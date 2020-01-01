@@ -161,5 +161,13 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
+        maven {
+            name = "davenonymous maven"
+            url = uri("http://maven.davenonymous.com/repository/maven-releases")
+            credentials {
+                username = System.getenv("DAVE_MAVEN_USER")
+                password = System.getenv("DAVE_MAVEN_PASSWORD")
+            }
+        }
     }
 }

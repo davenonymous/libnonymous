@@ -31,3 +31,5 @@ jobs:
       env:
         GITHUB_BUILD: 1
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DAVE_MAVEN_USER: ${{ secrets.DAVE_MAVEN_USER }}
+        DAVE_MAVEN_PASSWORD: ${{ secrets.DAVE_MAVEN_PASSWORD }}
