@@ -112,7 +112,7 @@ dependencies {
 
 allprojects {
     if (System.getenv("GITHUB_BUILD") != null) {
-        version += "-b${System.getenv("BUILD_NUMBER")}"
+        version += ".${System.getenv("BUILD_NUMBER")}"
     }
 }
 
