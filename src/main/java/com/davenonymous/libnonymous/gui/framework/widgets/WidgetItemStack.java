@@ -62,16 +62,12 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 
         GlStateManager.scaled(xScale, yScale, 1.0d);
 
-        RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(this.value, 0, 0);
-        RenderHelper.enableStandardItemLighting();
 
         GlStateManager.popMatrix();
     }
 
     private void drawSlot(Screen screen) {
-        RenderHelper.disableStandardItemLighting();
-
         GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1f);
         screen.getMinecraft().textureManager.bindTexture(SLOT_TEXTURES);
 
@@ -81,6 +77,5 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
         GuiUtils.drawTexturedModalRect(-1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
 
         GlStateManager.color4f(1f, 1f, 1f, 1f);
-        RenderHelper.enableGUIStandardItemLighting();
     }
 }
