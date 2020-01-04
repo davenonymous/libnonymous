@@ -76,8 +76,8 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
 
         /*
         // TODO: This should not be generalized in this way as it triggers on changes to blocks not belonging to this gui.
-        if(world.isRemote && Minecraft.getMinecraft().currentScreen instanceof WidgetGuiContainer) {
-            ((WidgetGuiContainer) Minecraft.getMinecraft().currentScreen).fireDataUpdateEvent();
+        if(world.isRemote && Minecraft.getMinecraft().currentScreen instanceof WidgetContainerScreen) {
+            ((WidgetContainerScreen) Minecraft.getMinecraft().currentScreen).fireDataUpdateEvent();
         }
         */
     }
