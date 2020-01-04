@@ -52,14 +52,30 @@ public class MultiBlockModelSerializer implements JsonDeserializer<MultiblockBlo
         return refMap;
     }
 
+    private boolean hasUnknownBlocksInMap(JsonObject jsonRefMap) {
+        for(Map.Entry<String,JsonElement> jsonRefEntry : jsonRefMap.entrySet()) {
+            JsonObject jsonBlockInfo = jsonRefEntry.getValue().getAsJsonObject();
+            if(!BlockStateSerializationHelper.isValidBlockState(jsonBlockInfo)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public MultiblockBlockModel deserializeV3(JsonObject root, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         // First get the name of the tree type
         if(!root.has("type")) {
-            Logz.warn("Missing type name in shape config");
+            Logz.warn("Missing type name in multiblockmodel json");
             return null;
         }
 
         ResourceLocation treeType = new ResourceLocation(root.get("type").getAsString());
+
+        if(hasUnknownBlocksInMap(root.getAsJsonObject("ref"))) {
+            Logz.warn("Unknown blocks in multiblockmodel json");
+            return null;
+        }
 
         // Get the reference map
         Map<String, BlockState> refMap = getReferenceMapV3(root.getAsJsonObject("ref"));

@@ -84,6 +84,20 @@ public class BlockStateSerializationHelper {
         return result;
     }
 
+    public static boolean isValidBlockState(JsonObject json) {
+        String blockName = json.get("block").getAsString();
+        if(blockName.equals("minecraft:air")) {
+            return true;
+        }
+
+        final Block block = MCJsonUtils.getBlock(json, "block");
+        if(block == null || block.getRegistryName().toString().equals("minecraft:air")) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static BlockState deserializeBlockState (JsonObject json) {
 
         // Read the block from the forge registry.
