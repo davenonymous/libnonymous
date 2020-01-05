@@ -47,7 +47,9 @@ public class WidgetPanel extends Widget {
         });
 
         this.addListener(VisibilityChangedEvent.class, (event, widget1) -> {
-            Networking.sendEnabledSlotsMessage(Minecraft.getInstance().player.openContainer.inventorySlots);
+            if(Minecraft.getInstance().player != null && Minecraft.getInstance().player.openContainer != null) {
+                Networking.sendEnabledSlotsMessage(Minecraft.getInstance().player.openContainer.inventorySlots);
+            }
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
 
@@ -67,7 +69,7 @@ public class WidgetPanel extends Widget {
                     continue;
                 }
 
-                //Logz.info("Passing along to child=%s with %d,%d", child.toString(), innerX, innerY);
+                //Logz.info("Passing along to child={} with {},{}", child.toString(), innerX, innerY);
                 if(child.fireEvent(new MouseClickEvent(event.x, event.y, event.button)) == WidgetEventResult.HANDLED) {
                     return WidgetEventResult.HANDLED;
                 }

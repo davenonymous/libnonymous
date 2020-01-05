@@ -2,10 +2,13 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 
 import com.davenonymous.libnonymous.gui.framework.ISelectable;
+import com.davenonymous.libnonymous.gui.framework.event.ListSelectionEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseScrollEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
+import com.davenonymous.libnonymous.render.RenderTickCounter;
 import com.davenonymous.libnonymous.utils.Logz;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
@@ -15,9 +18,11 @@ public class WidgetList extends WidgetPanel {
 
     private int lineOffset = 0;
     private int lastVisibleLine = 0;
+    private int visibleWidgets = 0;
 
     protected int selected = -1;
 
+    boolean autoSelectFirstEntry = false;
 
     public WidgetList() {
         super();
@@ -33,10 +38,63 @@ public class WidgetList extends WidgetPanel {
         });
     }
 
+    public Widget getScrollUpButton(int color) {
+        WidgetTextBox box = new WidgetTextBox("<") {
+            @Override
+            public void draw(Screen screen) {
+                if(lineOffset == 0) {
+                    return;
+                }
+
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(7.0f, 0.0f, 0.0f);
+                GlStateManager.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
+                super.draw(screen);
+                GlStateManager.popMatrix();
+            }
+        };
+        box.setTextColor(color);
+        box.setDimensions(0, 0, 7, 6);
+        box.addListener(MouseClickEvent.class, (event, widget) -> {
+            this.scrollUp();
+            return WidgetEventResult.HANDLED;
+        });
+        return box;
+    }
+
+    public Widget getScrollDownButton(int color) {
+        WidgetTextBox box = new WidgetTextBox(">") {
+            @Override
+            public void draw(Screen screen) {
+                if(lastVisibleLine == getTotalLines()-1) {
+                    return;
+                }
+
+                GlStateManager.pushMatrix();
+                GlStateManager.translatef(7.0f, 0.0f, 0.0f);
+                GlStateManager.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
+                super.draw(screen);
+                GlStateManager.popMatrix();
+            }
+        };
+        box.setTextColor(color);
+        box.setDimensions(0, 0, 7, 6);
+        box.addListener(MouseClickEvent.class, (event, widget) -> {
+            this.scrollDown();
+            return WidgetEventResult.HANDLED;
+        });
+        return box;
+    }
+
     @Override
     public void clear() {
         super.clear();
         this.selected = -1;
+        this.fireEvent(new ListSelectionEvent(this.selected));
+    }
+
+    public void scrollToTop() {
+        this.lineOffset = 0;
     }
 
     public void scrollUp() {
@@ -53,8 +111,35 @@ public class WidgetList extends WidgetPanel {
         this.updateWidgets();
     }
 
+    private ISelectable getSelectedWidget() {
+        if(this.selected == -1) {
+            return null;
+        }
+        return (ISelectable) this.children.get(this.selected);
+    }
+
     public void deselect() {
+        if(this.selected == -1) {
+            return;
+        }
+
+        this.getSelectedWidget().setSelected(false);
         this.selected = -1;
+        this.fireEvent(new ListSelectionEvent(this.selected));
+    }
+
+    public void select(int index) {
+        if(index == -1) {
+            this.deselect();
+            return;
+        }
+
+        if(this.selected != -1) {
+            this.getSelectedWidget().setSelected(false);
+        }
+        this.selected = index;
+        this.getSelectedWidget().setSelected(true);
+        this.fireEvent(new ListSelectionEvent(this.selected));
     }
 
     public int getTotalLines() {
@@ -75,8 +160,37 @@ public class WidgetList extends WidgetPanel {
         int borderColor = 0xFF000000;
         int selectedBackgroundColor = 0xFF555555;
 
-        GuiUtils.drawGradientRect(0, 0, 0, width, height, borderColor, borderColor);
-        GuiUtils.drawGradientRect(0, 1, 1, width-1, height-1, backgroundColor, backgroundColor);
+
+
+        // Draw background
+        boolean drawScrollbar = visibleWidgets < getTotalLines();
+        int scrollbarWidth = drawScrollbar ? 8 : 0;
+
+        int listWidth = width-scrollbarWidth;
+        GuiUtils.drawGradientRect(0, 0, 0, listWidth, height, borderColor, borderColor);
+        GuiUtils.drawGradientRect(0, 1, 1, listWidth-1, height-1, backgroundColor, backgroundColor);
+
+        // Draw scrollbars
+        if(drawScrollbar) {
+            int scrollBarX = listWidth + 1;
+            GuiUtils.drawGradientRect(0, scrollBarX, 0, listWidth + scrollbarWidth, height, backgroundColor, backgroundColor);
+
+            int linesBefore = lineOffset;
+            int linesAfter = getTotalLines() - lastVisibleLine - 1;
+
+            int scrollColor = 0xFF666666;
+
+            float ratioBefore = (float)linesBefore / getTotalLines();
+            float ratioSize = (float)visibleWidgets / getTotalLines();
+
+            int topOffset = (int) (height * ratioBefore);
+            int paddleHeight = (int) (height * ratioSize);
+
+            if(topOffset == 0) {
+                topOffset = 1;
+            }
+            GuiUtils.drawGradientRect(0, scrollBarX+1, topOffset, listWidth + scrollbarWidth -1, topOffset+paddleHeight, scrollColor, scrollColor);
+        }
 
         //Logz.info("Rendering lines %d to %d", lineOffset, lastVisibleLine);
 
@@ -90,22 +204,11 @@ public class WidgetList extends WidgetPanel {
 
             Widget selectedWidget = this.children.get(selected);
 
-            GuiUtils.drawGradientRect(0, 1, yOffset+1, width-1, yOffset+1+selectedWidget.height-1, selectedBackgroundColor, selectedBackgroundColor);
+            GuiUtils.drawGradientRect(0, 1, yOffset+1, listWidth-1, yOffset+1+selectedWidget.height-1, selectedBackgroundColor, selectedBackgroundColor);
         }
 
 
         super.draw(screen);
-    }
-
-    /**
-     * Deprecated, use addListEntry instead!
-     *
-     * @param widget
-     */
-    @Override
-    @Deprecated
-    public void add(Widget widget) {
-        Logz.warn("Calling unused method to add widgets to list! Use WidgetList#addListEntry instead!");
     }
 
     public <T extends Widget & ISelectable> void addListEntry(T widget) {
@@ -133,9 +236,10 @@ public class WidgetList extends WidgetPanel {
                 widget.setSelected(true);
             }
 
+            this.fireEvent(new ListSelectionEvent(this.selected));
+
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
-
 
         super.add(widget);
 
@@ -145,6 +249,7 @@ public class WidgetList extends WidgetPanel {
     public void updateWidgets() {
         int visibleHeight = padding;
         boolean exceededListHeight = false;
+        visibleWidgets = 0;
         for(int line = 0; line < this.children.size(); line++) {
             Widget widget = this.children.get(line);
 
@@ -173,6 +278,7 @@ public class WidgetList extends WidgetPanel {
             widget.setX(padding);
             visibleHeight += widget.height;
             lastVisibleLine = line;
+            visibleWidgets++;
         }
     }
 }

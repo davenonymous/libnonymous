@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 
+import com.davenonymous.libnonymous.utils.Logz;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.opengl.GL11;
@@ -46,10 +47,14 @@ public class WidgetTextBox extends Widget {
 
         int scale = computeGuiScale(screen.getMinecraft());
 
-        int bottomOffset = ((screen.getMinecraft().mainWindow.getHeight()/scale) - (getActualY() + height)) * scale;
-        GL11.glScissor(getActualX() * scale, bottomOffset, width*scale, height*scale);
+        GlStateManager.enableBlend();
+
+        int bottomOffset = (int)(((double)(screen.getMinecraft().mainWindow.getHeight()/scale) - (getActualY() + height)) * scale);
+        GL11.glScissor(getActualX() * scale, bottomOffset+2, width*scale, (height*scale)-1);
 
         screen.getMinecraft().fontRenderer.drawSplitString(text, 0, 0, width, textColor);
+
+        GlStateManager.disableBlend();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GL11.glPopAttrib();

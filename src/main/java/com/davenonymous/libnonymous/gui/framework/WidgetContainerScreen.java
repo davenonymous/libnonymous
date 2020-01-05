@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.text.ITextComponent;
 
@@ -45,10 +44,11 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends C
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
         Slot slot = this.getSlotUnderMouse();
-        if(slot instanceof WidgetSlot)
-        if(gui.fireEvent(new MouseReleasedEvent(mouseX, mouseY, mouseButton)) == WidgetEventResult.CONTINUE_PROCESSING) {
-            return super.mouseReleased(mouseX, mouseY, mouseButton);
-        }
+        //if(slot instanceof WidgetSlot) {
+            if (gui.fireEvent(new MouseReleasedEvent(mouseX, mouseY, mouseButton)) == WidgetEventResult.CONTINUE_PROCESSING) {
+                return super.mouseReleased(mouseX, mouseY, mouseButton);
+            }
+        //}
 
         return false;
     }
