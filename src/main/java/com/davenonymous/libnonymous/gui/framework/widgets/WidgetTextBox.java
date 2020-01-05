@@ -50,7 +50,11 @@ public class WidgetTextBox extends Widget {
         GlStateManager.enableBlend();
 
         int bottomOffset = (int)(((double)(screen.getMinecraft().mainWindow.getHeight()/scale) - (getActualY() + height)) * scale);
-        GL11.glScissor(getActualX() * scale, bottomOffset+2, width*scale, (height*scale)-1);
+        int heightTmp = (height*scale)-1;
+        if(heightTmp < 0) {
+            heightTmp = 0;
+        }
+        GL11.glScissor(getActualX() * scale, bottomOffset+2, width*scale, heightTmp);
 
         screen.getMinecraft().fontRenderer.drawSplitString(text, 0, 0, width, textColor);
 

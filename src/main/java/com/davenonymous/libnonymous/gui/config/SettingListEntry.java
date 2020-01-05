@@ -6,12 +6,15 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
 import com.davenonymous.libnonymous.gui.framework.widgets.*;
+import com.davenonymous.libnonymous.network.Networking;
 import com.davenonymous.libnonymous.utils.Logz;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -20,6 +23,7 @@ public class SettingListEntry extends WidgetListEntry {
 
     private static Color COLOR_ENABLED = new Color(50, 125, 50);
     private static Color COLOR_DISABLED = new Color(160, 160, 160, 255);
+    private static Color COLOR_ERRORED = new Color(150, 50, 50);
 
     public SettingListEntry(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int columnWidth) {
         super();
@@ -48,8 +52,13 @@ public class SettingListEntry extends WidgetListEntry {
             shortDescription += " ...";
         }
 
+        int headerHeight = 14;
+        int commentHeight = 29;
+        if(shortDescription.length() <= 0) {
+            commentHeight = 0;
+        }
         WidgetTextBox labelComment = new WidgetTextBox(shortDescription, 0xA0CCCCCC);
-        labelComment.setDimensions(0, 11, (int)(columnWidth * 0.85f), 29);
+        labelComment.setDimensions(0, 13, (int)(columnWidth * 0.85f), commentHeight);
         if(comment.length() > 0) {
             labelComment.setTooltipLines(new StringTextComponent(comment));
         }
@@ -59,35 +68,42 @@ public class SettingListEntry extends WidgetListEntry {
 
         Object uncastVal = value.get();
         if(uncastVal instanceof Boolean) {
-            this.setSize(columnWidth, 45);
+            int entryHeight = 5 + headerHeight + commentHeight;
+            this.setSize(columnWidth, entryHeight);
 
             boolean val = (boolean) uncastVal;
-            int buttonX = columnWidth-21;
-            int buttonY = 12;
+            int buttonX = columnWidth-16;
+            int buttonY = ((entryHeight-16)/2)-2;
 
-            WidgetFontAwesome toggleButtonOn = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_CheckCircle, true, true);
+            WidgetFontAwesome toggleButtonOn = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_CheckCircle, WidgetFontAwesome.IconSize.MEDIUM);
             toggleButtonOn.setColor(COLOR_ENABLED);
             toggleButtonOn.setPosition(buttonX, buttonY);
             this.add(toggleButtonOn);
 
-            WidgetFontAwesome toggleButtonOff = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_Circle, true, true);
+            WidgetFontAwesome toggleButtonOff = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_Circle, WidgetFontAwesome.IconSize.MEDIUM);
             toggleButtonOff.setColor(COLOR_DISABLED);
             toggleButtonOff.setPosition(buttonX, buttonY);
             this.add(toggleButtonOff);
 
             toggleButtonOff.addListener(MouseClickEvent.class, (event, widget) -> {
                 value.set(true);
-                value.save();
+                saveValueWithRaceConditionRetries(value);
+
                 toggleButtonOn.setVisible(true);
                 toggleButtonOff.setVisible(false);
+
+                //Networking.reloadConfigs();
+
                 return WidgetEventResult.HANDLED;
             });
 
             toggleButtonOn.addListener(MouseClickEvent.class, (event, widget) -> {
                 value.set(false);
-                value.save();
+                saveValueWithRaceConditionRetries(value);
                 toggleButtonOn.setVisible(false);
                 toggleButtonOff.setVisible(true);
+
+                //Networking.reloadConfigs();
                 return WidgetEventResult.HANDLED;
             });
 
@@ -121,7 +137,7 @@ public class SettingListEntry extends WidgetListEntry {
                 inputField.setDimensions(5, 33, columnWidth-26, 14);
                 this.add(inputField);
 
-                WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, true, true);
+                WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, WidgetFontAwesome.IconSize.MEDIUM);
                 save.setColor(COLOR_DISABLED);
                 save.setPosition(columnWidth-16, 32);
                 save.addListener(MouseEnterEvent.class, (event, widget) -> {
@@ -134,8 +150,12 @@ public class SettingListEntry extends WidgetListEntry {
                 });
                 save.addListener(MouseClickEvent.class, (event, widget) -> {
                     String inputText = inputField.getText();
-                    value.set(Arrays.asList(inputText.split(",")));
-                    value.save();
+                    if(inputText == null || inputText.length() == 0) {
+                        value.set(Collections.EMPTY_LIST);
+                    } else {
+                        value.set(Arrays.asList(inputText.split(",")));
+                    }
+                    saveValueWithRaceConditionRetries(value);
                     return WidgetEventResult.CONTINUE_PROCESSING;
                 });
                 this.add(save);
@@ -149,7 +169,7 @@ public class SettingListEntry extends WidgetListEntry {
             inputField.setDimensions(5, 33, columnWidth - 26, 14);
             this.add(inputField);
 
-            WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, true, true);
+            WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, WidgetFontAwesome.IconSize.MEDIUM);
             save.setColor(COLOR_DISABLED);
             save.setPosition(columnWidth - 16, 32);
             save.addListener(MouseEnterEvent.class, (event, widget) -> {
@@ -161,11 +181,20 @@ public class SettingListEntry extends WidgetListEntry {
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
             save.addListener(MouseClickEvent.class, (event, widget) -> {
-                /*
                 String inputText = inputField.getText();
-                value.set(Arrays.asList(inputText.split(",")));
-                value.save();
-                */
+                double inputVal = 0.0d;
+                boolean success = true;
+                try {
+                    inputVal = Double.parseDouble(inputText);
+                } catch(NumberFormatException e) {
+                    success = false;
+                }
+                if(success) {
+                    value.set(inputVal);
+                    saveValueWithRaceConditionRetries(value);
+                } else {
+                    save.setColor(COLOR_ERRORED);
+                }
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
             this.add(save);
@@ -177,7 +206,7 @@ public class SettingListEntry extends WidgetListEntry {
             inputField.setDimensions(5, 33, columnWidth - 26, 14);
             this.add(inputField);
 
-            WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, true, true);
+            WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, WidgetFontAwesome.IconSize.MEDIUM);
             save.setColor(COLOR_DISABLED);
             save.setPosition(columnWidth - 16, 32);
             save.addListener(MouseEnterEvent.class, (event, widget) -> {
@@ -189,11 +218,37 @@ public class SettingListEntry extends WidgetListEntry {
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
             save.addListener(MouseClickEvent.class, (event, widget) -> {
-                /*
-                String inputText = inputField.getText();
-                value.set(Arrays.asList(inputText.split(",")));
-                value.save();
-                */
+                int inputValue = inputField.getValue();
+                value.set(inputValue);
+                saveValueWithRaceConditionRetries(value);
+                return WidgetEventResult.CONTINUE_PROCESSING;
+            });
+            this.add(save);
+
+        } else if(uncastVal instanceof String) {
+            String val = (String) uncastVal;
+            this.setSize(columnWidth, 55);
+
+            WidgetInputField inputField = new WidgetInputField();
+            inputField.setValue(val);
+            inputField.setDimensions(5, 33, columnWidth - 26, 14);
+            this.add(inputField);
+
+            WidgetFontAwesome save = new WidgetFontAwesome(FontAwesomeIcons.SOLID_FileDownload, WidgetFontAwesome.IconSize.MEDIUM);
+            save.setColor(COLOR_DISABLED);
+            save.setPosition(columnWidth - 16, 32);
+            save.addListener(MouseEnterEvent.class, (event, widget) -> {
+                save.setColor(COLOR_ENABLED);
+                return WidgetEventResult.CONTINUE_PROCESSING;
+            });
+            save.addListener(MouseExitEvent.class, (event, widget) -> {
+                save.setColor(COLOR_DISABLED);
+                return WidgetEventResult.CONTINUE_PROCESSING;
+            });
+            save.addListener(MouseClickEvent.class, (event, widget) -> {
+                String inputValue = inputField.getValue();
+                value.set(inputValue);
+                saveValueWithRaceConditionRetries(value);
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
             this.add(save);
@@ -202,5 +257,13 @@ public class SettingListEntry extends WidgetListEntry {
             Logz.warn("Unknown config value type: {}", uncastVal.getClass());
         }
 
+    }
+
+    private void saveValueWithRaceConditionRetries(ForgeConfigSpec.ConfigValue value) {
+        value.save();
+        value.save();
+        value.save();
+        value.save();
+        value.save();
     }
 }

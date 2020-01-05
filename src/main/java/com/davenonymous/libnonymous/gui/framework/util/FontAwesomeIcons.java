@@ -1566,7 +1566,8 @@ public enum FontAwesomeIcons {
     int width;
     int height;
 
-    ResourceLocation location;
+    ResourceLocation locationLow;
+    ResourceLocation locationHigh;
 
     FontAwesomeIcons(String actualName, Categories category, int width, int height) {
         this.actualName = actualName;
@@ -1576,12 +1577,21 @@ public enum FontAwesomeIcons {
     }
 
     public ResourceLocation get(boolean doubleSize) {
-        if(this.location == null) {
-            String resourcePath = String.format("textures/gui/fontawesome/fa-%s-%s-%d.png", category.getPath(), this.actualName, doubleSize ? 32 : 16);
-            this.location = new ResourceLocation(Libnonymous.MODID, resourcePath);
-        }
+        if(doubleSize) {
+            if (this.locationHigh == null) {
+                String resourcePath = String.format("textures/gui/fontawesome/fa-%s-%s-%d.png", category.getPath(), this.actualName, doubleSize ? 32 : 16);
+                this.locationHigh = new ResourceLocation(Libnonymous.MODID, resourcePath);
+            }
 
-        return this.location;
+            return this.locationHigh;
+        } else {
+            if (this.locationLow == null) {
+                String resourcePath = String.format("textures/gui/fontawesome/fa-%s-%s-%d.png", category.getPath(), this.actualName, doubleSize ? 32 : 16);
+                this.locationLow = new ResourceLocation(Libnonymous.MODID, resourcePath);
+            }
+
+            return this.locationLow;
+        }
     }
 
     public int getWidth() {

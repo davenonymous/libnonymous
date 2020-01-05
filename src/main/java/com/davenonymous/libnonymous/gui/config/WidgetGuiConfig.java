@@ -2,8 +2,9 @@ package com.davenonymous.libnonymous.gui.config;
 
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.WidgetScreen;
-import com.davenonymous.libnonymous.gui.framework.event.ListSelectionEvent;
-import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
+import com.davenonymous.libnonymous.gui.framework.event.*;
+import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
+import com.davenonymous.libnonymous.gui.framework.widgets.WidgetFontAwesome;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetList;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetTextBox;
 import com.davenonymous.libnonymous.utils.Logz;
@@ -14,6 +15,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -123,6 +125,16 @@ public class WidgetGuiConfig extends WidgetScreen {
     }
 
     @Override
+    public void onClose() {
+        if(this.parent != null) {
+            super.onClose();
+            Minecraft.getInstance().displayGuiScreen(this.parent);
+        } else {
+            super.onClose();
+        }
+    }
+
+    @Override
     protected GUI createGUI() {
         // Best resolution guessing begins:
         int desiredHeight = (int) (Minecraft.getInstance().mainWindow.getHeight() / Minecraft.getInstance().mainWindow.getGuiScaleFactor());
@@ -134,6 +146,23 @@ public class WidgetGuiConfig extends WidgetScreen {
         WidgetTextBox labelSpecs = new WidgetTextBox("Config", 0xC0000000);
         labelSpecs.setDimensions(6, 6, columnWidths, 9);
         gui.add(labelSpecs);
+
+        WidgetFontAwesome closeButton = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_TimesCircle, WidgetFontAwesome.IconSize.TINY);
+        closeButton.setColor(new Color(50, 50, 50));
+        closeButton.setPosition(desiredWidth-12, 4);
+        closeButton.addListener(MouseEnterEvent.class, (event, widget) -> {
+            closeButton.setColor(new Color(90, 90, 90));
+            return WidgetEventResult.CONTINUE_PROCESSING;
+        });
+        closeButton.addListener(MouseExitEvent.class, (event, widget) -> {
+            closeButton.setColor(new Color(50, 50, 50));
+            return WidgetEventResult.CONTINUE_PROCESSING;
+        });
+        closeButton.addListener(MouseClickEvent.class, (event, widget) -> {
+            this.onClose();
+            return WidgetEventResult.HANDLED;
+        });
+        gui.add(closeButton);
 
         WidgetList specList = new WidgetList();
         specList.setDimensions(5, 16, columnWidths, desiredHeight-21);
@@ -151,7 +180,7 @@ public class WidgetGuiConfig extends WidgetScreen {
                 continue;
             }
 
-            SpecListEntry specListEntry = new SpecListEntry(filename, columnWidths);
+            SpecListEntry specListEntry = new SpecListEntry(filename, columnWidths-10);
             specList.addListEntry(specListEntry);
             //Logz.info("Found spec: {}", filename);
 
@@ -161,6 +190,7 @@ public class WidgetGuiConfig extends WidgetScreen {
 
             specList.addListener(ListSelectionEvent.class, (event, widget) -> {
                 categoriesPanel.categoryList.deselect();
+                specList.updateWidgets();
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
 
@@ -174,7 +204,7 @@ public class WidgetGuiConfig extends WidgetScreen {
 
                 UnmodifiableConfig categoryOptions = (UnmodifiableConfig) categoryEntry.getValue();
 
-                CategoryListEntry categoryListEntry = new CategoryListEntry(category, columnWidths);
+                CategoryListEntry categoryListEntry = new CategoryListEntry(category, columnWidths-10);
                 if(categoryComment.length() > 0) {
                     categoryListEntry.setTooltipLines(new StringTextComponent(categoryComment));
                 }
