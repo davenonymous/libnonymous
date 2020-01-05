@@ -28,10 +28,12 @@ public class WidgetList extends WidgetPanel {
         super();
 
         this.addListener(MouseScrollEvent.class, (event, widget) -> {
-            if(event.up) {
-                this.scrollUp();
-            } else {
-                this.scrollDown();
+            if(widget.isPosInside(event.mouseX, event.mouseY)) {
+                if (event.up) {
+                    this.scrollUp();
+                } else {
+                    this.scrollDown();
+                }
             }
 
             return WidgetEventResult.CONTINUE_PROCESSING;

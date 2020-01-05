@@ -77,18 +77,16 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends C
         return false;
     }
 
-    /*
-    // TODO: Mouse drag and scroll events
     @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        int wheelValue = Mouse.getEventDWheel();
-        if(wheelValue != 0) {
-            gui.fireEvent(new MouseScrollEvent(wheelValue));
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+        if(gui.fireEvent(new MouseScrollEvent(mouseX, mouseY, scrollAmount)) == WidgetEventResult.CONTINUE_PROCESSING) {
+            return super.mouseScrolled(mouseX, mouseY, scrollAmount);
         }
+        return false;
     }
 
+    /*
+    // TODO: Mouse drag and scroll events
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         if(gui.fireEvent(new MouseClickMoveEvent(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) == WidgetEventResult.CONTINUE_PROCESSING) {

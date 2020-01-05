@@ -6,9 +6,11 @@ import com.davenonymous.libnonymous.gui.framework.event.ListSelectionEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetList;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetTextBox;
+import com.davenonymous.libnonymous.utils.Logz;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -172,9 +174,11 @@ public class WidgetGuiConfig extends WidgetScreen {
 
                 UnmodifiableConfig categoryOptions = (UnmodifiableConfig) categoryEntry.getValue();
 
-                CategoryListEntry categoryListEntry = new CategoryListEntry(categoryComment, columnWidths);
+                CategoryListEntry categoryListEntry = new CategoryListEntry(category, columnWidths);
+                if(categoryComment.length() > 0) {
+                    categoryListEntry.setTooltipLines(new StringTextComponent(categoryComment));
+                }
                 categoriesPanel.categoryList.addListEntry(categoryListEntry);
-                //Logz.info("Found category: {}: {}", category, categoryComment);
 
                 SettingsPanel settingsPanel = new SettingsPanel(columnWidths, desiredHeight);
                 categoryListEntry.bindTo(settingsPanel);

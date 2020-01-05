@@ -25,8 +25,12 @@ public class SettingListEntry extends WidgetListEntry {
         super();
 
         WidgetTextBox label = new WidgetTextBox(optionKey, 0xA0FFFFFF);
-        label.setDimensions(0, 2, columnWidth, 9);
+        label.setDimensions(2, 2, columnWidth, 9);
         this.add(label);
+
+        if(comment == null) {
+            comment = "";
+        }
 
         String shortDescription;
         int firstDot = comment.indexOf(".")+1;
@@ -46,7 +50,9 @@ public class SettingListEntry extends WidgetListEntry {
 
         WidgetTextBox labelComment = new WidgetTextBox(shortDescription, 0xA0CCCCCC);
         labelComment.setDimensions(0, 11, (int)(columnWidth * 0.85f), 29);
-        labelComment.setTooltipLines(new StringTextComponent(comment));
+        if(comment.length() > 0) {
+            labelComment.setTooltipLines(new StringTextComponent(comment));
+        }
         this.add(labelComment);
 
         this.setSize(columnWidth, 45);
@@ -96,7 +102,7 @@ public class SettingListEntry extends WidgetListEntry {
                 return;
             }
 
-            labelComment.setText(comment + " (separate with commas)");
+            labelComment.setText(shortDescription + " (separate with commas)");
             Object firstDefaultValue = ((List) defaultValue).get(0);
             if(firstDefaultValue instanceof String) {
                 List<String> val = (List<String>) uncastVal;
@@ -106,7 +112,9 @@ public class SettingListEntry extends WidgetListEntry {
                     sb.append(listEntry);
                     sb.append(",");
                 }
-                sb.deleteCharAt(sb.length()-1);
+                if(sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
 
                 WidgetInputField inputField = new WidgetInputField();
                 inputField.setValue(sb.toString());
