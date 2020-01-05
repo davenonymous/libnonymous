@@ -85,7 +85,7 @@ minecraft {
     }
 }
 
-file("libs").eachFile { file ->
+file("libs").eachFileMatch(~/.*\.jar$/) { file ->
     def splitPos = file.name.lastIndexOf("-")
     def modartifact = file.name.substring(0, splitPos)
     def modversion = file.name.substring(splitPos+1, file.name.length()-4)
