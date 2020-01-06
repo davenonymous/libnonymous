@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.gui.config;
 
+import com.davenonymous.libnonymous.gui.config.types.*;
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.WidgetScreen;
 import com.davenonymous.libnonymous.gui.framework.event.*;
@@ -180,12 +181,12 @@ public class WidgetGuiConfig extends WidgetScreen {
                 continue;
             }
 
-            SpecListEntry specListEntry = new SpecListEntry(filename, columnWidths-10);
-            specList.addListEntry(specListEntry);
+            StringListEntry stringListEntry = new StringListEntry(filename, columnWidths-10);
+            specList.addListEntry(stringListEntry);
             //Logz.info("Found spec: {}", filename);
 
             CategoriesPanel categoriesPanel = new CategoriesPanel(columnWidths, desiredHeight);
-            specListEntry.bindTo(categoriesPanel);
+            stringListEntry.bindTo(categoriesPanel);
             gui.add(categoriesPanel);
 
             specList.addListener(ListSelectionEvent.class, (event, widget) -> {
@@ -204,7 +205,7 @@ public class WidgetGuiConfig extends WidgetScreen {
 
                 UnmodifiableConfig categoryOptions = (UnmodifiableConfig) categoryEntry.getValue();
 
-                CategoryListEntry categoryListEntry = new CategoryListEntry(category, columnWidths-10);
+                StringListEntry categoryListEntry = new StringListEntry(category, columnWidths-10);
                 if(categoryComment.length() > 0) {
                     categoryListEntry.setTooltipLines(new StringTextComponent(categoryComment));
                 }
@@ -227,7 +228,12 @@ public class WidgetGuiConfig extends WidgetScreen {
                     }
 
                     ForgeConfigSpec.ConfigValue value = spec.getValues().get(Arrays.asList(category, optionKey));
-                    SettingListEntry settingListEntry = new SettingListEntry(optionKey, comment, value, valueSpec.getDefault(), (columnWidths*2)-10);
+                    SettingListEntry settingListEntry = getEntryForType(optionKey, comment, value, valueSpec.getDefault(), (columnWidths*2)-10);
+                    if(settingListEntry == null) {
+                        Logz.warn("Unknown config value type: {} -> {}", value.getClass(), value.get().getClass());
+                        continue;
+                    }
+
                     settingsPanel.settingsList.addListEntry(settingListEntry);
                     //Logz.info("-> key={}, comment={}, value={}", optionKey, comment, value.get());
                 }
@@ -236,5 +242,24 @@ public class WidgetGuiConfig extends WidgetScreen {
         }
 
         return gui;
+    }
+
+    public SettingListEntry getEntryForType(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int entryWidth) {
+        Object uncastVal = value.get();
+        if(uncastVal instanceof Boolean) {
+            return new BooleanSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        } else if(uncastVal instanceof List) {
+            return new ListSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        } else if(uncastVal instanceof Double) {
+            return new DoubleSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        } else if(uncastVal instanceof Integer) {
+            return new IntegerSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        } else if(uncastVal instanceof String) {
+            return new StringSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        } else if(value instanceof ForgeConfigSpec.EnumValue) {
+            return new EnumSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
+        }
+
+        return new UnknownSettingListEntry(optionKey, comment, value, defaultValue, entryWidth);
     }
 }

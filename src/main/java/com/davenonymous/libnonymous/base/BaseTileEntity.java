@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -178,5 +179,13 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
         }
 
         setOwner(player.getUniqueID());
+    }
+
+    public boolean isWaterlogged() {
+        if(!this.world.getBlockState(this.getPos()).has(BlockStateProperties.WATERLOGGED)) {
+            return false;
+        }
+
+        return this.world.getBlockState(this.getPos()).get(BlockStateProperties.WATERLOGGED);
     }
 }
