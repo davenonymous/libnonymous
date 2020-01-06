@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.Libnonymous;
+import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
@@ -20,8 +21,6 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 
     public ResourceLocation backgroundTexture = new ResourceLocation("minecraft", "textures/blocks/concrete_silver.png");
     public TextureAtlasSprite atlasSprite;
-
-    protected static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation(Libnonymous.MODID, "textures/gui/tabicons.png");
 
     public WidgetSelectButton() {
         this.setHeight(20);
@@ -71,7 +70,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
         }
 
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, hovered ? 1.0F : 1.0F);
-        screen.getMinecraft().getTextureManager().bindTexture(BUTTON_TEXTURES);
+        screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
 
         // Top Left corner
         int texOffsetX = 64;

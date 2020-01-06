@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.Libnonymous;
+import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.TabChangedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
@@ -108,7 +109,6 @@ public class WidgetTabsPanel extends WidgetPanel {
     }
 
     private static class WidgetTabsButton extends Widget {
-        private static ResourceLocation tabIcons = new ResourceLocation(Libnonymous.MODID, "textures/gui/tabicons.png");
         WidgetTabsPanel parent;
         WidgetPanel page;
         ItemStack pageStack;
@@ -149,7 +149,7 @@ public class WidgetTabsPanel extends WidgetPanel {
         public void draw(Screen screen) {
             GlStateManager.pushMatrix();
 
-            screen.getMinecraft().getTextureManager().bindTexture(tabIcons);
+            screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
 
             GlStateManager.disableLighting();
             GlStateManager.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.

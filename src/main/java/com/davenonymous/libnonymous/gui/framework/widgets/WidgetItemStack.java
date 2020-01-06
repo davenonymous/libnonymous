@@ -1,22 +1,17 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
-import com.davenonymous.libnonymous.Libnonymous;
+import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.Collections;
 
 public class WidgetItemStack extends WidgetWithValue<ItemStack> {
     boolean drawSlot = false;
-
-    protected static ResourceLocation SLOT_TEXTURES = new ResourceLocation(Libnonymous.MODID, "textures/gui/tabicons.png");
 
     public WidgetItemStack(ItemStack stack) {
         this.setSize(16, 16);
@@ -69,7 +64,7 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 
     private void drawSlot(Screen screen) {
         GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1f);
-        screen.getMinecraft().textureManager.bindTexture(SLOT_TEXTURES);
+        screen.getMinecraft().textureManager.bindTexture(GUI.tabIcons);
 
         int texOffsetY = 84;
         int texOffsetX = 84;
