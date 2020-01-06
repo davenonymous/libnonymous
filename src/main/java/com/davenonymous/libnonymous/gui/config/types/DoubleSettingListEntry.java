@@ -6,6 +6,7 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetFontAwesome;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetInputField;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class DoubleSettingListEntry extends SettingListEntry {
@@ -43,7 +44,7 @@ public class DoubleSettingListEntry extends SettingListEntry {
                 value.save();
                 hideErrorIcon();
             } catch(NumberFormatException e) {
-                showErrorIcon("Invalid decimal number");
+                showErrorIcon(I18n.format("libnonymous.config.error.invalid_decimal"));
             }
 
             return WidgetEventResult.CONTINUE_PROCESSING;

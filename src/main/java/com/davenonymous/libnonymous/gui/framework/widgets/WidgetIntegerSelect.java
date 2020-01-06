@@ -66,9 +66,10 @@ public class WidgetIntegerSelect extends WidgetPanelWithValue<Integer> {
     }
 
     protected void setNumber(int number) {
+        int oldNumber = this.number;
         this.number = number;
         this.input.setText("" + this.number);
-        // TODO: Fire value changed event
+        this.fireEvent(new ValueChangedEvent<>(oldNumber, this.number));
     }
 
     @Override

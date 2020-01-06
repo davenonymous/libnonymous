@@ -6,6 +6,7 @@ import com.davenonymous.libnonymous.gui.framework.widgets.WidgetListEntry;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetTextBox;
 import com.davenonymous.libnonymous.utils.FontAwesomeHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -88,7 +89,7 @@ public abstract class SettingListEntry extends WidgetListEntry {
     protected void addUnsupportedRow(int entryHeight) {
         this.setSize(columnWidth, entryHeight+17);
 
-        WidgetTextBox textBox = new WidgetTextBox("Sorry, this config type is not supported.", COLOR_ERRORED.getRGB());
+        WidgetTextBox textBox = new WidgetTextBox(I18n.format("libnonymous.config.error.unsupported_config_type"), COLOR_ERRORED.getRGB());
         textBox.setSize(columnWidth-10, 9);
         textBox.setPosition(25, 30);
         this.add(textBox);

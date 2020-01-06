@@ -1,3 +1,13 @@
 {
-  "libnonymous.config.title": "Configuration"
+  "libnonymous.config.title": "Configuration",
+
+  "libnonymous.config.gui.label.config": "Config",
+  "libnonymous.config.gui.label.category": "Category",
+  "libnonymous.config.gui.label.settings": "Settings",
+  "libnonymous.config.gui.label.separate_with_commas": "(separate with commas)",
+
+  "libnonymous.config.error.invalid_enum": "Invalid enum value",
+  "libnonymous.config.error.invalid_decimal": "Invalid decimal number",
+  "libnonymous.config.error.no_native_menu_exists": "Sorry, no native menu exists for that mod.",
+  "libnonymous.config.error.unsupported_config_type": "Sorry, this config type is not supported."
 }

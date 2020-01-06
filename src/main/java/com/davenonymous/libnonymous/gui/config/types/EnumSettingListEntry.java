@@ -7,6 +7,7 @@ import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetFontAwesome;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetInputField;
 import com.davenonymous.libnonymous.utils.Logz;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class EnumSettingListEntry extends SettingListEntry {
@@ -58,7 +59,7 @@ public class EnumSettingListEntry extends SettingListEntry {
                 value.save();
                 hideErrorIcon();
             } catch (IllegalArgumentException e) {
-                showErrorIcon("Invalid enum value");
+                showErrorIcon(I18n.format("libnonymous.config.error.invalid_enum"));
             }
             return WidgetEventResult.CONTINUE_PROCESSING;
         });

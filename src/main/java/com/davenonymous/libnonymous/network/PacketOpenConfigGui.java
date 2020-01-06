@@ -5,6 +5,7 @@ import com.davenonymous.libnonymous.gui.config.WidgetGuiConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
@@ -96,7 +97,7 @@ public class PacketOpenConfigGui {
                             Screen screen = configGuiFactory.apply(Minecraft.getInstance(), null);
                             Minecraft.getInstance().displayGuiScreen(screen);
                         } else {
-                            // TODO: communicate to the client that no native context menu exists
+                            Minecraft.getInstance().player.sendStatusMessage(new TranslationTextComponent("libnonymous.config.error.no_native_menu_exists"), false);
                         }
                     } else if(this.mode == CommandOpenConfigGUI.Mode.BY_SPEC) {
                         EnumMap<ModConfig.Type, ModConfig> configs = getConfigsForModContainer(modContainer);

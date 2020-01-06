@@ -12,6 +12,7 @@ import com.davenonymous.libnonymous.utils.Logz;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -144,7 +145,7 @@ public class WidgetGuiConfig extends WidgetScreen {
 
         int columnWidths = (desiredWidth - 20) / 3;
 
-        WidgetTextBox labelSpecs = new WidgetTextBox("Config", 0xC0000000);
+        WidgetTextBox labelSpecs = new WidgetTextBox(I18n.format("libnonymous.config.gui.label.config"), 0xC0000000);
         labelSpecs.setDimensions(6, 6, columnWidths, 9);
         gui.add(labelSpecs);
 
