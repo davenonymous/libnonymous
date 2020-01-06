@@ -1,5 +1,7 @@
 package com.davenonymous.libnonymous.gui.config.types;
 
+import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
+import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetFontAwesome;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetListEntry;
@@ -8,9 +10,11 @@ import com.davenonymous.libnonymous.utils.FontAwesomeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.awt.*;
+import java.util.Arrays;
 
 
 public abstract class SettingListEntry extends WidgetListEntry {
@@ -38,8 +42,9 @@ public abstract class SettingListEntry extends WidgetListEntry {
 
         int availableSpaceForText = columnWidth - 30;
 
+        int optionKeyStringWidth = Minecraft.getInstance().fontRenderer.getStringWidth(optionKey);
         label = new WidgetTextBox(optionKey, 0xA0FFFFFF);
-        label.setDimensions(2, 2, availableSpaceForText, 9);
+        label.setDimensions(2, 2, optionKeyStringWidth+1, 9);
         this.add(label);
 
         if(comment == null) {
@@ -74,7 +79,37 @@ public abstract class SettingListEntry extends WidgetListEntry {
         errorIcon.setVisible(false);
         this.add(errorIcon);
 
+        restoreDefaultIcon = new WidgetFontAwesome(FontAwesomeIcons.SOLID_UndoAlt, WidgetFontAwesome.IconSize.TINY);
+        restoreDefaultIcon.setColor(COLOR_DISABLED);
+        restoreDefaultIcon.setPosition(optionKeyStringWidth + 5, 2);
+        restoreDefaultIcon.setTooltipLines(Arrays.asList(
+                new TranslationTextComponent("libnonymous.config.gui.tooltip.default_is"),
+                new StringTextComponent(defaultValue != null ? defaultValue.toString() : "")
+        ));
+        restoreDefaultIcon.addListener(MouseClickEvent.class, (event, widget) -> {
+            value.set(defaultValue);
+            value.save();
+            updateDefaultIconState();
+            this.setValueInInputField(defaultValue);
+            return WidgetEventResult.HANDLED;
+        });
+        updateDefaultIconState();
+
+        this.add(restoreDefaultIcon);
+
         this.fillPanel(headerHeight + 5 + commentHeight);
+    }
+
+    protected void updateDefaultIconState() {
+        if(value.get() == null) {
+            return;
+        }
+
+        if(value.get().equals(defaultValue)) {
+            restoreDefaultIcon.setColor(COLOR_DISABLED);
+        } else {
+            restoreDefaultIcon.setColor(COLOR_ENABLED);
+        }
     }
 
     protected void showErrorIcon(String message) {
@@ -100,5 +135,6 @@ public abstract class SettingListEntry extends WidgetListEntry {
         this.add(sadIcon);
     }
 
+    public abstract void setValueInInputField(Object defaultValue);
     public abstract void fillPanel(int entryHeight);
 }

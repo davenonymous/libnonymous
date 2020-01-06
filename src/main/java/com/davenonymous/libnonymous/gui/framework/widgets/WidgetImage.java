@@ -12,6 +12,7 @@ public class WidgetImage extends Widget {
     float textureWidth = 16.0f;
     float textureHeight = 16.0f;
     Color color;
+    float alpha = 1.0f;
 
     public WidgetImage(ResourceLocation image) {
         this.image = image;
@@ -23,12 +24,19 @@ public class WidgetImage extends Widget {
         return this;
     }
 
+    public WidgetImage setAlpha(float alpha) {
+        this.alpha = alpha;
+        return this;
+    }
+
     public WidgetImage setColor(Color color) {
+        this.alpha = color.getAlpha() / 255;
         this.color = color;
         return this;
     }
 
     public WidgetImage resetColor() {
+        this.alpha = 1.0f;
         this.color = null;
         return this;
     }
@@ -46,7 +54,7 @@ public class WidgetImage extends Widget {
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         } else {
             float[] pColors = color.getRGBColorComponents(null);
-            float pA = 1.0f;
+            float pA = alpha;
             float pR = pColors[0];
             float pG = pColors[1];
             float pB = pColors[2];

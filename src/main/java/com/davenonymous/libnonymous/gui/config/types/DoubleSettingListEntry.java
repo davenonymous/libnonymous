@@ -10,6 +10,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class DoubleSettingListEntry extends SettingListEntry {
+    WidgetInputField inputField;
+
     public DoubleSettingListEntry(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int columnWidth) {
         super(optionKey, comment, value, defaultValue, columnWidth);
     }
@@ -19,7 +21,7 @@ public class DoubleSettingListEntry extends SettingListEntry {
         double val = (double) value.get();
         this.setSize(columnWidth, entryHeight+18);
 
-        WidgetInputField inputField = new WidgetInputField();
+        inputField = new WidgetInputField();
         inputField.setValue(String.format("%.4f", val));
         inputField.setDimensions(5, entryHeight-3, columnWidth - 26, 14);
         this.add(inputField);
@@ -42,6 +44,7 @@ public class DoubleSettingListEntry extends SettingListEntry {
                 inputVal = Double.parseDouble(inputText);
                 value.set(inputVal);
                 value.save();
+                updateDefaultIconState();
                 hideErrorIcon();
             } catch(NumberFormatException e) {
                 showErrorIcon(I18n.format("libnonymous.config.error.invalid_decimal"));
@@ -50,5 +53,14 @@ public class DoubleSettingListEntry extends SettingListEntry {
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
         this.add(saveButton);
+    }
+
+    @Override
+    public void setValueInInputField(Object defaultValue) {
+        if(defaultValue == null) {
+            inputField.setValue("");
+        } else {
+            inputField.setValue(String.format("%.4f", defaultValue));
+        }
     }
 }

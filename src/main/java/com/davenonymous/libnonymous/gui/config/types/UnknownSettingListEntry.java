@@ -11,4 +11,9 @@ public class UnknownSettingListEntry extends SettingListEntry {
     public void fillPanel(int entryHeight) {
         this.addUnsupportedRow(entryHeight);
     }
+
+    @Override
+    public void setValueInInputField(Object defaultValue) {
+
+    }
 }

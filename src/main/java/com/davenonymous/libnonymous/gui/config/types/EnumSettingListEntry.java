@@ -11,6 +11,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class EnumSettingListEntry extends SettingListEntry {
+    WidgetInputField inputField;
+
     public EnumSettingListEntry(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int columnWidth) {
         super(optionKey, comment, value, defaultValue, columnWidth);
     }
@@ -31,7 +33,7 @@ public class EnumSettingListEntry extends SettingListEntry {
         String val = value.get().toString();
         this.setSize(columnWidth, entryHeight+18);
 
-        WidgetInputField inputField = new WidgetInputField();
+        inputField = new WidgetInputField();
         inputField.setValue(val);
         inputField.setDimensions(5, entryHeight-3, columnWidth - 26, 14);
         this.add(inputField);
@@ -57,6 +59,7 @@ public class EnumSettingListEntry extends SettingListEntry {
 
                 value.set(enumVal);
                 value.save();
+                updateDefaultIconState();
                 hideErrorIcon();
             } catch (IllegalArgumentException e) {
                 showErrorIcon(I18n.format("libnonymous.config.error.invalid_enum"));
@@ -64,5 +67,14 @@ public class EnumSettingListEntry extends SettingListEntry {
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
         this.add(save);
+    }
+
+    @Override
+    public void setValueInInputField(Object defaultValue) {
+        if(defaultValue == null) {
+            inputField.setValue("");
+        } else {
+            inputField.setValue(defaultValue.toString());
+        }
     }
 }

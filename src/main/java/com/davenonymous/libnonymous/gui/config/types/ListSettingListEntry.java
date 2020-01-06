@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ListSettingListEntry extends SettingListEntry {
+    WidgetInputField inputField;
+
     public ListSettingListEntry(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int columnWidth) {
         super(optionKey, comment, value, defaultValue, columnWidth);
     }
@@ -39,18 +41,9 @@ public class ListSettingListEntry extends SettingListEntry {
         Object firstDefaultValue = ((List) defaultValue).get(0);
         if(firstDefaultValue instanceof String) {
             List<String> val = (List<String>) value.get();
-            StringBuilder sb = new StringBuilder();
 
-            for(String listEntry : val) {
-                sb.append(listEntry);
-                sb.append(",");
-            }
-            if(sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-
-            WidgetInputField inputField = new WidgetInputField();
-            inputField.setValue(sb.toString());
+            inputField = new WidgetInputField();
+            inputField.setValue(buildStringFromValue(val));
             inputField.setDimensions(3, 35, columnWidth-26, 14);
             this.add(inputField);
 
@@ -73,9 +66,35 @@ public class ListSettingListEntry extends SettingListEntry {
                     value.set(Arrays.asList(inputText.split(",")));
                 }
                 value.save();
+                updateDefaultIconState();
                 return WidgetEventResult.CONTINUE_PROCESSING;
             });
             this.add(save);
+        }
+    }
+
+    private String buildStringFromValue(List<String> val) {
+        StringBuilder sb = new StringBuilder();
+
+        for(String listEntry : val) {
+            sb.append(listEntry);
+            sb.append(",");
+        }
+        if(sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public void setValueInInputField(Object defaultValue) {
+        if(inputField != null) {
+            if(defaultValue == null) {
+                inputField.setValue("");
+            } else {
+                inputField.setValue(buildStringFromValue((List<String>) defaultValue));
+            }
         }
     }
 }

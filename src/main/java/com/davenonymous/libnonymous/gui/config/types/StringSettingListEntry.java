@@ -9,6 +9,8 @@ import com.davenonymous.libnonymous.gui.framework.widgets.WidgetInputField;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class StringSettingListEntry extends SettingListEntry {
+    WidgetInputField inputField;
+
     public StringSettingListEntry(String optionKey, String comment, ForgeConfigSpec.ConfigValue value, Object defaultValue, int columnWidth) {
         super(optionKey, comment, value, defaultValue, columnWidth);
     }
@@ -18,7 +20,7 @@ public class StringSettingListEntry extends SettingListEntry {
         String val = (String) value.get();
         this.setSize(columnWidth, entryHeight+18);
 
-        WidgetInputField inputField = new WidgetInputField();
+        inputField = new WidgetInputField();
         inputField.setValue(val);
         inputField.setDimensions(5, entryHeight-3, columnWidth - 26, 14);
         this.add(inputField);
@@ -38,8 +40,14 @@ public class StringSettingListEntry extends SettingListEntry {
             String inputValue = inputField.getValue();
             value.set(inputValue);
             value.save();
+            updateDefaultIconState();
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
         this.add(save);
+    }
+
+    @Override
+    public void setValueInInputField(Object defaultValue) {
+        inputField.setValue((String) defaultValue);
     }
 }
