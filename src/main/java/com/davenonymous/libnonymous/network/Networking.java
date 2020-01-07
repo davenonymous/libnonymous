@@ -2,11 +2,8 @@ package com.davenonymous.libnonymous.network;
 
 import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.command.CommandOpenConfigGUI;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
