@@ -33,6 +33,7 @@ public class WidgetGuiConfig extends WidgetScreen {
     private static Field FIELD_SPEC_COMMENTS;
     private static Field FIELD_SPEC_CHILD_CONFIG;
     private static Method METHOD_SPEC_GET_NIO_PATH;
+    private static Class ACFC;
 
     static {
         try {
@@ -42,7 +43,7 @@ public class WidgetGuiConfig extends WidgetScreen {
             FIELD_SPEC_CHILD_CONFIG = ForgeConfigSpec.class.getDeclaredField("childConfig");
             FIELD_SPEC_CHILD_CONFIG.setAccessible(true);
 
-            Class ACFC = Class.forName("com.electronwill.nightconfig.core.file.AutosaveCommentedFileConfig");
+            ACFC = Class.forName("com.electronwill.nightconfig.core.file.AutosaveCommentedFileConfig");
             METHOD_SPEC_GET_NIO_PATH = ACFC.getMethod("getNioPath");
             METHOD_SPEC_GET_NIO_PATH.setAccessible(true);
 
@@ -61,12 +62,18 @@ public class WidgetGuiConfig extends WidgetScreen {
             return null;
         }
 
+        if(childConfig.getClass() != ACFC) {
+            return "Unknown / No-File";
+        }
+
         Path path = null;
         try {
             path = (Path) METHOD_SPEC_GET_NIO_PATH.invoke(childConfig);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
