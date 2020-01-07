@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 public class WidgetSlot extends SlotItemHandler {
     private boolean enabled;
     private ResourceLocation id;
+    private boolean locked = false;
 
     public WidgetSlot(ResourceLocation slotId, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
@@ -43,8 +44,21 @@ public class WidgetSlot extends SlotItemHandler {
         return this;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public WidgetSlot setLocked(boolean locked) {
+        this.locked = locked;
+        return this;
+    }
+
     @Override
     public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
+        if(locked) {
+            return stack;
+        }
+
         if(stack.getCount() <= stack.getMaxStackSize()) {
             return super.onTake(thePlayer, stack);
         }
@@ -63,6 +77,10 @@ public class WidgetSlot extends SlotItemHandler {
 
     @Override
     public boolean canTakeStack(PlayerEntity player) {
+        if(locked) {
+            return false;
+        }
+
         if(player != null) {
             ItemStack mouseStack = player.inventory.getItemStack();
             if(mouseStack.isEmpty()) {

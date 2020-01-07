@@ -44,7 +44,7 @@ gui widget framework.
 
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.examplemod]] #optional
+[[dependencies.libnonymous]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
 
@@ -61,7 +61,7 @@ gui widget framework.
     side="BOTH"
 
 # Here's another dependency
-[[dependencies.examplemod]]
+[[dependencies.libnonymous]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.14.4]"

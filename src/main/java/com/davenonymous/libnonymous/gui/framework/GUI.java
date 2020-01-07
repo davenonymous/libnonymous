@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class GUI extends WidgetPanel {
     public static ResourceLocation tabIcons = new ResourceLocation(Libnonymous.MODID, "textures/gui/tabicons.png");
+    public static ResourceLocation defaultButtonTexture = new ResourceLocation(Libnonymous.MODID, "textures/gui/button_background.png");
 
     public boolean hasTabs = false;
     private Map<ResourceLocation, IValueProvider> valueMap = new HashMap<>();

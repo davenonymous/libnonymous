@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class WidgetButton extends Widget {
     protected String unlocalizedLabel;
     public boolean hovered = false;
-    public ResourceLocation backgroundTexture = new ResourceLocation("minecraft", "textures/block/stone.png");
+    public ResourceLocation backgroundTexture;
     public TextureAtlasSprite atlasSprite;
 
     public WidgetButton(String unlocalizedLabel) {
@@ -32,6 +32,7 @@ public class WidgetButton extends Widget {
         this.setWidth(100);
 
         this.unlocalizedLabel = unlocalizedLabel;
+        this.backgroundTexture = GUI.defaultButtonTexture;
 
         this.addListener(MouseClickEvent.class, ((event, widget) -> {
             // TODO: Fix mouse click sound

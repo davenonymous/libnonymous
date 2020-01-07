@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous;
 
+import com.davenonymous.libnonymous.render.RenderEventHandler;
 import com.davenonymous.libnonymous.setup.IProxy;
 import com.davenonymous.libnonymous.setup.ModSetup;
 import com.davenonymous.libnonymous.setup.ProxyClient;
@@ -29,6 +30,7 @@ public class Libnonymous {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(RenderEventHandler.class);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

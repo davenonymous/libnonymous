@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.gui.config.types;
 
+import com.davenonymous.libnonymous.gui.framework.ColorHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
@@ -26,14 +27,14 @@ public class StringSettingListEntry extends SettingListEntry {
         this.add(inputField);
 
         WidgetFontAwesome save = new WidgetFontAwesome(SAVE_ICON, WidgetFontAwesome.IconSize.MEDIUM);
-        save.setColor(COLOR_DISABLED);
+        save.setColor(ColorHelper.COLOR_DISABLED);
         save.setPosition(columnWidth - 16, entryHeight-4);
         save.addListener(MouseEnterEvent.class, (event, widget) -> {
-            save.setColor(COLOR_ENABLED);
+            save.setColor(ColorHelper.COLOR_ENABLED);
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
         save.addListener(MouseExitEvent.class, (event, widget) -> {
-            save.setColor(COLOR_DISABLED);
+            save.setColor(ColorHelper.COLOR_DISABLED);
             return WidgetEventResult.CONTINUE_PROCESSING;
         });
         save.addListener(MouseClickEvent.class, (event, widget) -> {

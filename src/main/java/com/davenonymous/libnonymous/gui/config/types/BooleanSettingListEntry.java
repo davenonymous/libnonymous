@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.gui.config.types;
 
+import com.davenonymous.libnonymous.gui.framework.ColorHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
@@ -22,12 +23,12 @@ public class BooleanSettingListEntry extends SettingListEntry {
         int buttonY = ((baseEntryHeight - 16) / 2) - 2;
 
         toggleButtonOn = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_CheckCircle, WidgetFontAwesome.IconSize.MEDIUM);
-        toggleButtonOn.setColor(COLOR_ENABLED);
+        toggleButtonOn.setColor(ColorHelper.COLOR_ENABLED);
         toggleButtonOn.setPosition(buttonX, buttonY);
         this.add(toggleButtonOn);
 
         toggleButtonOff = new WidgetFontAwesome(FontAwesomeIcons.REGULAR_Circle, WidgetFontAwesome.IconSize.MEDIUM);
-        toggleButtonOff.setColor(COLOR_DISABLED);
+        toggleButtonOff.setColor(ColorHelper.COLOR_DISABLED);
         toggleButtonOff.setPosition(buttonX, buttonY);
         this.add(toggleButtonOff);
 

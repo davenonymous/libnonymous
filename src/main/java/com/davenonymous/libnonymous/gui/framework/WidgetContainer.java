@@ -32,6 +32,14 @@ public class WidgetContainer extends Container {
         return super.addSlot(slotIn);
     }
 
+    protected void lockSlot(int index) {
+        Slot slot = this.inventorySlots.get(index);
+        if(slot instanceof WidgetSlot) {
+            ((WidgetSlot) slot).setLocked(true);
+            this.inventorySlots.set(index, slot);
+        }
+    }
+
     private int addSlotRange(ResourceLocation id, IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {
             this.addSlot(new WidgetSlot(id, handler, index, x, y));

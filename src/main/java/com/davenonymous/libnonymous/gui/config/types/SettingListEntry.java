@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.gui.config.types;
 
+import com.davenonymous.libnonymous.gui.framework.ColorHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
@@ -13,7 +14,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.awt.*;
 import java.util.Arrays;
 
 
@@ -21,10 +21,6 @@ public abstract class SettingListEntry extends WidgetListEntry {
     public static final FontAwesomeIcons SAVE_ICON = FontAwesomeIcons.REGULAR_Save;
 
     protected int columnWidth;
-
-    protected static Color COLOR_ENABLED = new Color(50, 125, 50);
-    protected static Color COLOR_DISABLED = new Color(160, 160, 160, 255);
-    protected static Color COLOR_ERRORED = new Color(150, 50, 50);
 
     protected ForgeConfigSpec.ConfigValue value;
     protected Object defaultValue;
@@ -75,12 +71,12 @@ public abstract class SettingListEntry extends WidgetListEntry {
 
         errorIcon = new WidgetFontAwesome(FontAwesomeIcons.SOLID_ExclamationTriangle, WidgetFontAwesome.IconSize.MEDIUM);
         errorIcon.setPosition(columnWidth-18, 2);
-        errorIcon.setColor(COLOR_ERRORED);
+        errorIcon.setColor(ColorHelper.COLOR_ERRORED);
         errorIcon.setVisible(false);
         this.add(errorIcon);
 
         restoreDefaultIcon = new WidgetFontAwesome(FontAwesomeIcons.SOLID_UndoAlt, WidgetFontAwesome.IconSize.TINY);
-        restoreDefaultIcon.setColor(COLOR_DISABLED);
+        restoreDefaultIcon.setColor(ColorHelper.COLOR_DISABLED);
         restoreDefaultIcon.setPosition(optionKeyStringWidth + 5, 2);
         restoreDefaultIcon.setTooltipLines(Arrays.asList(
                 new TranslationTextComponent("libnonymous.config.gui.tooltip.default_is"),
@@ -106,9 +102,9 @@ public abstract class SettingListEntry extends WidgetListEntry {
         }
 
         if(value.get().equals(defaultValue)) {
-            restoreDefaultIcon.setColor(COLOR_DISABLED);
+            restoreDefaultIcon.setColor(ColorHelper.COLOR_DISABLED);
         } else {
-            restoreDefaultIcon.setColor(COLOR_ENABLED);
+            restoreDefaultIcon.setColor(ColorHelper.COLOR_ENABLED);
         }
     }
 
@@ -124,13 +120,13 @@ public abstract class SettingListEntry extends WidgetListEntry {
     protected void addUnsupportedRow(int entryHeight) {
         this.setSize(columnWidth, entryHeight+17);
 
-        WidgetTextBox textBox = new WidgetTextBox(I18n.format("libnonymous.config.error.unsupported_config_type"), COLOR_ERRORED.getRGB());
+        WidgetTextBox textBox = new WidgetTextBox(I18n.format("libnonymous.config.error.unsupported_config_type"), ColorHelper.COLOR_ERRORED.getRGB());
         textBox.setSize(columnWidth-10, 9);
         textBox.setPosition(25, 30);
         this.add(textBox);
 
         WidgetFontAwesome sadIcon = new WidgetFontAwesome(FontAwesomeHelper.getRandomAnimalIcon(), WidgetFontAwesome.IconSize.MEDIUM);
-        sadIcon.setColor(COLOR_ERRORED);
+        sadIcon.setColor(ColorHelper.COLOR_ERRORED);
         sadIcon.setPosition(6, 24);
         this.add(sadIcon);
     }

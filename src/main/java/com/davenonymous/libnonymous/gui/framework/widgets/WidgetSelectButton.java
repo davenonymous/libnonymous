@@ -19,13 +19,14 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
     public boolean hovered = false;
 
-    public ResourceLocation backgroundTexture = new ResourceLocation("minecraft", "textures/blocks/concrete_silver.png");
+    public ResourceLocation backgroundTexture;
     public TextureAtlasSprite atlasSprite;
 
     public WidgetSelectButton() {
         this.setHeight(20);
         this.setWidth(100);
 
+        this.backgroundTexture = GUI.defaultButtonTexture;
         this.addListener(MouseEnterEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = true; return WidgetEventResult.CONTINUE_PROCESSING; });
         this.addListener(MouseExitEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = false; return WidgetEventResult.CONTINUE_PROCESSING; });
 
@@ -64,9 +65,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
             //Gui.drawModalRectWithCustomSizedTexture(0, 0, atlasSprite.getMinU(), atlasSprite.getMinV(), width, height, atlasSprite.getMaxU()-atlasSprite.getMinU(), atlasSprite.getMaxV()-atlasSprite.getMinU());
         } else {
             screen.getMinecraft().getTextureManager().bindTexture(backgroundTexture);
-
-            // TODO: FIX THIS LINE
-            //Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width, height, 16.0f, 16.0f);
+            GUIHelper.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width, height, 16.0f, 16.0f);
         }
 
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, hovered ? 1.0F : 1.0F);
