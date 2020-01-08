@@ -1,7 +1,10 @@
 package com.davenonymous.libnonymous.serialization.packetbuffer;
 
+import com.davenonymous.libnonymous.utils.BlockStateSerializationHelper;
 import com.davenonymous.libnonymous.utils.Logz;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
@@ -49,6 +52,8 @@ public class PacketBufferFieldHandlers {
 
         addIOHandler(ItemStack.class, buf -> buf.readItemStack(), (itemStack, buf) -> buf.writeItemStack(itemStack));
 
+        addIOHandler(Ingredient.class, buf -> Ingredient.read(buf), (ingredient, buf) -> ingredient.write(buf));
+
         addIOHandler(Enum.class, buf -> {
             try {
                 Class clz = Class.forName(buf.readString());
@@ -75,6 +80,10 @@ public class PacketBufferFieldHandlers {
         addIOHandler(ResourceLocation.class, buf -> buf.readResourceLocation(), (resourceLocation, buf) -> buf.writeResourceLocation(resourceLocation));
 
         addIOHandler(BlockPos.class, buf -> buf.readBlockPos(), (pos, buf) -> buf.writeBlockPos(pos));
+
+        addIOHandler(BlockState.class,
+            buf -> BlockStateSerializationHelper.deserializeBlockState(buf),
+            (blockState, buf) -> BlockStateSerializationHelper.serializeBlockState(buf, blockState));
 
         addIOHandler(UUID.class, buf -> buf.readUniqueId(), (uuid, buf) -> buf.writeUniqueId(uuid));
 

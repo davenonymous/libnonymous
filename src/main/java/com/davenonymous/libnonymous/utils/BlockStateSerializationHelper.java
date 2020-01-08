@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.state.IProperty;
 import net.minecraft.util.JSONUtils;
@@ -17,6 +18,64 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BlockStateSerializationHelper {
+    public static CompoundNBT serializeBlockStateToNBT(BlockState state) {
+        CompoundNBT result = new CompoundNBT();
+        final Block block = state.getBlock();
+        result.putString("block", block.getRegistryName().toString());
+        if(state.getProperties().size() > 0) {
+            CompoundNBT propertiesTag = new CompoundNBT();
+
+            for (final IProperty property : state.getProperties()) {
+                propertiesTag.putString(property.getName(), state.get(property).toString());
+            }
+
+            result.put("properties", propertiesTag);
+        }
+
+        return result;
+    }
+
+    public static BlockState deserializeBlockState(CompoundNBT nbt) {
+        if(!nbt.contains("block")) {
+            Logz.warn("NBT compound {} is not a blockstate", nbt);
+            return null;
+        }
+
+        ResourceLocation blockId = ResourceLocation.tryCreate(nbt.getString("block"));
+        final Block block = ForgeRegistries.BLOCKS.getValue(blockId);
+        if(block == null) {
+            Logz.warn("Unknown block {} in NBT package", nbt.getString("block"));
+            return null;
+        }
+
+        BlockState state = block.getDefaultState();
+        if(nbt.contains("properties")) {
+            CompoundNBT propertiesTag = nbt.getCompound("properties");
+            for(String propertyName : propertiesTag.keySet()) {
+                final IProperty blockProperty = block.getStateContainer().getProperty(propertyName);
+                if(blockProperty == null) {
+                    Logz.warn("The property '{}' is not valid for block {}", propertyName, blockId);
+                    continue;
+                }
+
+                String valueString = propertiesTag.getString(propertyName);
+                final Optional<Comparable> propValue = blockProperty.parseValue(valueString);
+                if (!propValue.isPresent()) {
+                    Logz.warn("The property '{}' with value '{}' could not be parsed!", propertyName, valueString);
+                    continue;
+                }
+
+                try {
+                    state = state.with(blockProperty, propValue.get());
+                } catch (final Exception e) {
+                    Logz.warn("Failed to update state for block {}. The mod that adds this block has issues.", block.getRegistryName());
+                    continue;
+                }
+            }
+        }
+
+        return state;
+    }
 
     public static void serializeBlockState(PacketBuffer buffer, BlockState state) {
         buffer.writeResourceLocation(state.getBlock().getRegistryName());
@@ -145,7 +204,7 @@ public class BlockStateSerializationHelper {
 
                             else {
 
-                                throw new JsonSyntaxException("The property " + property.getKey() + " with value " + valueString + " coul not be parsed!");
+                                throw new JsonSyntaxException("The property " + property.getKey() + " with value " + valueString + " could not be parsed!");
                             }
                         }
 

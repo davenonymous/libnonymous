@@ -28,7 +28,7 @@ public class PacketBufferUtils {
             Annotation annotation = field.getDeclaredAnnotation(Sync.class);
             if(annotation != null && annotation instanceof Sync) {
                 if(!PacketBufferFieldHandlers.hasIOHandler(field.getType())) {
-                    Logz.warn("No PacketBuffer serialization methods for field='%s' (type='%s') in class='%s' exists.", field.getName(), field.getType().getSimpleName(), clz.getSimpleName());
+                    Logz.warn("No PacketBuffer serialization methods for field='{}' (type='{}') in class='{}' exists.", field.getName(), field.getType().getSimpleName(), clz.getSimpleName());
                     continue;
                 }
 

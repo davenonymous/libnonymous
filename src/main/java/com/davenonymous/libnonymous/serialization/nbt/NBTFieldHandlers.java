@@ -1,6 +1,8 @@
 package com.davenonymous.libnonymous.serialization.nbt;
 
+import com.davenonymous.libnonymous.utils.BlockStateSerializationHelper;
 import com.davenonymous.libnonymous.utils.Logz;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -50,6 +52,12 @@ public class NBTFieldHandlers {
         addNBTHandler(long.class, (key, tag) -> tag.getLong(key), (key, val, tag) -> tag.putLong(key, val));
         addNBTHandler(Long.class, (key, tag) -> tag.getLong(key), (key, val, tag) -> tag.putLong(key, val));
 
+        addNBTHandler(String.class, (key, tag) -> tag.contains(key) ? tag.getString(key) : null, (key, s, tag) -> {
+            if(s != null) {
+                tag.putString(key, s);
+            }
+        });
+
         // This is actually covered by INBTSerializable, but our class/interface iteration method is too strict about this.
         addNBTHandler(ItemStack.class, (key, tag) -> ItemStack.read(tag.getCompound(key)), (key, itemStack, tag) -> tag.put(key, itemStack.serializeNBT()));
 
@@ -59,7 +67,7 @@ public class NBTFieldHandlers {
                 Class clz = Class.forName(enumTag.getString("class"));
                 return Enum.valueOf(clz, enumTag.getString("value"));
             } catch (ClassNotFoundException e) {
-                Logz.warn("Could not find enum '%s' during NBT deserialization", tag.getString(key));
+                Logz.warn("Could not find enum '{}' during NBT deserialization", tag.getString(key));
                 e.printStackTrace();
             }
             return null;
@@ -79,7 +87,7 @@ public class NBTFieldHandlers {
             try {
                 return Class.forName(tag.getString(key));
             } catch (ClassNotFoundException e) {
-                Logz.warn("Could not find class '%s' during NBT deserialization", tag.getString(key));
+                Logz.warn("Could not find class '{}' during NBT deserialization", tag.getString(key));
                 e.printStackTrace();
             }
             return null;
@@ -114,11 +122,10 @@ public class NBTFieldHandlers {
             tag.put(key, container);
         });
 
-        addNBTHandler(String.class, (key, tag) -> tag.contains(key) ? tag.getString(key) : null, (key, s, tag) -> {
-            if(s != null) {
-                tag.putString(key, s);
-            }
-        });
+        addNBTHandler(BlockState.class,
+            (key, tag) -> BlockStateSerializationHelper.deserializeBlockState(tag.getCompound(key)),
+            (key, blockState, tag) -> tag.put(key, BlockStateSerializationHelper.serializeBlockStateToNBT(blockState)));
+
         addNBTHandler(UUID.class, (key, tag) -> {
             if(!tag.contains(key)) {
                 return null;
@@ -174,13 +181,13 @@ public class NBTFieldHandlers {
             try {
                 Class keyClass = Class.forName(containerTag.getString("keyClass"));
                 if (!hasNBTHandler(keyClass)) {
-                    Logz.warn("No NBT deserialization methods for keys in map (type='%s') exists.", keyClass);
+                    Logz.warn("No NBT deserialization methods for keys in map (type='{}') exists.", keyClass);
                     return new HashMap();
                 }
 
                 Class valueClass = Class.forName(containerTag.getString("valueClass"));
                 if (!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT deserialization methods for values in map (type='%s') exists.", valueClass);
+                    Logz.warn("No NBT deserialization methods for values in map (type='{}') exists.", valueClass);
                     return new HashMap();
                 }
 
@@ -206,13 +213,13 @@ public class NBTFieldHandlers {
             if(!map.isEmpty()) {
                 Class keyClass = map.keySet().toArray()[0].getClass();
                 if(!hasNBTHandler(keyClass)) {
-                    Logz.warn("No NBT deserialization methods for keys in map (type='%s') exists.", keyClass);
+                    Logz.warn("No NBT deserialization methods for keys in map (type='{}') exists.", keyClass);
                     return;
                 }
 
                 Class valueClass = map.values().toArray()[0].getClass();
                 if(!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT deserialization methods for values in map (type='%s') exists.", valueClass);
+                    Logz.warn("No NBT deserialization methods for values in map (type='{}') exists.", valueClass);
                     return;
                 }
 
@@ -249,7 +256,7 @@ public class NBTFieldHandlers {
             try {
                 Class valueClass = Class.forName(containerTag.getString("valueClass"));
                 if(!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT deserialization methods for values in list (type='%s') exists.", valueClass);
+                    Logz.warn("No NBT deserialization methods for values in list (type='{}') exists.", valueClass);
                     return result;
                 }
 
@@ -271,7 +278,7 @@ public class NBTFieldHandlers {
             if(!list.isEmpty()) {
                 Class valueClass = list.get(0).getClass();
                 if(!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT serialization methods for values in list (type='%s') exists.", valueClass.getName());
+                    Logz.warn("No NBT serialization methods for values in list (type='{}') exists.", valueClass.getName());
                     return;
                 }
 
@@ -301,7 +308,7 @@ public class NBTFieldHandlers {
 
                 Class valueClass = Class.forName(containerTag.getString("valueClass"));
                 if(!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT deserialization methods for values in queue (type='%s') exists.", valueClass);
+                    Logz.warn("No NBT deserialization methods for values in queue (type='{}') exists.", valueClass);
                     return new ArrayDeque<>();
                 }
 
@@ -324,7 +331,7 @@ public class NBTFieldHandlers {
             if(!queue.isEmpty()) {
                 Class valueClass = queue.peek().getClass();
                 if(!hasNBTHandler(valueClass)) {
-                    Logz.warn("No NBT serialization methods for values in list (type='%s') exists.", valueClass.getName());
+                    Logz.warn("No NBT serialization methods for values in list (type='{}') exists.", valueClass.getName());
                     return;
                 }
 
