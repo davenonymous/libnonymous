@@ -17,6 +17,19 @@ public class PacketBufferFieldHandlers {
     private static final Map<Class<?>, Pair<Reader, Writer>> packetBufferHandlers = new HashMap<>();
 
     static {
+        addIOHandler(boolean[].class, buf -> {
+            int size = buf.readInt();
+            boolean[] result = new boolean[size];
+            for(int i = 0; i < size; i++) {
+                result[i] = buf.readBoolean();
+            }
+            return result;
+        }, (booleans, buf) -> {
+            buf.writeInt(booleans.length);
+            for(boolean b : booleans) {
+                buf.writeBoolean(b);
+            }
+        });
         addIOHandler(boolean.class, buf -> buf.readBoolean(), (b, buf) -> buf.writeBoolean(b));
         addIOHandler(Boolean.class, buf -> buf.readBoolean(), (b, buf) -> buf.writeBoolean(b));
 

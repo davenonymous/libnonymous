@@ -11,6 +11,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
 
+import java.lang.reflect.Field;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,26 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PacketOpenConfigGuiHandler implements Consumer<PacketOpenConfigGui> {
+    private static Field FIELD_MODCONTAINER_CONFIGS;
+
+    static {
+        try {
+            FIELD_MODCONTAINER_CONFIGS = ModContainer.class.getDeclaredField("configs");
+            FIELD_MODCONTAINER_CONFIGS.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static EnumMap<ModConfig.Type, ModConfig> getConfigsForModContainer(ModContainer container) {
+        try {
+            return (EnumMap<ModConfig.Type, ModConfig>) FIELD_MODCONTAINER_CONFIGS.get(container);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     @Override
     public void accept(PacketOpenConfigGui packet) {
@@ -26,7 +47,7 @@ public class PacketOpenConfigGuiHandler implements Consumer<PacketOpenConfigGui>
             List<ForgeConfigSpec> configSpecs = ModList.get().getMods().stream()
                     .map(m -> ModList.get().getModContainerById(m.getModId()))
                     .filter(m -> m.isPresent())
-                    .map(m -> PacketOpenConfigGui.getConfigsForModContainer(m.get()))
+                    .map(m -> getConfigsForModContainer(m.get()))
                     .flatMap(m -> m.values().stream())
                     .map(m -> m.getSpec())
                     .collect(Collectors.toList());
@@ -46,7 +67,7 @@ public class PacketOpenConfigGuiHandler implements Consumer<PacketOpenConfigGui>
                         Minecraft.getInstance().player.sendStatusMessage(new TranslationTextComponent("libnonymous.config.error.no_native_menu_exists"), false);
                     }
                 } else if(packet.mode == CommandOpenConfigGUI.Mode.BY_SPEC) {
-                    EnumMap<ModConfig.Type, ModConfig> configs = PacketOpenConfigGui.getConfigsForModContainer(modContainer);
+                    EnumMap<ModConfig.Type, ModConfig> configs = getConfigsForModContainer(modContainer);
                     if(configs != null) {
                         List<ForgeConfigSpec> configSpecs = configs.values().stream().map(ModConfig::getSpec).collect(Collectors.toList());
                         Minecraft.getInstance().displayGuiScreen(new WidgetGuiConfig(null, configSpecs));

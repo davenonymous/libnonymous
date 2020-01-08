@@ -1,25 +1,23 @@
 package com.davenonymous.libnonymous.network;
 
+import com.davenonymous.libnonymous.base.BasePacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketReloadConfigs {
+public class PacketReloadConfigs extends BasePacket {
 
     public PacketReloadConfigs() {
+        super();
     }
 
     public PacketReloadConfigs(PacketBuffer buf) {
+        super(buf);
     }
 
-    public void toBytes(PacketBuffer buf) {
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ctx.get().getSender().server.reload();
-        });
-        ctx.get().setPacketHandled(true);
+    @Override
+    public void doWork(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().getSender().server.reload();
     }
 }

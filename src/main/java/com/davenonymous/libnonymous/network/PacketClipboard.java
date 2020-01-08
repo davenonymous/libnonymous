@@ -1,5 +1,7 @@
 package com.davenonymous.libnonymous.network;
 
+import com.davenonymous.libnonymous.base.BasePacket;
+import com.davenonymous.libnonymous.serialization.Sync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -7,25 +9,21 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Supplier;
 
-public class PacketClipboard {
+public class PacketClipboard extends BasePacket {
+    @Sync
     protected String clipboardContent;
 
     public PacketClipboard(String clipboardContent) {
+        super();
         this.clipboardContent = clipboardContent;
     }
 
     public PacketClipboard(PacketBuffer buf) {
-        this.clipboardContent = buf.readString();
+        super(buf);
     }
 
-    public void toBytes(PacketBuffer buf) {
-        buf.writeString(this.clipboardContent);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            GLFW.glfwSetClipboardString(Minecraft.getInstance().mainWindow.getHandle(), this.clipboardContent);
-        });
-        ctx.get().setPacketHandled(true);
+    @Override
+    public void doWork(Supplier<NetworkEvent.Context> ctx) {
+        GLFW.glfwSetClipboardString(Minecraft.getInstance().mainWindow.getHandle(), this.clipboardContent);
     }
 }

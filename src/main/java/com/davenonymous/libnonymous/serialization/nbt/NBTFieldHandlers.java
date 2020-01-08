@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.ShortNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -18,6 +19,22 @@ public class NBTFieldHandlers {
     private static final Map<Class<?>, Pair<NbtReader, NbtWriter>> nbtHandlers = new HashMap<>();
 
     static {
+        addNBTHandler(boolean[].class, (key, tag) -> {
+            ListNBT listNBT = tag.getList(key, Constants.NBT.TAG_SHORT);
+            boolean[] result = new boolean[listNBT.size()];
+            for(int i = 0; i < result.length; i++) {
+                result[i] = listNBT.getShort(i) == 1;
+            }
+
+            return null;
+        }, (key, booleans, tag) -> {
+            ListNBT listNBT = new ListNBT();
+            for(boolean b : booleans) {
+                listNBT.add(new ShortNBT(b ? (short)1 : (short)0));
+            }
+
+            tag.put(key, listNBT);
+        });
         addNBTHandler(boolean.class, (key, tag) -> tag.getBoolean(key), (key, aBoolean, tag) -> tag.putBoolean(key, aBoolean));
         addNBTHandler(Boolean.class, (key, tag) -> tag.getBoolean(key), (key, aBoolean, tag) -> tag.putBoolean(key, aBoolean));
 
