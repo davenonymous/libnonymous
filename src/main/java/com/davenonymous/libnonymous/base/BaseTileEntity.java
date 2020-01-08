@@ -1,8 +1,9 @@
 package com.davenonymous.libnonymous.base;
 
 import com.davenonymous.libnonymous.serialization.FieldUtils;
-import com.davenonymous.libnonymous.serialization.NBTFieldSerializationData;
+import com.davenonymous.libnonymous.serialization.nbt.NBTFieldSerializationData;
 import com.davenonymous.libnonymous.serialization.Store;
+import com.davenonymous.libnonymous.serialization.nbt.NBTFieldUtils;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,7 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
     public BaseTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
 
-        this.NBTActions = FieldUtils.initSerializableStoreFields(this.getClass());
+        this.NBTActions = NBTFieldUtils.initSerializableStoreFields(this.getClass());
     }
 
     public void loadFromItem(ItemStack stack) {
@@ -43,7 +44,7 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
             return;
         }
 
-        FieldUtils.readFieldsFromNBT(NBTActions, this, stack.getTag(), data -> data.storeWithItem);
+        NBTFieldUtils.readFieldsFromNBT(NBTActions, this, stack.getTag(), data -> data.storeWithItem);
         this.markDirty();
     }
 
@@ -53,7 +54,7 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
     }
 
     protected CompoundNBT createItemStackTagCompound() {
-        return FieldUtils.writeFieldsToNBT(NBTActions, this, new CompoundNBT(), data -> data.storeWithItem);
+        return NBTFieldUtils.writeFieldsToNBT(NBTActions, this, new CompoundNBT(), data -> data.storeWithItem);
     }
 
     public void notifyClients() {
@@ -68,12 +69,12 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return FieldUtils.writeFieldsToNBT(NBTActions, this, super.getUpdateTag(), data -> data.sendInUpdatePackage);
+        return NBTFieldUtils.writeFieldsToNBT(NBTActions, this, super.getUpdateTag(), data -> data.sendInUpdatePackage);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        FieldUtils.readFieldsFromNBT(NBTActions, this, pkt.getNbtCompound(), data -> data.sendInUpdatePackage);
+        NBTFieldUtils.readFieldsFromNBT(NBTActions, this, pkt.getNbtCompound(), data -> data.sendInUpdatePackage);
 
         /*
         // TODO: This should not be generalized in this way as it triggers on changes to blocks not belonging to this gui.
@@ -87,13 +88,13 @@ public class BaseTileEntity extends TileEntity implements ITickableTileEntity {
     public void read(CompoundNBT compound) {
         super.read(compound);
 
-        FieldUtils.readFieldsFromNBT(NBTActions, this, compound, data -> true);
+        NBTFieldUtils.readFieldsFromNBT(NBTActions, this, compound, data -> true);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         compound = super.write(compound);
-        compound = FieldUtils.writeFieldsToNBT(NBTActions, this, compound, data -> true);
+        compound = NBTFieldUtils.writeFieldsToNBT(NBTActions, this, compound, data -> true);
 
         return compound;
     }

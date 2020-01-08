@@ -1,7 +1,6 @@
-package com.davenonymous.libnonymous.serialization;
+package com.davenonymous.libnonymous.serialization.nbt;
 
 import com.davenonymous.libnonymous.utils.Logz;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -15,17 +14,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class FieldHandlers {
-    private static final Map<Class<?>, Pair<Reader, Writer>> handlers = new HashMap<>();
+public class NBTFieldHandlers {
     private static final Map<Class<?>, Pair<NbtReader, NbtWriter>> nbtHandlers = new HashMap<>();
 
     static {
-        addIOHandler(byte.class, buf -> buf.readByte(), (val, buf) -> buf.writeByte(val));
-        addIOHandler(int.class, buf -> buf.readInt(), (val, buf) -> buf.writeInt(val));
-        addIOHandler(float.class, buf -> buf.readFloat(), (val, buf) -> buf.writeFloat(val));
-
-        //addIOHandler(String.class, buf -> ByteBufUtils.readUTF8String(buf), (val, buf) -> ByteBufUtil.writeUtf8(buf, val));
-
         addNBTHandler(boolean.class, (key, tag) -> tag.getBoolean(key), (key, aBoolean, tag) -> tag.putBoolean(key, aBoolean));
         addNBTHandler(Boolean.class, (key, tag) -> tag.getBoolean(key), (key, aBoolean, tag) -> tag.putBoolean(key, aBoolean));
 
@@ -338,19 +330,6 @@ public class FieldHandlers {
     }
 
 
-    public static <T extends Object> void addIOHandler (Class<T> type, Reader<T> reader, Writer<T> writer) {
-        handlers.put(type, Pair.of(reader, writer));
-    }
-
-    public static boolean hasIOHandler(Class clz) {
-        return handlers.containsKey(clz);
-    }
-
-    public static Pair<Reader, Writer> getIOHandler(Class clz) {
-        return handlers.get(clz);
-    }
-
-
     public static <T extends Object> void addNBTHandler (Class<T> type, NbtReader<T> reader, NbtWriter<T> writer) {
         nbtHandlers.put(type, Pair.of(reader, writer));
     }
@@ -391,16 +370,6 @@ public class FieldHandlers {
         }
 
         return getNBTHandler(superClass);
-    }
-
-
-    // Functional interfaces
-    public interface Writer<T extends Object> {
-        void write(T t, ByteBuf buf);
-    }
-
-    public interface Reader<T extends Object> {
-        T read(ByteBuf buf);
     }
 
     public interface NbtWriter<T extends Object> {

@@ -1,12 +1,13 @@
-package com.davenonymous.libnonymous.serialization;
+package com.davenonymous.libnonymous.serialization.nbt;
 
+import com.davenonymous.libnonymous.serialization.nbt.NBTFieldHandlers;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Field;
 
 public class NBTFieldSerializationData {
-    public FieldHandlers.NbtReader reader;
-    public FieldHandlers.NbtWriter writer;
+    public NBTFieldHandlers.NbtReader reader;
+    public NBTFieldHandlers.NbtWriter writer;
     public Field field;
     public String key;
     public boolean storeWithItem;
@@ -18,7 +19,7 @@ public class NBTFieldSerializationData {
         this.storeWithItem = storeWithItem;
         this.sendInUpdatePackage = sendInUpdatePackage;
 
-        Pair<FieldHandlers.NbtReader, FieldHandlers.NbtWriter> pair = FieldHandlers.getNBTHandler(field.getType());
+        Pair<NBTFieldHandlers.NbtReader, NBTFieldHandlers.NbtWriter> pair = NBTFieldHandlers.getNBTHandler(field.getType());
         this.reader = pair.getLeft();
         this.writer = pair.getRight();
     }

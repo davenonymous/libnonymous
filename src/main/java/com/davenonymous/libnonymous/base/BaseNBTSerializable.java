@@ -1,8 +1,8 @@
 package com.davenonymous.libnonymous.base;
 
 
-import com.davenonymous.libnonymous.serialization.FieldUtils;
-import com.davenonymous.libnonymous.serialization.NBTFieldSerializationData;
+import com.davenonymous.libnonymous.serialization.nbt.NBTFieldSerializationData;
+import com.davenonymous.libnonymous.serialization.nbt.NBTFieldUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -13,17 +13,17 @@ public class BaseNBTSerializable implements INBTSerializable<CompoundNBT> {
     private boolean isDirty = false;
 
     public BaseNBTSerializable() {
-        this.NBTActions = FieldUtils.initSerializableStoreFields(this.getClass());
+        this.NBTActions = NBTFieldUtils.initSerializableStoreFields(this.getClass());
     }
 
     @Override
     public CompoundNBT serializeNBT() {
-        return FieldUtils.writeFieldsToNBT(NBTActions, this, new CompoundNBT(), data -> true);
+        return NBTFieldUtils.writeFieldsToNBT(NBTActions, this, new CompoundNBT(), data -> true);
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        FieldUtils.readFieldsFromNBT(NBTActions, this, nbt, data -> true);
+        NBTFieldUtils.readFieldsFromNBT(NBTActions, this, nbt, data -> true);
         afterLoad();
     }
 
