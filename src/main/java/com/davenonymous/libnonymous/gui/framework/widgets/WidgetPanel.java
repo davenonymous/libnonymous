@@ -183,4 +183,27 @@ public class WidgetPanel extends Widget {
             }
         }
     }
+
+    public void adjustSizeToContent() {
+        int smallestY = Integer.MAX_VALUE;
+        int smallestX = Integer.MAX_VALUE;
+        int largestY = Integer.MIN_VALUE;
+        int largestX = Integer.MIN_VALUE;
+
+        for(Widget child : this.children) {
+            smallestX = Math.min(child.x, smallestX);
+            smallestY = Math.min(child.y, smallestY);
+            largestX = Math.max(child.x + child.width, largestX);
+            largestY = Math.max(child.y + child.height, largestY);
+        }
+
+        largestX -= smallestX;
+        largestY -= smallestY;
+
+        for(Widget child : this.children) {
+            child.setX(child.x - smallestX);    // Shift all children to 0
+            child.setY(child.y - smallestY);    // Shift all children to 0
+        }
+        this.setSize(largestX, largestY);
+    }
 }
