@@ -66,16 +66,10 @@ public class GUI extends WidgetPanel {
     }
 
     protected void drawWindow(Screen screen) {
-        GlStateManager.disableLighting();
+        RenderHelper.disableStandardItemLighting();
 
         GlStateManager.color4f(1f, 1f, 1f, 1f);
         screen.getMinecraft().textureManager.bindTexture(tabIcons);
-
-        float offsetX = 0.0f;
-        float offsetY = 0.0f;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(offsetX, offsetY, 0);
 
         int texOffsetY = 11;
         int texOffsetX = 64;
@@ -113,8 +107,6 @@ public class GUI extends WidgetPanel {
         GUIHelper.drawStretchedTexture(xOffset+width - 4, 4, 4, this.height - 8, texOffsetX + 64 + 4, texOffsetY + 3, 4, 64);
 
         GUIHelper.drawStretchedTexture(xOffset+4, 4, width - 8, this.height - 8, texOffsetX + 4, texOffsetY+4, 64, 64);
-
-        GlStateManager.popMatrix();
     }
 
     public void drawTooltips(Screen screen, int mouseX, int mouseY) {
@@ -153,6 +145,7 @@ public class GUI extends WidgetPanel {
         float offsetY = guiTop-1;
 
         GlStateManager.pushMatrix();
+
         GlStateManager.translatef(offsetX, offsetY, 0.0f);
 
         int texOffsetY = 84;

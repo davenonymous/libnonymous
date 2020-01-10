@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework;
 
 import com.davenonymous.libnonymous.gui.framework.event.*;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
@@ -110,12 +111,23 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends C
         }
 
         super.render(mouseX, mouseY, partialTicks);
+    }
 
-        RenderHelper.enableGUIStandardItemLighting();
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
+        GlStateManager.pushMatrix();
+        GlStateManager.translatef(-guiLeft, -guiTop+18, 0.0f);
+        gui.drawTooltips(this, mouseX, mouseY);
+        renderHoveredToolTip(mouseX, mouseY);
+        GlStateManager.popMatrix();
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        this.renderBackground();
         gui.drawGUI(this);
-        GlStateManager.enableBlend();
-
 
         if(this.container != null && this.container.inventorySlots != null) {
             for(Slot slot : this.container.inventorySlots) {
@@ -126,16 +138,6 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends C
                 gui.drawSlot(this, slot, guiLeft, guiTop);
             }
         }
-
-        gui.drawTooltips(this, mouseX, mouseY);
-        renderHoveredToolTip(mouseX, mouseY);
-        RenderHelper.disableStandardItemLighting();
-
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        this.renderBackground();
     }
 
     protected void resetMousePositions() {
