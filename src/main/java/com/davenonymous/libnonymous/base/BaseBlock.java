@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -56,5 +57,13 @@ public class BaseBlock extends Block {
 
         BaseTileEntity baseTile = (BaseTileEntity) world.getTileEntity(pos);
         baseTile.loadFromItem(stack);
+    }
+
+    public static Direction getFacingFromEntity(BlockPos clickedBlock, LivingEntity entity, boolean horizontalOnly) {
+        Direction result = Direction.getFacingFromVector((float) (entity.posX - clickedBlock.getX()), (float) (entity.posY - clickedBlock.getY()), (float) (entity.posZ - clickedBlock.getZ()));
+        if(horizontalOnly && (result == Direction.UP || result == Direction.DOWN)) {
+            return Direction.NORTH;
+        }
+        return result;
     }
 }
