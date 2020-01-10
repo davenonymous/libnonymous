@@ -30,6 +30,10 @@ public class WidgetSlot extends SlotItemHandler {
         });
     }
 
+    public ResourceLocation getGroupId() {
+        return this.id;
+    }
+
     public boolean matches(ResourceLocation slotId) {
         return this.id.equals(slotId);
     }
