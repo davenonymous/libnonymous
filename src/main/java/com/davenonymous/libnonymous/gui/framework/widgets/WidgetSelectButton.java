@@ -3,16 +3,21 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
+import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 
@@ -22,15 +27,29 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
     public ResourceLocation backgroundTexture;
     public TextureAtlasSprite atlasSprite;
 
+    public SoundEvent clickSound;
+
     public WidgetSelectButton() {
         this.setHeight(20);
         this.setWidth(100);
 
+        this.clickSound = SoundEvents.UI_BUTTON_CLICK;
         this.backgroundTexture = GUI.defaultButtonTexture;
         this.addListener(MouseEnterEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = true; return WidgetEventResult.CONTINUE_PROCESSING; });
         this.addListener(MouseExitEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = false; return WidgetEventResult.CONTINUE_PROCESSING; });
+        this.addListener(MouseClickEvent.class, ((event, widget) -> {
+            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(this.clickSound, 1.0F));
+            return WidgetEventResult.CONTINUE_PROCESSING;
+        }));
+
+        // TODO: Add mouse scroll wheel functionality
 
         this.addClickListener();
+    }
+
+    public WidgetSelectButton<T> setClickSound(SoundEvent clickSound) {
+        this.clickSound = clickSound;
+        return this;
     }
 
     public WidgetSelectButton<T> setBackgroundTexture(ResourceLocation backgroundTexture) {

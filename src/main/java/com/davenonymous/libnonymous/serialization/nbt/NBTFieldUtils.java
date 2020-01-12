@@ -59,7 +59,7 @@ public class NBTFieldUtils {
             Annotation annotation = field.getDeclaredAnnotation(Store.class);
             if(annotation != null && annotation instanceof Store) {
                 if(!NBTFieldHandlers.hasNBTHandler(field.getType())) {
-                    Logz.warn("No NBT serialization methods for field='%s' (type='%s') in class='%s' exists.", field.getName(), field.getType().getSimpleName(), clz.getSimpleName());
+                    Logz.warn("No NBT serialization methods for field='{}' (type='{}') in class='{}' exists.", field.getName(), field.getType().getSimpleName(), clz.getSimpleName());
                     continue;
                 }
 

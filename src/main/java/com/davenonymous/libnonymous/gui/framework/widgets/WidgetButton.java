@@ -8,6 +8,8 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -16,6 +18,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
@@ -35,8 +38,7 @@ public class WidgetButton extends Widget {
         this.backgroundTexture = GUI.defaultButtonTexture;
 
         this.addListener(MouseClickEvent.class, ((event, widget) -> {
-            // TODO: Fix mouse click sound
-            //Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             return WidgetEventResult.CONTINUE_PROCESSING;
         }));
 

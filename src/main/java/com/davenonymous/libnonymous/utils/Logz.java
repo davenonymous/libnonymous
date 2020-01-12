@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.utils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 
 public class Logz {
     private static final Logger LOGGER = LogManager.getLogger("Libnonymous");
@@ -43,4 +44,39 @@ public class Logz {
         log(Level.WARN, fmt, data);
     }
 
+    public static void log(Marker mark, Level logLevel, String fmt, Object... data) {
+        LOGGER.log(logLevel, mark, fmt, data);
+    }
+
+    public static void all(Marker mark, String fmt, Object... data) {
+        log(mark, Level.ALL, fmt, data);
+    }
+
+    public static void debug(Marker mark, String fmt, Object... data) {
+        log(mark, Level.DEBUG, fmt, data);
+    }
+
+    public static void error(Marker mark, String fmt, Object... data) {
+        log(mark, Level.ERROR, fmt, data);
+    }
+
+    public static void fatal(Marker mark, String fmt, Object... data) {
+        log(mark, Level.FATAL, fmt, data);
+    }
+
+    public static void info(Marker mark, String fmt, Object... data) {
+        log(mark, Level.INFO, fmt, data);
+    }
+
+    public static void off(Marker mark, String fmt, Object... data) {
+        log(mark, Level.OFF, fmt, data);
+    }
+
+    public static void trace(Marker mark, String fmt, Object... data) {
+        log(mark, Level.TRACE, fmt, data);
+    }
+
+    public static void warn(Marker mark, String fmt, Object... data) {
+        log(mark, Level.WARN, fmt, data);
+    }
 }

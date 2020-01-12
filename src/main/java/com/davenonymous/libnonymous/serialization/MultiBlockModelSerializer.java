@@ -73,7 +73,7 @@ public class MultiBlockModelSerializer implements JsonDeserializer<MultiblockBlo
         ResourceLocation treeType = new ResourceLocation(root.get("type").getAsString());
 
         if(hasUnknownBlocksInMap(root.getAsJsonObject("ref"))) {
-            Logz.warn("Unknown blocks in multiblockmodel json");
+            //Logz.warn("Unknown blocks in multiblockmodel json");
             return null;
         }
 
