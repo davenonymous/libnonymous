@@ -19,8 +19,23 @@ public class BaseRecipeHelper<T extends RecipeData> {
         this.recipeType = type;
     }
 
+    public boolean hasRecipes(RecipeManager manager) {
+        Map<ResourceLocation, IRecipe<?>> recipes = getRecipes(manager);
+        return recipes != null && recipes.size() > 0;
+    }
+
+    public int getRecipeCount(RecipeManager manager) {
+        Map<ResourceLocation, IRecipe<?>> recipes = getRecipes(manager);
+        return recipes != null ? recipes.size() : 0;
+    }
+
     public T getRecipe(RecipeManager manager, ResourceLocation id) {
-        return (T) getRecipes(manager).getOrDefault(id, null);
+        Map<ResourceLocation, IRecipe<?>> recipes = getRecipes(manager);
+        if(recipes == null) {
+            return null;
+        }
+
+        return (T) recipes.getOrDefault(id, null);
     }
 
     public Stream<T> getRecipeStream(RecipeManager manager) {
@@ -33,7 +48,7 @@ public class BaseRecipeHelper<T extends RecipeData> {
 
     public T getRandomRecipe(RecipeManager manager, Random rand) {
         Map<ResourceLocation, IRecipe<?>> recipes = getRecipes(manager);
-        if(recipes.size() == 0) {
+        if(recipes == null || recipes.size() == 0) {
             return null;
         }
         Set<ResourceLocation> ids = recipes.keySet();
