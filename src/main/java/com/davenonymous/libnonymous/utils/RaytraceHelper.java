@@ -14,14 +14,19 @@ public class RaytraceHelper {
     }
 
     public static BlockRayTraceResult rayTrace(World world, Entity entity, double blockReachDistance) {
-        return rayTrace(world, entity, blockReachDistance, 0.0f);
+        return rayTrace(world, entity, blockReachDistance, 1.0f);
     }
 
     @Nullable
     public static BlockRayTraceResult rayTrace(World world, Entity entity, double blockReachDistance, float partialTicks) {
+        return rayTrace(world, entity, blockReachDistance, partialTicks, true);
+    }
+
+    @Nullable
+    public static BlockRayTraceResult rayTrace(World world, Entity entity, double blockReachDistance, float partialTicks, boolean outline) {
         Vec3d vec3d = entity.getEyePosition(partialTicks);
         Vec3d vec3d1 = entity.getLook(partialTicks);
         Vec3d vec3d2 = vec3d.add(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance, vec3d1.z * blockReachDistance);
-        return world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, entity));
+        return world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d2, outline ? RayTraceContext.BlockMode.OUTLINE : RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity));
     }
 }

@@ -1,8 +1,11 @@
 package com.davenonymous.libnonymous.render;
 
+import com.davenonymous.libnonymous.base.BaseBlock;
 import com.davenonymous.libnonymous.base.BaseItem;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,14 +31,24 @@ public class RenderEventHandler {
             if(mainHand.getItem() instanceof BaseItem) {
                 BaseItem mainBase = (BaseItem)mainHand.getItem();
                 mainBase.renderEffectOnHeldItem(player, Hand.MAIN_HAND, event.getPartialTicks());
-            } // TODO: elseif ItemBlockBase
+            } else if(mainHand.getItem() instanceof BlockItem) {
+                Block block = ((BlockItem) mainHand.getItem()).getBlock();
+                if(block instanceof BaseBlock) {
+                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.MAIN_HAND, event.getPartialTicks());
+                }
+            }
         }
 
         if(!offHand.isEmpty()) {
             if(offHand.getItem() instanceof BaseItem) {
                 BaseItem mainBase = (BaseItem)offHand.getItem();
                 mainBase.renderEffectOnHeldItem(player, Hand.OFF_HAND, event.getPartialTicks());
-            } // TODO: elseif ItemBlockBase
+            } else if(offHand.getItem() instanceof BlockItem) {
+                Block block = ((BlockItem) offHand.getItem()).getBlock();
+                if(block instanceof BaseBlock) {
+                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.OFF_HAND, event.getPartialTicks());
+                }
+            }
         }
     }
 

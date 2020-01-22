@@ -5,16 +5,21 @@ import com.davenonymous.libnonymous.utils.FloodFill;
 import com.davenonymous.libnonymous.utils.Logz;
 import com.google.gson.JsonObject;
 import net.minecraft.block.BlockState;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MultiblockBlockModel {
     public Map<BlockPos, BlockState> blocks;
+    public Map<BlockState, List<BlockPos>> reverseBlocks;
+    public Map<BlockState, Character> refMap;
+    public char[][][] blocksAsArray;
+    public char[][][] blocksAsArray90;
+    public char[][][] blocksAsArray180;
+    public char[][][] blocksAsArray270;
     public ResourceLocation id;
 
     public int width = 0;
@@ -23,6 +28,28 @@ public class MultiblockBlockModel {
 
     public MultiblockBlockModel(ResourceLocation id) {
         this.id = id;
+    }
+
+    public MultiblockBlockModel(PacketBuffer buffer) {
+        // TODO: Be smarter! Send a refmap first, then only references.
+        this.id = buffer.readResourceLocation();
+        int size = buffer.readInt();
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            BlockPos pos = buffer.readBlockPos();
+            BlockState state = BlockStateSerializationHelper.deserializeBlockState(buffer);
+            blocks.put(pos, state);
+        }
+        this.setBlocks(blocks);
+    }
+
+    public void writeToBuffer(PacketBuffer buffer) {
+        buffer.writeResourceLocation(this.id);
+        buffer.writeInt(this.blocks.size());
+        for(Map.Entry<BlockPos, BlockState> entry : this.blocks.entrySet()) {
+            buffer.writeBlockPos(entry.getKey());
+            BlockStateSerializationHelper.serializeBlockState(buffer, entry.getValue());
+        }
     }
 
     public void setBlocks(Map<BlockPos, BlockState> blocks) {
@@ -35,6 +62,55 @@ public class MultiblockBlockModel {
             if(pos.getY() > height)height = pos.getY();
             if(pos.getZ() > depth)depth = pos.getZ();
         }
+
+        char refChar = 'a';
+        refMap = new HashMap<>();
+        blocksAsArray = new char[width+1][height+1][depth+1];
+        for(Map.Entry<BlockPos, BlockState> entry : blocks.entrySet()) {
+            BlockPos pos = entry.getKey();
+            BlockState state = entry.getValue();
+
+            char stateChar = refMap.getOrDefault(state, refChar++);
+            if(!refMap.containsKey(state)) {
+                refMap.put(state, stateChar);
+            }
+
+            blocksAsArray[pos.getX()][pos.getY()][pos.getZ()] = stateChar;
+        }
+
+        blocksAsArray90 = rotateMapCW(blocksAsArray);
+        blocksAsArray180 = rotateMapCW(blocksAsArray90);
+        blocksAsArray270 = rotateMapCW(blocksAsArray180);
+        createReverseMap();
+    }
+
+    private void createReverseMap() {
+        this.reverseBlocks = new HashMap<>();
+        for(Map.Entry<BlockPos, BlockState> entry : blocks.entrySet()) {
+            if(!this.reverseBlocks.containsKey(entry.getValue())) {
+                this.reverseBlocks.put(entry.getValue(), new ArrayList<>());
+            }
+
+            this.reverseBlocks.get(entry.getValue()).add(entry.getKey());
+        }
+    }
+
+    private char[][][] rotateMapCW(char[][][] map) {
+        char[][][] ret = new char[map.length][][];
+        for(int y = 0; y < map.length; y++) {
+            final int M = map[y].length;
+            final int N = map[y][0].length;
+            char[][] slice = new char[N][M];
+            for (int r = 0; r < M; r++) {
+                for (int c = 0; c < N; c++) {
+                    slice[c][M - 1 - r] = map[y][r][c];
+                }
+            }
+            ret[y] = slice;
+        }
+
+        return ret;
+
     }
 
     public void setBlocksByFloodFill(IWorldReader world, BlockPos pos) {
@@ -133,5 +209,51 @@ public class MultiblockBlockModel {
         output.append("  ]\n}\n");
 
         return output.toString();
+    }
+
+    public boolean equalsWithRotation(MultiblockBlockModel tempModel) {
+        if(tempModel == this)return true;
+        if(tempModel == null)return false;
+
+        if(this.blocks.size() != tempModel.blocks.size()) {
+            return false;
+        }
+
+        boolean no0 = false;
+        boolean no90 = false;
+        boolean no180 = false;
+        boolean no270 = false;
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                for (int z = 0; z < this.depth; z++) {
+                    // Does x,y,z match any of the tempModels rotations?
+                    char shouldBe = this.blocksAsArray[x][y][z];
+
+                    char at0 = tempModel.blocksAsArray[x][y][z];
+                    char at90 = tempModel.blocksAsArray90[x][y][z];
+                    char at180 = tempModel.blocksAsArray180[x][y][z];
+                    char at270 = tempModel.blocksAsArray270[x][y][z];
+
+                    if(at0 != shouldBe) {
+                        no0 = true;
+                    }
+                    if(at90 != shouldBe) {
+                        no90 = true;
+                    }
+                    if(at180 != shouldBe) {
+                        no180 = true;
+                    }
+                    if(at270 != shouldBe) {
+                        no270 = true;
+                    }
+
+                    if(no0 && no90 && no180 && no270) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return no0 || no90 || no180 || no270;
     }
 }

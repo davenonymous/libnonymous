@@ -3,9 +3,11 @@ package com.davenonymous.libnonymous.base;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -15,6 +17,10 @@ import javax.annotation.Nullable;
 public class BaseBlock extends Block {
     public BaseBlock(Properties properties) {
         super(properties);
+    }
+
+    public void renderEffectOnHeldItem(PlayerEntity player, Hand mainHand, float partialTicks) {
+
     }
 
     @Override

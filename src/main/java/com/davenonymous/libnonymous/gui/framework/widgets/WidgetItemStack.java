@@ -4,6 +4,7 @@ import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -57,7 +58,9 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 
         GlStateManager.scaled(xScale, yScale, 1.0d);
 
+        RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(this.value, 0, 0);
+        RenderHelper.disableStandardItemLighting();
 
         GlStateManager.popMatrix();
     }
