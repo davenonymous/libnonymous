@@ -3,7 +3,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 import com.davenonymous.libnonymous.gui.framework.SmartNumberFormatter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 
 public class WidgetProgressBar extends WidgetWithValue<Double> {

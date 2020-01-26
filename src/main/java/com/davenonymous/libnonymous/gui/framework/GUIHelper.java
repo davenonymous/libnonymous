@@ -1,6 +1,8 @@
 package com.davenonymous.libnonymous.gui.framework;
 
+
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -31,11 +33,11 @@ public class GUIHelper {
     public static void drawColoredRectangle(int x, int y, int width, int height, int red, int green, int blue, int alpha) {
         double zLevel = 0.0f;
 
-        GlStateManager.disableTexture();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlphaTest();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder renderer = tessellator.getBuffer();
@@ -46,10 +48,10 @@ public class GUIHelper {
         renderer.pos((x + width), (y + 0), zLevel).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
 
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture();
+        RenderSystem.shadeModel(GL11.GL_FLAT);
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture();
 
     }
 
@@ -62,22 +64,22 @@ public class GUIHelper {
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
         bufferbuilder
                 .pos((double)(x + 0), (double)(y + height), zLevel)
-                .tex((double)((float)(textureX + 0) * f), (double)((float)(textureY + textureHeight) * f))
+                .tex(((float)(textureX + 0) * f), ((float)(textureY + textureHeight) * f))
                 .endVertex();
 
         bufferbuilder
                 .pos((double)(x + width), (double)(y + height), zLevel)
-                .tex((double)((float)(textureX + textureWidth) * f), (double)((float)(textureY + textureHeight) * f))
+                .tex(((float)(textureX + textureWidth) * f), ((float)(textureY + textureHeight) * f))
                 .endVertex();
 
         bufferbuilder
                 .pos((double)(x + width), (double)(y + 0), zLevel)
-                .tex((double)((float)(textureX + textureWidth) * f), (double)((float)(textureY + 0) * f))
+                .tex(((float)(textureX + textureWidth) * f), ((float)(textureY + 0) * f))
                 .endVertex();
 
         bufferbuilder
                 .pos((double)(x + 0), (double)(y + 0), zLevel)
-                .tex((double)((float)(textureX + 0) * f), (double)((float)(textureY + 0) * f))
+                .tex(((float)(textureX + 0) * f), ((float)(textureY + 0) * f))
                 .endVertex();
 
         tessellator.draw();
@@ -90,10 +92,10 @@ public class GUIHelper {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        bufferbuilder.pos((double)x, (double)(y + height), 0.0D).tex((double)(u * f), (double)((v + (float)height) * f1)).endVertex();
-        bufferbuilder.pos((double)(x + width), (double)(y + height), 0.0D).tex((double)((u + (float)width) * f), (double)((v + (float)height) * f1)).endVertex();
-        bufferbuilder.pos((double)(x + width), (double)y, 0.0D).tex((double)((u + (float)width) * f), (double)(v * f1)).endVertex();
-        bufferbuilder.pos((double)x, (double)y, 0.0D).tex((double)(u * f), (double)(v * f1)).endVertex();
+        bufferbuilder.pos((double)x, (double)(y + height), 0.0D).tex((u * f), ((v + (float)height) * f1)).endVertex();
+        bufferbuilder.pos((double)(x + width), (double)(y + height), 0.0D).tex(((u + (float)width) * f), ((v + (float)height) * f1)).endVertex();
+        bufferbuilder.pos((double)(x + width), (double)y, 0.0D).tex(((u + (float)width) * f), (v * f1)).endVertex();
+        bufferbuilder.pos((double)x, (double)y, 0.0D).tex((u * f), (v * f1)).endVertex();
         tessellator.draw();
     }
 }

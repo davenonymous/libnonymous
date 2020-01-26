@@ -1,7 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 
@@ -42,32 +42,32 @@ public class WidgetImage extends Widget {
     }
 
     public void draw(Screen screen) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.translatef(0.0f, 0.0f, 2.0f);
+        RenderSystem.pushMatrix();
+        RenderSystem.enableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.translatef(0.0f, 0.0f, 2.0f);
 
         screen.getMinecraft().getTextureManager().bindTexture(image);
 
         // Draw the image
         if(color == null) {
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         } else {
             float[] pColors = color.getRGBColorComponents(null);
             float pA = alpha;
             float pR = pColors[0];
             float pG = pColors[1];
             float pB = pColors[2];
-            GlStateManager.color4f(pR, pG, pB, pA);
+            RenderSystem.color4f(pR, pG, pB, pA);
         }
 
         actuallyDraw();
 
-        //GlStateManager.clearCurrentColor();
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlphaTest();
+        //RenderSystem.clearCurrentColor();
+        RenderSystem.disableBlend();
+        RenderSystem.disableAlphaTest();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     protected void actuallyDraw() {

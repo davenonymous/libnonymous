@@ -146,8 +146,8 @@ public class WidgetGuiConfig extends WidgetScreen {
     @Override
     protected GUI createGUI() {
         // Best resolution guessing begins:
-        int desiredHeight = (int) (Minecraft.getInstance().mainWindow.getHeight() / Minecraft.getInstance().mainWindow.getGuiScaleFactor());
-        int desiredWidth = (int) (Minecraft.getInstance().mainWindow.getWidth() / Minecraft.getInstance().mainWindow.getGuiScaleFactor());
+        int desiredHeight = (int) (Minecraft.getInstance().getMainWindow().getHeight() / Minecraft.getInstance().getMainWindow().getGuiScaleFactor());
+        int desiredWidth = (int) (Minecraft.getInstance().getMainWindow().getWidth() / Minecraft.getInstance().getMainWindow().getGuiScaleFactor());
         GUI gui = new GUI(0, 0, desiredWidth, desiredHeight);
 
         int columnWidths = (desiredWidth - 20) / 3;

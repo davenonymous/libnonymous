@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.base;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -19,7 +20,7 @@ public class BaseBlock extends Block {
         super(properties);
     }
 
-    public void renderEffectOnHeldItem(PlayerEntity player, Hand mainHand, float partialTicks) {
+    public void renderEffectOnHeldItem(PlayerEntity player, Hand mainHand, float partialTicks, MatrixStack matrix) {
 
     }
 
@@ -66,7 +67,7 @@ public class BaseBlock extends Block {
     }
 
     public static Direction getFacingFromEntity(BlockPos clickedBlock, LivingEntity entity, boolean horizontalOnly) {
-        Direction result = Direction.getFacingFromVector((float) (entity.posX - clickedBlock.getX()), (float) (entity.posY - clickedBlock.getY()), (float) (entity.posZ - clickedBlock.getZ()));
+        Direction result = Direction.getFacingFromVector((float) (entity.getPosX() - clickedBlock.getX()), (float) (entity.getPosY() - clickedBlock.getY()), (float) (entity.getPosZ() - clickedBlock.getZ()));
         if(horizontalOnly && (result == Direction.UP || result == Direction.DOWN)) {
             return Direction.NORTH;
         }

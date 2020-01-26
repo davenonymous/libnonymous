@@ -1,21 +1,26 @@
 package com.davenonymous.libnonymous.utils;
 
 import com.davenonymous.libnonymous.Libnonymous;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.*;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
@@ -24,7 +29,7 @@ public class RotationTools {
     private static ResourceLocation arrowImage;
 
     @OnlyIn(Dist.CLIENT)
-    public static void renderArrowOnGround(Vec3d hitPosition, BlockPos drawPosition, float partialTicks) {
+    public static void renderArrowOnGround(Vec3d hitPosition, BlockPos drawPosition, float partialTicks, MatrixStack matrix) {
         Direction facing = RotationTools.getFacingByTriangle(hitPosition);
 
         RotationTools.TextureRotationList rotList = new RotationTools.TextureRotationList();
@@ -48,26 +53,34 @@ public class RotationTools {
         if(arrowImage == null) {
              arrowImage = new ResourceLocation(Libnonymous.MODID, "textures/particles/blockmarker.png");
         }
+
         Minecraft.getInstance().getTextureManager().bindTexture(arrowImage);
 
-        GlStateManager.pushMatrix();
+        matrix.push();
 
-        GlStateManager.translated(-TileEntityRendererDispatcher.staticPlayerX, -TileEntityRendererDispatcher.staticPlayerY, -TileEntityRendererDispatcher.staticPlayerZ);
-        GlStateManager.translatef(drawPosition.getX(), drawPosition.getY(), drawPosition.getZ());
+        // Shift back from camera
+        ActiveRenderInfo renderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+        matrix.translate(-renderInfo.getProjectedView().getX(), -renderInfo.getProjectedView().getY(), -renderInfo.getProjectedView().getZ());
+
+        // Shift to actual block position
+        matrix.translate(drawPosition.getX(), drawPosition.getY(), drawPosition.getZ());
 
         // Draw with 50% transparency
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.5F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Actually draw
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        //IRenderTypeBuffer buffer = IRenderTypeBuffer.getImpl(bufferbuilder);
+        //Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(Blocks.DIAMOND_BLOCK.getDefaultState(), matrix, buffer, 15728880,  OverlayTexture.DEFAULT_LIGHT, EmptyModelData.INSTANCE);
 
+        // TODO: Fix arrows drawing on the ground
         rotList.fillBufferBuilder(bufferbuilder, 0.0005d);
 
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        matrix.pop();
     }
 
     public static Direction getFacingForPlayer(World world, PlayerEntity player) {
@@ -144,7 +157,6 @@ public class RotationTools {
             buffer.pos(1, yLevel, 1).tex(this.get(1).getA(), this.get(1).getB()).endVertex();
             buffer.pos(1, yLevel, 0).tex(this.get(2).getA(), this.get(2).getB()).endVertex();
             buffer.pos(0, yLevel, 0).tex(this.get(3).getA(), this.get(3).getB()).endVertex();
-
         }
     }
 

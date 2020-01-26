@@ -5,9 +5,10 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.awt.*;
 
@@ -31,12 +32,12 @@ public class WidgetColorSelect extends WidgetWithChoiceValue<Color> {
         screen.getMinecraft().getTextureManager().bindTexture(BUTTON_TEXTURES);
 
         float[] colors = this.getValue().getRGBColorComponents(null);
-        GlStateManager.color4f(colors[0], colors[1], colors[2], hovered ? 0.7F : 1.0F);
+        RenderSystem.color4f(colors[0], colors[1], colors[2], hovered ? 0.7F : 1.0F);
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.translatef(0.0f, 0.0f, 2.0f);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.translatef(0.0f, 0.0f, 2.0f);
 
         if(hovered) {
             GuiUtils.drawTexturedModalRect(0, 0, 0, 46 + 2 * 20, width / 2, height, 0.0f);

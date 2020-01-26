@@ -24,6 +24,6 @@ public class PacketClipboard extends BasePacket {
 
     @Override
     public void doWork(Supplier<NetworkEvent.Context> ctx) {
-        GLFW.glfwSetClipboardString(Minecraft.getInstance().mainWindow.getHandle(), this.clipboardContent);
+        GLFW.glfwSetClipboardString(Minecraft.getInstance().getMainWindow().getHandle(), this.clipboardContent);
     }
 }

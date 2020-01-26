@@ -2,10 +2,8 @@ package com.davenonymous.libnonymous.gui.framework;
 
 
 import com.davenonymous.libnonymous.gui.framework.event.*;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.text.ITextComponent;
@@ -117,11 +115,11 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends C
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(-guiLeft, -guiTop+18, 0.0f);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(-guiLeft, -guiTop+18, 0.0f);
         gui.drawTooltips(this, mouseX, mouseY);
         renderHoveredToolTip(mouseX, mouseY);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     @Override

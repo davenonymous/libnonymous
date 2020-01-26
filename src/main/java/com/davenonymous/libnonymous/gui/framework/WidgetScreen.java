@@ -98,7 +98,6 @@ public abstract class WidgetScreen extends Screen {
             previousMouseY = mouseY;
         }
 
-        RenderHelper.enableGUIStandardItemLighting();
         getOrCreateGui().drawGUI(this);
         getOrCreateGui().drawTooltips(this, mouseX, mouseY);
         //renderHoveredToolTip(mouseX, mouseY);

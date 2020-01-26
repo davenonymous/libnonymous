@@ -5,14 +5,16 @@ import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.TabChangedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,13 +149,13 @@ public class WidgetTabsPanel extends WidgetPanel {
 
         @Override
         public void draw(Screen screen) {
-            GlStateManager.pushMatrix();
+            RenderSystem.pushMatrix();
 
             screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
 
-            GlStateManager.disableLighting();
-            GlStateManager.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-            GlStateManager.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
+            RenderSystem.disableLighting();
+            RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
+            RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
 
 
             // Defaults are for the West edge
@@ -191,11 +193,10 @@ public class WidgetTabsPanel extends WidgetPanel {
 
             GuiUtils.drawTexturedModalRect(x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
 
-            RenderHelper.enableGUIStandardItemLighting();
             screen.getMinecraft().getItemRenderer().renderItemAndEffectIntoGUI(pageStack, iconX, iconY);
             RenderHelper.enableStandardItemLighting();
 
-            GlStateManager.popMatrix();
+            RenderSystem.popMatrix();
         }
     }
 }

@@ -6,11 +6,13 @@ import com.davenonymous.libnonymous.gui.framework.event.ListSelectionEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseScrollEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
-import com.davenonymous.libnonymous.render.RenderTickCounter;
+
 import com.davenonymous.libnonymous.utils.Logz;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
+
 
 public class WidgetList extends WidgetPanel {
     public int padding = 2;
@@ -48,11 +50,11 @@ public class WidgetList extends WidgetPanel {
                     return;
                 }
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translatef(7.0f, 0.0f, 0.0f);
-                GlStateManager.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
+                RenderSystem.pushMatrix();
+                RenderSystem.translatef(7.0f, 0.0f, 0.0f);
+                RenderSystem.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
                 super.draw(screen);
-                GlStateManager.popMatrix();
+                RenderSystem.popMatrix();
             }
         };
         box.setTextColor(color);
@@ -72,11 +74,11 @@ public class WidgetList extends WidgetPanel {
                     return;
                 }
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translatef(7.0f, 0.0f, 0.0f);
-                GlStateManager.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
+                RenderSystem.pushMatrix();
+                RenderSystem.translatef(7.0f, 0.0f, 0.0f);
+                RenderSystem.rotatef(90.0f, 0.0f, 0.0f, 1.0f);
                 super.draw(screen);
-                GlStateManager.popMatrix();
+                RenderSystem.popMatrix();
             }
         };
         box.setTextColor(color);

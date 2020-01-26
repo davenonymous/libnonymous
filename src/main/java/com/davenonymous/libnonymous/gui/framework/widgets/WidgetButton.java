@@ -1,13 +1,12 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
-import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,7 +18,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -64,13 +63,13 @@ public class WidgetButton extends Widget {
     public void draw(Screen screen) {
         //Logz.info("Width: %d, height: %d", width, height);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.translatef(0.0f, 0.0f, 2.0f);
+        RenderSystem.pushMatrix();
+        RenderSystem.enableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.translatef(0.0f, 0.0f, 2.0f);
 
         // Draw the background
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 
         if(atlasSprite != null) {
@@ -84,7 +83,7 @@ public class WidgetButton extends Widget {
             GUIHelper.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width, height, 16.0f, 16.0f);
         }
 
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, hovered ? 1.0F : 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, hovered ? 1.0F : 1.0F);
         screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
 
         // Top Left corner
@@ -118,9 +117,9 @@ public class WidgetButton extends Widget {
         GUIHelper.drawStretchedTexture(0+width - 4, 4, 4, this.height - 8, texOffsetX + overlayWidth - 4, texOffsetY + 3, 4, 12);
 
         FontRenderer fontrenderer = screen.getMinecraft().fontRenderer;
-        GlStateManager.translatef(0.0f, 0.0f, 10.0f);
+        RenderSystem.translatef(0.0f, 0.0f, 10.0f);
         drawButtonContent(screen, fontrenderer);
-        GlStateManager.translatef(0.0f, 0.0f, -10.0f);
+        RenderSystem.translatef(0.0f, 0.0f, -10.0f);
 
         if(!enabled) {
             GUIHelper.drawColoredRectangle(1, 1, width-2, height-2, 0x80000000);
@@ -128,7 +127,7 @@ public class WidgetButton extends Widget {
             GUIHelper.drawColoredRectangle(1, 1, width-2, height-2, 0x808090FF);
         }
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     protected void drawButtonContent(Screen screen, FontRenderer renderer) {

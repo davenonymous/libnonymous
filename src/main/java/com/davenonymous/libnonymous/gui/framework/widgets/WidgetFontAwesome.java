@@ -2,7 +2,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.davenonymous.libnonymous.gui.framework.util.FontAwesomeIcons;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class WidgetFontAwesome extends WidgetImage {
     FontAwesomeIcons icon;
@@ -36,7 +36,7 @@ public class WidgetFontAwesome extends WidgetImage {
         //    GlStateManager.scaled(0.5d, 0.5d, 0.0d);
         //    GUIHelper.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width*2, height*2, textureWidth, textureHeight);
         //} else {
-        GlStateManager.scalef(size.sizeModifier, size.sizeModifier, size.sizeModifier);
+        RenderSystem.scalef(size.sizeModifier, size.sizeModifier, size.sizeModifier);
         GUIHelper.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, width*size.sizeFactor, height*size.sizeFactor, textureWidth, textureHeight);
         //}
     }

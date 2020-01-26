@@ -1,8 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 
-import com.davenonymous.libnonymous.utils.Logz;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import org.lwjgl.opengl.GL11;
 
@@ -41,15 +40,15 @@ public class WidgetTextBox extends Widget {
             return;
         }
 
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
         GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         int scale = computeGuiScale(screen.getMinecraft());
 
-        GlStateManager.enableBlend();
+        RenderSystem.enableBlend();
 
-        int bottomOffset = (int)(((double)(screen.getMinecraft().mainWindow.getHeight()/scale) - (getActualY() + height)) * scale);
+        int bottomOffset = (int)(((double)(screen.getMinecraft().getMainWindow().getHeight()/scale) - (getActualY() + height)) * scale);
         int heightTmp = (height*scale)-1;
         if(heightTmp < 0) {
             heightTmp = 0;
@@ -58,10 +57,10 @@ public class WidgetTextBox extends Widget {
 
         screen.getMinecraft().fontRenderer.drawSplitString(text, 0, 0, width, textColor);
 
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GL11.glPopAttrib();
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 }

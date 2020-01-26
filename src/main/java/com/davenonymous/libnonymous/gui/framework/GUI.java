@@ -4,13 +4,13 @@ import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.widgets.IValueProvider;
 import com.davenonymous.libnonymous.gui.framework.widgets.Widget;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetPanel;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class GUI extends WidgetPanel {
     protected void drawWindow(Screen screen) {
         RenderHelper.disableStandardItemLighting();
 
-        GlStateManager.color4f(1f, 1f, 1f, 1f);
+        RenderSystem.color4f(1f, 1f, 1f, 1f);
         screen.getMinecraft().textureManager.bindTexture(tabIcons);
 
         int texOffsetY = 11;
@@ -129,12 +129,12 @@ public class GUI extends WidgetPanel {
 
         RenderHelper.disableStandardItemLighting();
 
-        GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1f);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1f);
 
         /*
         if(slot instanceof WidgetSlot) {
             if(!slot.canTakeStack(screen.getMinecraft().player)) {
-                GlStateManager.color4f(1.0f, 0.3f, 0.3f, 1f);
+                RenderSystem.color4f(1.0f, 0.3f, 0.3f, 1f);
             }
         }
         */
@@ -144,9 +144,9 @@ public class GUI extends WidgetPanel {
         float offsetX = guiLeft-1;
         float offsetY = guiTop-1;
 
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
-        GlStateManager.translatef(offsetX, offsetY, 0.0f);
+        RenderSystem.translatef(offsetX, offsetY, 0.0f);
 
         int texOffsetY = 84;
         int texOffsetX = 84;
@@ -155,9 +155,8 @@ public class GUI extends WidgetPanel {
 
         GuiUtils.drawTexturedModalRect(slot.xPos, slot.yPos, texOffsetX, texOffsetY, 18, 18, 0.0f);
 
-        GlStateManager.color4f(1f, 1f, 1f, 1f);
-        RenderHelper.enableGUIStandardItemLighting();
+        RenderSystem.color4f(1f, 1f, 1f, 1f);
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 }

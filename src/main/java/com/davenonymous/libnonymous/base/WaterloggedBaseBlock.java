@@ -57,10 +57,4 @@ public class WaterloggedBaseBlock extends BaseBlock implements IWaterLoggable {
     public IFluidState getFluidState(BlockState state) {
         return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
-
-    @Override
-    public boolean isSolid(BlockState state) {
-        return false;
-    }
-
 }

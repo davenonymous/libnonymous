@@ -2,10 +2,9 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.*;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.*;
@@ -122,7 +121,8 @@ public class Widget {
             k = 1000;
         }
 
-        while (scaleFactor < k && mc.mainWindow.getWidth() / (scaleFactor + 1) >= 320 && mc.mainWindow.getHeight() / (scaleFactor + 1) >= 240) {
+
+        while (scaleFactor < k && mc.getMainWindow().getWidth() / (scaleFactor + 1) >= 320 && mc.getMainWindow().getHeight() / (scaleFactor + 1) >= 240) {
             ++scaleFactor;
         }
         return scaleFactor;
@@ -231,10 +231,10 @@ public class Widget {
      */
     public void shiftAndDraw(Screen screen) {
         this.drawBeforeShift(screen);
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(this.x, this.y, 0);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(this.x, this.y, 0);
         this.draw(screen);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     /**

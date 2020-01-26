@@ -34,7 +34,7 @@ public class RenderEventHandler {
             } else if(mainHand.getItem() instanceof BlockItem) {
                 Block block = ((BlockItem) mainHand.getItem()).getBlock();
                 if(block instanceof BaseBlock) {
-                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.MAIN_HAND, event.getPartialTicks());
+                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.MAIN_HAND, event.getPartialTicks(), event.getMatrixStack());
                 }
             }
         }
@@ -46,7 +46,7 @@ public class RenderEventHandler {
             } else if(offHand.getItem() instanceof BlockItem) {
                 Block block = ((BlockItem) offHand.getItem()).getBlock();
                 if(block instanceof BaseBlock) {
-                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.OFF_HAND, event.getPartialTicks());
+                    ((BaseBlock) block).renderEffectOnHeldItem(player, Hand.OFF_HAND, event.getPartialTicks(), event.getMatrixStack());
                 }
             }
         }

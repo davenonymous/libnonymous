@@ -1,6 +1,8 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
+
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -85,12 +87,12 @@ public class WidgetColorDisplay extends Widget {
         float sB = sColors[2];
 
 
-        GlStateManager.disableTexture();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlphaTest();
-        // TODO: Fix this line
-        //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+        RenderSystem.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -99,10 +101,10 @@ public class WidgetColorDisplay extends Widget {
         buffer.pos(x2, y2, zLevel).color(sR, sG, sB, sA).endVertex();
         buffer.pos(x2, y1, zLevel).color(sR, sG, sB, sA).endVertex();
         tessellator.draw();
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture();
+        RenderSystem.shadeModel(GL11.GL_FLAT);
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture();
     }
 
     /**
@@ -127,12 +129,11 @@ public class WidgetColorDisplay extends Widget {
         float sG = sColors[1];
         float sB = sColors[2];
 
-        GlStateManager.disableTexture();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlphaTest();
-        // TODO: Fix this line
-        //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderSystem.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -142,9 +143,9 @@ public class WidgetColorDisplay extends Widget {
         buffer.pos(x2, y2, zLevel).color(sR, sG, sB, sA).endVertex();
         tessellator.draw();
 
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture();
+        RenderSystem.shadeModel(GL11.GL_FLAT);
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture();
     }
 }

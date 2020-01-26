@@ -52,7 +52,7 @@ gui widget framework.
     mandatory=true #mandatory
 
     # The version range of the dependency
-    versionRange="[28,)" #mandatory
+    versionRange="[31,)" #mandatory
 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
@@ -64,6 +64,6 @@ gui widget framework.
 [[dependencies.libnonymous]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.15.2]"
     ordering="NONE"
     side="BOTH"

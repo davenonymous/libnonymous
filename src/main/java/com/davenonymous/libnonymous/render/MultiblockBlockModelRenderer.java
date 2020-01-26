@@ -1,18 +1,15 @@
 package com.davenonymous.libnonymous.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.settings.AmbientOcclusionStatus;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 import java.util.Set;
@@ -20,56 +17,41 @@ import java.util.Set;
 public class MultiblockBlockModelRenderer {
     private static final Random rand = new Random();
 
-    public static void renderModel(MultiblockBlockModel model) {
+    public static void renderModel(MultiblockBlockModel model, MatrixStack matrix, IRenderTypeBuffer buffer, int light, int overlay) {
         MultiBlockModelWorldReader modelWorld = new MultiBlockModelWorldReader(model);
-        renderModel(model, modelWorld);
+        renderModel(model, modelWorld, matrix, buffer, light, overlay);
     }
 
-    public static void renderModel(MultiblockBlockModel model, IEnviromentBlockReader worldContext, BlockPos blockContext) {
+    public static void renderModel(MultiblockBlockModel model, MatrixStack matrix, IRenderTypeBuffer buffer, int light, int overlay, IWorldReader worldContext, BlockPos blockContext) {
         MultiBlockModelWorldReader modelWorld = new MultiBlockModelWorldReader(model, worldContext, blockContext);
-        renderModel(model, modelWorld);
+        renderModel(model, modelWorld, matrix, buffer, light, overlay);
     }
 
-    private static void renderModel(MultiblockBlockModel model, MultiBlockModelWorldReader modelWorld) {
-        GlStateManager.pushMatrix();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+    private static void renderModel(MultiblockBlockModel model, MultiBlockModelWorldReader modelWorld, MatrixStack matrix, IRenderTypeBuffer buffer, int light, int overlay) {
+        BlockRendererDispatcher brd = Minecraft.getInstance().getBlockRendererDispatcher();
 
         // Aaaand render
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        GlStateManager.disableAlphaTest();
-        renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.SOLID, modelWorld, model);
-        GlStateManager.enableAlphaTest();
-        renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.CUTOUT_MIPPED, modelWorld, model);
-        renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.CUTOUT, modelWorld, model);
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.TRANSLUCENT, modelWorld, model);
-
-        tessellator.draw();
-
-        GlStateManager.popMatrix();
-    }
-
-    private static void renderLayer(BlockRendererDispatcher brd, BufferBuilder buffer, BlockRenderLayer renderLayer, IEnviromentBlockReader treeWorld, MultiblockBlockModel model) {
         Set<BlockPos> renderPositions = model.getRelevantPositions();
-
-        ForgeHooksClient.setRenderLayer(renderLayer);
         for (BlockPos pos : renderPositions) {
             BlockState state = model.blocks.get(pos);
-            if (!state.getBlock().canRenderInLayer(state, renderLayer)) {
-                continue;
-            }
 
             try {
-                //Logz.info("Rendering: %s", state);
-                brd.renderBlock(state, pos, treeWorld, buffer, rand, EmptyModelData.INSTANCE);
+                matrix.push();
+                matrix.translate(pos.getX(), pos.getY(), pos.getZ());
+
+                if(modelWorld.getContextWorld() != null && modelWorld.getContextPos() != null) {
+                    // TODO: Hacks hack hacks. Clean this up, make ambient occlusion work, use proper world references
+                    AmbientOcclusionStatus before = Minecraft.getInstance().gameSettings.ambientOcclusionStatus;
+                    Minecraft.getInstance().gameSettings.ambientOcclusionStatus = AmbientOcclusionStatus.OFF;
+                    brd.renderModel(state, modelWorld.getContextPos(), modelWorld.getContextWorld(), matrix, buffer.getBuffer(RenderType.cutout()), false, rand, EmptyModelData.INSTANCE);
+                    Minecraft.getInstance().gameSettings.ambientOcclusionStatus = before;
+                } else {
+                    brd.renderBlock(state, matrix, buffer, light, overlay, EmptyModelData.INSTANCE);
+                }
+                matrix.pop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        ForgeHooksClient.setRenderLayer(null);
     }
 }

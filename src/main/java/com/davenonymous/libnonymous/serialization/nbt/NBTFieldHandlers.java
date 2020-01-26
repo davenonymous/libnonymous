@@ -32,7 +32,7 @@ public class NBTFieldHandlers {
         }, (key, booleans, tag) -> {
             ListNBT listNBT = new ListNBT();
             for(boolean b : booleans) {
-                listNBT.add(new ShortNBT(b ? (short)1 : (short)0));
+                listNBT.add(ShortNBT.valueOf(b ? (short)1 : (short)0));
             }
 
             tag.put(key, listNBT);

@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.particles;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleRenderType;
@@ -11,9 +12,9 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.particles.BlockParticleData;
-import net.minecraft.util.BlockRenderLayer;
+
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
+
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -42,8 +43,10 @@ public class BlockProjectionParticle extends Particle {
     }
 
     @Override
-    public void renderParticle(BufferBuilder bufferIn, ActiveRenderInfo entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        GlStateManager.pushMatrix();
+    public void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
+        // TODO: Fix block particle rendering
+        /*
+        RenderSystem.pushMatrix();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -55,26 +58,33 @@ public class BlockProjectionParticle extends Particle {
         float y = (float)(prevPosY + (posY - prevPosY) * partialTicks - interpPosY);
         float z = (float)(prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ);
 
-        GlStateManager.translated(x, y+0.01d, z);
+        RenderSystem.translated(x, y+0.01d, z);
 
-        GlStateManager.scaled(0.98f, 0.98f, 0.98f);
-        GlStateManager.color4f(1.0f, 1.0f, 1.0f, 0.2f);
+        RenderSystem.scaled(0.98f, 0.98f, 0.98f);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 0.2f);
         // Aaaand render
-        GlStateManager.enableBlend();
+        RenderSystem.enableBlend();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        GlStateManager.disableAlphaTest();
+        RenderSystem.disableAlphaTest();
         renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.SOLID, this.world, data.getBlockState(), this.world.rand);
-        GlStateManager.enableAlphaTest();
+        RenderSystem.enableAlphaTest();
         renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.CUTOUT_MIPPED, this.world, data.getBlockState(), this.world.rand);
         renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.CUTOUT, this.world, data.getBlockState(), this.world.rand);
-        GlStateManager.shadeModel(GL11.GL_FLAT);
+        RenderSystem.shadeModel(GL11.GL_FLAT);
         renderLayer(blockrendererdispatcher, buffer, BlockRenderLayer.TRANSLUCENT, this.world, data.getBlockState(), this.world.rand);
 
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
+        */
     }
 
+    @Override
+    public IParticleRenderType getRenderType() {
+        return IParticleRenderType.CUSTOM;
+    }
+
+    /*
     private static void renderLayer(BlockRendererDispatcher brd, BufferBuilder buffer, BlockRenderLayer renderLayer, IEnviromentBlockReader treeWorld, BlockState state, Random rand) {
         if (!state.getBlock().canRenderInLayer(state, renderLayer)) {
             return;
@@ -90,9 +100,5 @@ public class BlockProjectionParticle extends Particle {
         ForgeHooksClient.setRenderLayer(null);
 
     }
-
-    @Override
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.CUSTOM;
-    }
+    */
 }

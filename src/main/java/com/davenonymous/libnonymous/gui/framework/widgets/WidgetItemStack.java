@@ -1,13 +1,13 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUI;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.Collections;
 
@@ -47,26 +47,25 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
             return;
         }
 
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
-        GlStateManager.disableLighting();
-        GlStateManager.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-        GlStateManager.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
+        RenderSystem.disableLighting();
+        RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
+        RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
 
         double xScale = this.width / 16.0f;
         double yScale = this.height / 16.0f;
 
-        GlStateManager.scaled(xScale, yScale, 1.0d);
+        RenderSystem.scaled(xScale, yScale, 1.0d);
 
-        RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(this.value, 0, 0);
         RenderHelper.disableStandardItemLighting();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     private void drawSlot(Screen screen) {
-        GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1f);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1f);
         screen.getMinecraft().textureManager.bindTexture(GUI.tabIcons);
 
         int texOffsetY = 84;
@@ -74,6 +73,6 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 
         GuiUtils.drawTexturedModalRect(-1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
 
-        GlStateManager.color4f(1f, 1f, 1f, 1f);
+        RenderSystem.color4f(1f, 1f, 1f, 1f);
     }
 }

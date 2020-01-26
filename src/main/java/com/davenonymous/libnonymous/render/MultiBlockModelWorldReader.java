@@ -5,32 +5,56 @@ import net.minecraft.block.Blocks;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.ILightReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.lighting.WorldLightManager;
 
 import javax.annotation.Nullable;
 
-public class MultiBlockModelWorldReader implements IEnviromentBlockReader {
+public class MultiBlockModelWorldReader implements IBlockReader, BiomeManager.IBiomeReader, ILightReader {
     private MultiblockBlockModel model;
 
-    private IEnviromentBlockReader blockWorld;
+    private IWorldReader blockWorld;
     private BlockPos blockPos;
 
     public MultiBlockModelWorldReader(MultiblockBlockModel model) {
         this.model = model;
     }
 
-    public MultiBlockModelWorldReader(MultiblockBlockModel model, IEnviromentBlockReader blockWorld, BlockPos blockPos) {
+    public MultiBlockModelWorldReader(MultiblockBlockModel model, IWorldReader blockWorld, BlockPos blockPos) {
         this.model = model;
         this.blockWorld = blockWorld;
         this.blockPos = blockPos;
     }
 
-    @Override
     public Biome getBiome(BlockPos pos) {
         return blockWorld == null ? Biomes.FOREST : blockWorld.getBiome(blockPos);
+    }
+
+
+    public IWorldReader getContextWorld() {
+        return blockWorld;
+    }
+
+    public BlockPos getContextPos() {
+        return blockPos;
+    }
+
+    @Override
+    public WorldLightManager getLightManager() {
+        // TODO: blockworld might be null, what lightmanager do we use then?
+        return blockWorld.getLightManager();
+    }
+
+    @Override
+    public int getBlockColor(BlockPos blockPosIn, ColorResolver colorResolverIn) {
+        return 0;
     }
 
     @Override
@@ -59,12 +83,7 @@ public class MultiBlockModelWorldReader implements IEnviromentBlockReader {
     }
 
     @Override
-    public boolean isSkyLightMax(BlockPos pos) {
-        return blockWorld == null || blockWorld.isSkyLightMax(blockPos);
-    }
-
-    @Override
-    public int getCombinedLight(BlockPos pos, int minLight) {
-        return blockWorld == null ? 255 : blockWorld.getCombinedLight(blockPos, minLight);
+    public Biome getNoiseBiome(int x, int y, int z) {
+        return null;
     }
 }
