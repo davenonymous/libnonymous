@@ -41,18 +41,22 @@ public class PacketOpenConfigGuiHandler implements Consumer<PacketOpenConfigGui>
         return null;
     }
 
+    public static void openConfigGuiForAll(Screen parent) {
+        List<ForgeConfigSpec> configSpecs = ModList.get().getMods().stream()
+                .map(m -> ModList.get().getModContainerById(m.getModId()))
+                .filter(m -> m.isPresent())
+                .map(m -> getConfigsForModContainer(m.get()))
+                .flatMap(m -> m.values().stream())
+                .map(m -> m.getSpec())
+                .collect(Collectors.toList());
+
+        Minecraft.getInstance().displayGuiScreen(new WidgetGuiConfig(parent, configSpecs));
+    }
+
     @Override
     public void accept(PacketOpenConfigGui packet) {
         if(packet.all) {
-            List<ForgeConfigSpec> configSpecs = ModList.get().getMods().stream()
-                    .map(m -> ModList.get().getModContainerById(m.getModId()))
-                    .filter(m -> m.isPresent())
-                    .map(m -> getConfigsForModContainer(m.get()))
-                    .flatMap(m -> m.values().stream())
-                    .map(m -> m.getSpec())
-                    .collect(Collectors.toList());
-
-            Minecraft.getInstance().displayGuiScreen(new WidgetGuiConfig(null, configSpecs));
+            openConfigGuiForAll(null);
         } else {
             Optional<? extends ModContainer> optContainer = ModList.get().getModContainerById(packet.modId);
             if(optContainer.isPresent()) {
