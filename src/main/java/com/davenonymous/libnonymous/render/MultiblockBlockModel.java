@@ -52,6 +52,19 @@ public class MultiblockBlockModel {
         }
     }
 
+    public void removeBlockState(BlockState state) {
+        Map<BlockPos, BlockState> newBlocks = new HashMap<>();
+        for(Map.Entry<BlockPos, BlockState> entry : this.blocks.entrySet()) {
+            if(entry.getValue().equals(state)) {
+                continue;
+            }
+
+            newBlocks.put(entry.getKey(), entry.getValue());
+        }
+
+        this.setBlocks(newBlocks);
+    }
+
     public void setBlocks(Map<BlockPos, BlockState> blocks) {
         this.blocks = blocks;
         width = 0;
