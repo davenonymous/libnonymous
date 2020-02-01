@@ -223,20 +223,19 @@ public class WidgetList extends WidgetPanel {
             Logz.warn("List has an entry larger than the list itself. This will cause problems.", widget);
         }
 
-        final int line = this.children.size();
         widget.addListener(MouseClickEvent.class, (event, clickedWidget) -> {
-            if(this.selected == line) {
+            if(this.selected == this.children.indexOf(widget)) {
                 this.selected = -1;
                 widget.setSelected(false);
             } else {
-                if(this.selected != -1) {
+                if(this.selected != -1 && this.selected < this.children.size()) {
                     Widget oldSelection = this.children.get(selected);
                     if(oldSelection instanceof ISelectable) {
                         ((ISelectable) oldSelection).setSelected(false);
                     }
                 }
 
-                this.selected = line;
+                this.selected = this.children.indexOf(widget);
                 widget.setSelected(true);
             }
 
@@ -248,6 +247,12 @@ public class WidgetList extends WidgetPanel {
         super.add(widget);
 
         updateWidgets();
+    }
+
+    @Override
+    public void remove(Widget widget) {
+        super.remove(widget);
+        this.updateWidgets();
     }
 
     public void updateWidgets() {
