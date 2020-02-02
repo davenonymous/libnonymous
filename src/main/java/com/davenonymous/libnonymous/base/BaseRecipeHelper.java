@@ -7,9 +7,8 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BaseRecipeHelper<T extends RecipeData> {
@@ -44,6 +43,10 @@ public class BaseRecipeHelper<T extends RecipeData> {
 
     public Map<ResourceLocation, IRecipe<?>> getRecipes(RecipeManager manager) {
         return RecipeHelper.getRecipes(manager, recipeType);
+    }
+
+    public List<T> getRecipesList(RecipeManager manager) {
+        return getRecipeStream(manager).collect(Collectors.toList());
     }
 
     public T getRandomRecipe(RecipeManager manager, Random rand) {
