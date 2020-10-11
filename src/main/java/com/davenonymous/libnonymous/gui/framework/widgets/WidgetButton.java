@@ -136,7 +136,8 @@ public class WidgetButton extends Widget {
 
     protected void drawString(Screen screen, FontRenderer renderer) {
         int color = 0xFFFFFF;
-        screen.drawCenteredString(renderer, unlocalizedLabel, width / 2, (height - 8) / 2, color);
+        //TODO
+        //screen.drawCenteredString(renderer, unlocalizedLabel, width / 2, (height - 8) / 2, color);
     }
 
     /**

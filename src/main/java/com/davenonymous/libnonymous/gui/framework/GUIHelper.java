@@ -10,14 +10,17 @@ import net.minecraft.client.renderer.BufferBuilder;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
 public class GUIHelper {
-    public static void drawSplitStringCentered(String str, Screen screen, int x, int y, int width, int color) {
+    public void drawSplitStringCentered(String str, Screen screen, int x, int y, int width, int color) {
         FontRenderer renderer = screen.getMinecraft().fontRenderer;
         int yOffset = 0;
-        for(String row : renderer.listFormattedStringToWidth(str, width)) {
-            screen.drawCenteredString(renderer, row, x + width/2, y + yOffset, color);
+        for(IReorderingProcessor row : renderer.trimStringToWidth(new StringTextComponent(str), width)) {
+            //TODO
+            //screen.drawCenteredString(renderer, row, x + width/2, y + yOffset, color);
             yOffset += renderer.FONT_HEIGHT;
         }
     }

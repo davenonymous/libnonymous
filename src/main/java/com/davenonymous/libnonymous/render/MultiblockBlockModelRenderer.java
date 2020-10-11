@@ -43,7 +43,7 @@ public class MultiblockBlockModelRenderer {
                     // TODO: Hacks hack hacks. Clean this up, make ambient occlusion work, use proper world references
                     AmbientOcclusionStatus before = Minecraft.getInstance().gameSettings.ambientOcclusionStatus;
                     Minecraft.getInstance().gameSettings.ambientOcclusionStatus = AmbientOcclusionStatus.OFF;
-                    brd.renderModel(state, modelWorld.getContextPos(), modelWorld.getContextWorld(), matrix, buffer.getBuffer(RenderType.cutout()), false, rand, EmptyModelData.INSTANCE);
+                    brd.renderModel(state, modelWorld.getContextPos(), modelWorld.getContextWorld(), matrix, buffer.getBuffer(RenderType.getCutout()), false, rand, EmptyModelData.INSTANCE);
                     Minecraft.getInstance().gameSettings.ambientOcclusionStatus = before;
                 } else {
                     brd.renderBlock(state, matrix, buffer, light, overlay, EmptyModelData.INSTANCE);

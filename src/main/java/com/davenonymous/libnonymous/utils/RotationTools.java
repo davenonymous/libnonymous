@@ -15,7 +15,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,7 +30,7 @@ public class RotationTools {
     private static ResourceLocation arrowImage;
 
     @OnlyIn(Dist.CLIENT)
-    public static void renderArrowOnGround(Vec3d hitPosition, BlockPos drawPosition, float partialTicks, MatrixStack matrix) {
+    public static void renderArrowOnGround(Vector3d hitPosition, BlockPos drawPosition, float partialTicks, MatrixStack matrix) {
         Direction facing = RotationTools.getFacingByTriangle(hitPosition);
 
         RotationTools.TextureRotationList rotList = new RotationTools.TextureRotationList();
@@ -91,14 +92,14 @@ public class RotationTools {
             return null;
         }
 
-        Vec3d hitPosition = trace.getHitVec();
+        Vector3d hitPosition = trace.getHitVec();
 
-        hitPosition = hitPosition.subtract(new Vec3d(trace.getPos()));
+        hitPosition = hitPosition.subtract(new Vector3d(new Vector3f()));//trace.getPos()
         hitPosition = hitPosition.subtract(0.5d, 0.5d, 0.5d);
         return getFacingByTriangle(hitPosition);
     }
 
-    public static Direction getFacingByTriangle(Vec3d vec) {
+    public static Direction getFacingByTriangle(Vector3d vec) {
         if(vec.z > 0) {
             if(vec.x < 0) {
                 // Quadrant 1

@@ -8,7 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -25,7 +25,7 @@ public class BlockStateSerializationHelper {
         if(state.getProperties().size() > 0) {
             CompoundNBT propertiesTag = new CompoundNBT();
 
-            for (final IProperty property : state.getProperties()) {
+            for (final Property property : state.getProperties()) {
                 propertiesTag.putString(property.getName(), state.get(property).toString());
             }
 
@@ -52,7 +52,7 @@ public class BlockStateSerializationHelper {
         if(nbt.contains("properties")) {
             CompoundNBT propertiesTag = nbt.getCompound("properties");
             for(String propertyName : propertiesTag.keySet()) {
-                final IProperty blockProperty = block.getStateContainer().getProperty(propertyName);
+                final Property blockProperty = block.getStateContainer().getProperty(propertyName);
                 if(blockProperty == null) {
                     Logz.warn("The property '{}' is not valid for block {}", propertyName, blockId);
                     continue;
@@ -80,10 +80,10 @@ public class BlockStateSerializationHelper {
     public static void serializeBlockState(PacketBuffer buffer, BlockState state) {
         buffer.writeResourceLocation(state.getBlock().getRegistryName());
 
-        final Collection<IProperty<?>> properties = state.getProperties();
+        final Collection<Property<?>> properties = state.getProperties();
         buffer.writeInt(properties.size());
 
-        for (final IProperty property : properties) {
+        for (final Property property : properties) {
             buffer.writeString(property.getName());
             buffer.writeString(state.get(property).toString());
         }
@@ -102,7 +102,7 @@ public class BlockStateSerializationHelper {
                 final String value = buffer.readString();
 
                 // Check the block for the property. Keys = property names.
-                final IProperty blockProperty = block.getStateContainer().getProperty(propName);
+                final Property blockProperty = block.getStateContainer().getProperty(propName);
 
                 if (blockProperty != null) {
                     // Attempt to parse the value with the the property.
@@ -133,7 +133,7 @@ public class BlockStateSerializationHelper {
         if(state.getProperties().size() > 0) {
             JsonObject propertiesObj = new JsonObject();
 
-            for (final IProperty property : state.getProperties()) {
+            for (final Property property : state.getProperties()) {
                 propertiesObj.addProperty(property.getName(), state.get(property).toString());
             }
 
@@ -179,7 +179,7 @@ public class BlockStateSerializationHelper {
                 for (final Map.Entry<String, JsonElement> property : props.entrySet()) {
 
                     // Check the block for the property. Keys = property names.
-                    final IProperty blockProperty = block.getStateContainer().getProperty(property.getKey());
+                    final Property blockProperty = block.getStateContainer().getProperty(property.getKey());
 
                     if (blockProperty != null) {
 

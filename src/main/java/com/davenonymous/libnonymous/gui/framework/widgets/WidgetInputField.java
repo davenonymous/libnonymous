@@ -6,6 +6,7 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.google.common.base.Predicates;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -87,8 +89,7 @@ public class WidgetInputField extends WidgetWithValue<String> {
         }
     }
 
-    @Override
-    public void draw(Screen screen) {
+    public void draw(Screen screen, MatrixStack matrixStack) {
         super.draw(screen);
 
         int renderX = 0;
@@ -96,14 +97,14 @@ public class WidgetInputField extends WidgetWithValue<String> {
 
         if (this.isVisible()) {
             if (this.enableBackgroundDrawing) {
-                fill(renderX - 1, renderY - 1, renderX + this.width + 1, renderY + this.height + 1, -6250336);
-                fill(renderX, renderY, renderX + this.width, renderY + this.height, -16777216);
+                fill(matrixStack, renderX - 1, renderY - 1, renderX + this.width + 1, renderY + this.height + 1, -6250336);
+                fill(matrixStack, renderX, renderY, renderX + this.width, renderY + this.height, -16777216);
             }
 
             int i = this.enabled ? this.enabledColor : this.disabledColor;
             int j = this.cursorPosition - this.lineScrollOffset;
             int k = this.selectionEnd - this.lineScrollOffset;
-            String s = this.fontRenderer.trimStringToWidth(this.value.substring(this.lineScrollOffset), this.getAdjustedWidth());
+            String s = this.fontRenderer.trimStringToWidth(new StringTextComponent(this.value.substring(this.lineScrollOffset)), this.getAdjustedWidth()).toString();
             boolean flag = j >= 0 && j <= s.length();
             boolean flag1 = this.isFocused() && this.cursorCounter / 6 % 2 == 0 && flag;
             int l = this.enableBackgroundDrawing ? renderX + 4 : renderX;
@@ -115,7 +116,7 @@ public class WidgetInputField extends WidgetWithValue<String> {
 
             if (!s.isEmpty()) {
                 String s1 = flag ? s.substring(0, j) : s;
-                j1 = this.fontRenderer.drawStringWithShadow(this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i);
+                j1 = this.fontRenderer.drawStringWithShadow(matrixStack, this.textFormatter.apply(s1, this.lineScrollOffset), (float)l, (float)i1, i);
             }
 
             boolean flag2 = this.cursorPosition < this.value.length() || this.value.length() >= this.maxStringLength;
@@ -128,18 +129,18 @@ public class WidgetInputField extends WidgetWithValue<String> {
             }
 
             if (!s.isEmpty() && flag && j < s.length()) {
-                this.fontRenderer.drawStringWithShadow(this.textFormatter.apply(s.substring(j), this.cursorPosition), (float)j1, (float)i1, i);
+                this.fontRenderer.drawStringWithShadow(matrixStack, this.textFormatter.apply(s.substring(j), this.cursorPosition), (float)j1, (float)i1, i);
             }
 
             if (!flag2 && this.suggestion != null) {
-                this.fontRenderer.drawStringWithShadow(this.suggestion, (float)(k1 - 1), (float)i1, -8355712);
+                this.fontRenderer.drawStringWithShadow(matrixStack, this.suggestion, (float)(k1 - 1), (float)i1, -8355712);
             }
 
             if (flag1) {
                 if (flag2) {
-                    fill(k1, i1 - 1, k1 + 1, i1 + 1 + 9, -3092272);
+                    fill(matrixStack, k1, i1 - 1, k1 + 1, i1 + 1 + 9, -3092272);
                 } else {
-                    this.fontRenderer.drawStringWithShadow("_", (float)k1, (float)i1, i);
+                    this.fontRenderer.drawStringWithShadow(matrixStack, "_", (float)k1, (float)i1, i);
                 }
             }
 
@@ -505,8 +506,8 @@ public class WidgetInputField extends WidgetWithValue<String> {
                     i -= 4;
                 }
 
-                String s = this.fontRenderer.trimStringToWidth(this.value.substring(this.lineScrollOffset), this.getAdjustedWidth());
-                this.setCursorPosition(this.fontRenderer.trimStringToWidth(s, i).length() + this.lineScrollOffset);
+                String s = this.fontRenderer.trimStringToWidth(new StringTextComponent(this.value.substring(this.lineScrollOffset)), this.getAdjustedWidth()).toString();
+                this.setCursorPosition(this.fontRenderer.trimStringToWidth(new StringTextComponent(s), i).toString().length() + this.lineScrollOffset);
                 return true;
             } else {
                 return false;
@@ -536,10 +537,10 @@ public class WidgetInputField extends WidgetWithValue<String> {
             }
 
             int j = this.getAdjustedWidth();
-            String s = this.fontRenderer.trimStringToWidth(this.value.substring(this.lineScrollOffset), j);
+            String s = this.fontRenderer.trimStringToWidth(new StringTextComponent(this.value.substring(this.lineScrollOffset)), j).toString();
             int k = s.length() + this.lineScrollOffset;
             if (this.selectionEnd == this.lineScrollOffset) {
-                this.lineScrollOffset -= this.fontRenderer.trimStringToWidth(this.value, j, true).length();
+                this.lineScrollOffset -= this.fontRenderer.trimStringToWidth(new StringTextComponent(this.value), j).toString().length();
             }
 
             if (this.selectionEnd > k) {
