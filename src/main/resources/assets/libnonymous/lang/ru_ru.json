@@ -1,0 +1,15 @@
+{
+  "libnonymous.config.title": "Конфигурация",
+
+  "libnonymous.config.gui.label.config": "Конфигурация",
+  "libnonymous.config.gui.label.category": "Категория",
+  "libnonymous.config.gui.label.settings": "Настройки",
+  "libnonymous.config.gui.label.separate_with_commas": "(отдельно запятые)",
+  "libnonymous.config.gui.tooltip.default_is": "Значение по умолчанию:",
+  "libnonymous.config.gui.label.mods": "Моды...",
+
+  "libnonymous.config.error.invalid_enum": "Недействительное перечисленное значение",
+  "libnonymous.config.error.invalid_decimal": "Недействительное десятичное число",
+  "libnonymous.config.error.no_native_menu_exists": "Извините, для этого мода не существует никакого собственного меню.",
+  "libnonymous.config.error.unsupported_config_type": "Извините, этот тип конфигурации не поддерживается."
+}
