@@ -68,7 +68,8 @@ public class Widget {
     }
 
     public List<String> getTooltipAsString() {
-        return getTooltip().stream().map(t -> t.getFormattedText()).collect(Collectors.toList());
+        //TODO Maybe false
+        return getTooltip().stream().map(t -> t.func_241878_f().toString()).collect(Collectors.toList());
     }
 
     public List<ITextComponent> getTooltip() {

@@ -11,6 +11,7 @@ import com.davenonymous.libnonymous.utils.Logz;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 
@@ -171,13 +172,15 @@ public class WidgetList extends WidgetPanel {
         int scrollbarWidth = drawScrollbar ? 8 : 0;
 
         int listWidth = width-scrollbarWidth;
-        GuiUtils.drawGradientRect(0, 0, 0, listWidth, height, borderColor, borderColor);
-        GuiUtils.drawGradientRect(0, 1, 1, listWidth-1, height-1, backgroundColor, backgroundColor);
+
+        GuiUtils.drawGradientRect(Matrix4f.makeTranslate(0,0,0), 0, 0, 0, listWidth, height, borderColor, borderColor);
+        GuiUtils.drawGradientRect(Matrix4f.makeTranslate(0,0,0), 0, 1, 1, listWidth-1, height-1, backgroundColor, backgroundColor);
 
         // Draw scrollbars
         if(drawScrollbar) {
             int scrollBarX = listWidth + 1;
-            GuiUtils.drawGradientRect(0, scrollBarX, 0, listWidth + scrollbarWidth, height, backgroundColor, backgroundColor);
+
+            GuiUtils.drawGradientRect(Matrix4f.makeTranslate(0,0,0), 0, scrollBarX, 0, listWidth + scrollbarWidth, height, backgroundColor, backgroundColor);
 
             int linesBefore = lineOffset;
             int linesAfter = getTotalLines() - lastVisibleLine - 1;
@@ -193,7 +196,8 @@ public class WidgetList extends WidgetPanel {
             if(topOffset == 0) {
                 topOffset = 1;
             }
-            GuiUtils.drawGradientRect(0, scrollBarX+1, topOffset, listWidth + scrollbarWidth -1, topOffset+paddleHeight, scrollColor, scrollColor);
+
+            GuiUtils.drawGradientRect(Matrix4f.makeTranslate(0,0,0), 0, scrollBarX+1, topOffset, listWidth + scrollbarWidth -1, topOffset+paddleHeight, scrollColor, scrollColor);
         }
 
         //Logz.info("Rendering lines %d to %d", lineOffset, lastVisibleLine);
@@ -208,7 +212,7 @@ public class WidgetList extends WidgetPanel {
 
             Widget selectedWidget = this.children.get(selected);
 
-            GuiUtils.drawGradientRect(0, 1, yOffset+1, listWidth-1, yOffset+1+selectedWidget.height-1, selectedBackgroundColor, selectedBackgroundColor);
+            GuiUtils.drawGradientRect(Matrix4f.makeTranslate(0,0,0), 0, 1, yOffset+1, listWidth-1, yOffset+1+selectedWidget.height-1, selectedBackgroundColor, selectedBackgroundColor);
         }
 
 

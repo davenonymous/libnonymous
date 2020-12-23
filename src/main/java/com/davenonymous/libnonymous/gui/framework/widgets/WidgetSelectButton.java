@@ -134,6 +134,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 
     protected void drawButtonContent(Screen screen, FontRenderer fontrenderer) {
         int color = 0xEEEEEE;
-        screen.drawCenteredString(fontrenderer, getValue().toString(), width / 2, (height - 8) / 2, color);
+        //TODO
+        //screen.drawCenteredString(fontrenderer, getValue().toString(), width / 2, (height - 8) / 2, color);
     }
 }

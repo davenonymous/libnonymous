@@ -18,7 +18,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -143,9 +142,9 @@ public final class MCJsonUtils {
         return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.PAINTING_TYPES);
     }
 
-    public static ModDimension getDimension (JsonObject json, String memberName) {
+    /*public static ModDimension getDimension (JsonObject json, String memberName) {
 
         return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.MOD_DIMENSIONS);
-    }
+    }*/
 
 }

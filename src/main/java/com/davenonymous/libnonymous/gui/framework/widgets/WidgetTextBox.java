@@ -55,7 +55,8 @@ public class WidgetTextBox extends Widget {
         }
         GL11.glScissor(getActualX() * scale, bottomOffset+2, width*scale, heightTmp);
 
-        screen.getMinecraft().fontRenderer.drawSplitString(text, 0, 0, width, textColor);
+        //TODO
+        //screen.getMinecraft().fontRenderer.drawSplitString(text, 0, 0, width, textColor);
 
         RenderSystem.disableBlend();
 

@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 
@@ -15,7 +16,7 @@ public class WidgetCheckbox extends WidgetSelectButton<Boolean> {
     @Override
     protected void drawButtonContent(Screen screen, FontRenderer fontrenderer) {
         if(this.getValue()) {
-            fontrenderer.drawString("x", 2.2f, 0.3f, 0xEEEEEE);
+            fontrenderer.drawString(new MatrixStack(), "x", 2.2f, 0.3f, 0xEEEEEE);
         }
     }
 }

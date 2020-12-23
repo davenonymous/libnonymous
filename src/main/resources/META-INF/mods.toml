@@ -6,7 +6,7 @@ loaderVersion="[28,)" #mandatory (28 is current forge version)
 
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/thraaawn/libnonymous/issues/" #optional
-
+license="MIT"
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
@@ -52,7 +52,7 @@ gui widget framework.
     mandatory=true #mandatory
 
     # The version range of the dependency
-    versionRange="[31,)" #mandatory
+    versionRange="[34,)" #mandatory
 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
@@ -64,6 +64,6 @@ gui widget framework.
 [[dependencies.libnonymous]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.3,1.17)"
     ordering="NONE"
     side="BOTH"

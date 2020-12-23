@@ -10,6 +10,7 @@ import com.davenonymous.libnonymous.gui.framework.widgets.WidgetTextBox;
 import com.davenonymous.libnonymous.utils.FontAwesomeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -47,7 +48,7 @@ public abstract class SettingListEntry extends WidgetListEntry {
             comment = "";
         }
 
-        String trimmedComment = Minecraft.getInstance().fontRenderer.trimStringToWidth(comment, availableSpaceForText-13);
+        String trimmedComment = Minecraft.getInstance().fontRenderer.trimStringToWidth(new StringTextComponent(comment), availableSpaceForText-13).toString();
         if(trimmedComment.length() < comment.length()) {
             trimmedComment += "...";
         }

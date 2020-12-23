@@ -4,15 +4,19 @@ import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.widgets.IValueProvider;
 import com.davenonymous.libnonymous.gui.framework.widgets.Widget;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetPanel;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GUI extends WidgetPanel {
@@ -109,13 +113,13 @@ public class GUI extends WidgetPanel {
         GUIHelper.drawStretchedTexture(xOffset+4, 4, width - 8, this.height - 8, texOffsetX + 4, texOffsetY+4, 64, 64);
     }
 
-    public void drawTooltips(Screen screen, int mouseX, int mouseY) {
+    public void drawTooltips(MatrixStack matrixStack, Screen screen, int mouseX, int mouseY) {
         Widget hoveredWidget = getHoveredWidget(mouseX, mouseY);
         FontRenderer font = screen.getMinecraft().fontRenderer;
 
         if(hoveredWidget != null && hoveredWidget.getTooltip() != null) {
             if(hoveredWidget.getTooltip().size() > 0) {
-                GuiUtils.drawHoveringText(hoveredWidget.getTooltipAsString(), mouseX, mouseY, width, height, 180, font);
+                GuiUtils.drawHoveringText(matrixStack, (List<? extends ITextProperties>) new StringTextComponent(hoveredWidget.getTooltipAsString().toString()), mouseX, mouseY, width, height, 180, font);
             }/* else {
                 List<String> tooltips = new ArrayList<>();
                 tooltips.add(hoveredWidget.toString());
