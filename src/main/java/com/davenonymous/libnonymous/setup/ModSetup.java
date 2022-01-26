@@ -1,11 +1,10 @@
 package com.davenonymous.libnonymous.setup;
 
 import com.davenonymous.libnonymous.network.Networking;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class ModSetup {
-    public void init() {
-        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        Networking.registerMessages();
-    }
+	public static void init(FMLCommonSetupEvent event) {
+		Networking.registerMessages();
+	}
 }

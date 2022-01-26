@@ -1,99 +1,92 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
+
 import com.davenonymous.libnonymous.gui.framework.event.CharTypedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.KeyPressedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
+import com.davenonymous.libnonymous.helper.MathHelper;
 import com.google.common.base.Predicates;
-
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.SharedConstants;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import static net.minecraft.client.gui.AbstractGui.fill;
-
 public class WidgetInputField extends WidgetWithValue<String> {
-    private boolean hasShiftKeyDown;
-    private int cursorPosition;
-    private int lineScrollOffset;
-    private int selectionEnd;
-    private int enabledColor = 14737632;
-    private int disabledColor = 7368816;
-    private int maxStringLength = 128;
-    private String suggestion;
-    private int cursorCounter;
-    private Predicate<String> validator = Predicates.alwaysTrue();
-    private final FontRenderer fontRenderer;
-    private boolean enableBackgroundDrawing = true;
-    private boolean canLoseFocus = true;
-    private BiFunction<String, Integer, String> textFormatter = (p_195610_0_, p_195610_1_) -> {
-        return p_195610_0_;
-    };
+	private boolean hasShiftKeyDown;
+	private int cursorPosition;
+	private int lineScrollOffset;
+	private int selectionEnd;
+	private int enabledColor = 14737632;
+	private int disabledColor = 7368816;
+	private int maxStringLength = 128;
+	private String suggestion;
+	private int cursorCounter;
+	private Predicate<String> validator = Predicates.alwaysTrue();
+	private final Font fontRenderer;
+	private boolean enableBackgroundDrawing = true;
+	private boolean canLoseFocus = true;
+	private BiFunction<String, Integer, String> textFormatter = (p_195610_0_, p_195610_1_) -> {
+		return p_195610_0_;
+	};
 
-    public WidgetInputField() {
-        fontRenderer = Minecraft.getInstance().fontRenderer;
-        this.lineScrollOffset = 0;
-        this.value = "";
+	public WidgetInputField() {
+		fontRenderer = Minecraft.getInstance().font;
+		this.lineScrollOffset = 0;
+		this.value = "";
 
-        this.addListener(KeyPressedEvent.class, (event, widget) -> {
-            boolean result = this.onKeyPressed(event.keyCode, event.scanCode, event.modifiers);
-            return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
-        });
+		this.addListener(KeyPressedEvent.class, (event, widget) -> {
+			boolean result = this.onKeyPressed(event.keyCode, event.scanCode, event.modifiers);
+			return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
+		});
 
-        this.addListener(MouseClickEvent.class, ((event, widget) -> {
-            boolean result = this.mouseClicked(event.x, event.y, event.button);
-            return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
-        }));
+		this.addListener(MouseClickEvent.class, ((event, widget) -> {
+			boolean result = this.mouseClicked(event.x, event.y, event.button);
+			return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
+		}));
 
-        this.addListener(CharTypedEvent.class, (event, widget) -> {
-            boolean result = this.charTyped(event.chr, event.scanCode);
-            return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
-        });
-    }
+		this.addListener(CharTypedEvent.class, (event, widget) -> {
+			boolean result = this.charTyped(event.chr, event.scanCode);
+			return !result ? WidgetEventResult.CONTINUE_PROCESSING : WidgetEventResult.HANDLED;
+		});
+	}
 
-    public WidgetInputField setValidator(Predicate<String> validator) {
-        this.validator = validator;
-        return this;
-    }
+	public WidgetInputField setValidator(Predicate<String> validator) {
+		this.validator = validator;
+		return this;
+	}
 
-    public WidgetInputField setMaxStringLength(int maxStringLength) {
-        this.maxStringLength = maxStringLength;
-        return this;
-    }
+	public WidgetInputField setMaxStringLength(int maxStringLength) {
+		this.maxStringLength = maxStringLength;
+		return this;
+	}
 
-    public boolean charTyped(char chr, int scanCode) {
-        if (!this.isFocused()) {
-            return false;
-        } else if (SharedConstants.isAllowedCharacter(chr)) {
-            if (this.enabled) {
-                this.writeText(Character.toString(chr));
-            }
+	public boolean charTyped(char chr, int scanCode) {
+		if(!this.isFocused()) {
+			return false;
+		} else if(SharedConstants.isAllowedChatCharacter(chr)) {
+			if(this.enabled) {
+				this.writeText(Character.toString(chr));
+			}
 
-            return true;
-        } else {
-            return false;
-        }
-    }
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    @Override
-    public void draw(Screen screen) {
-        super.draw(screen);
+	@Override
+	public void draw(PoseStack pPoseStack, Screen screen) {
+		super.draw(pPoseStack, screen);
 
-        int renderX = 0;
-        int renderY = 0;
+		int renderX = 0;
+		int renderY = 0;
 
+        /*
         if (this.isVisible()) {
             if (this.enableBackgroundDrawing) {
                 fill(renderX - 1, renderY - 1, renderX + this.width + 1, renderY + this.height + 1, -6250336);
@@ -151,35 +144,38 @@ public class WidgetInputField extends WidgetWithValue<String> {
             RenderSystem.enableAlphaTest();
             RenderSystem.enableBlend();
         }
-    }
+
+         */
+	}
 
 
-    /**
-     * Draws the blue selection box.
-     */
-    private void drawSelectionBox(int startX, int startY, int endX, int endY) {
-        if (startX < endX) {
-            int i = startX;
-            startX = endX;
-            endX = i;
-        }
+	/**
+	 * Draws the blue selection box.
+	 */
+	private void drawSelectionBox(PoseStack pPoseStack, int startX, int startY, int endX, int endY) {
+		if(startX < endX) {
+			int i = startX;
+			startX = endX;
+			endX = i;
+		}
 
-        if (startY < endY) {
-            int j = startY;
-            startY = endY;
-            endY = j;
-        }
+		if(startY < endY) {
+			int j = startY;
+			startY = endY;
+			endY = j;
+		}
 
-        if (endX > this.x + this.width) {
-            endX = this.x + this.width;
-        }
+		if(endX > this.x + this.width) {
+			endX = this.x + this.width;
+		}
 
-        if (startX > this.x + this.width) {
-            startX = this.x + this.width;
-        }
+		if(startX > this.x + this.width) {
+			startX = this.x + this.width;
+		}
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        /*
+        Tesselator tessellator = Tesselator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuilder();
         RenderSystem.color4f(0.0F, 0.0F, 255.0F, 255.0F);
         RenderSystem.disableTexture();
         RenderSystem.enableColorLogicOp();
@@ -192,365 +188,366 @@ public class WidgetInputField extends WidgetWithValue<String> {
         tessellator.draw();
         RenderSystem.disableColorLogicOp();
         RenderSystem.enableTexture();
-    }
+         */
+	}
 
-    public WidgetInputField setSuggestion(String suggestion) {
-        this.suggestion = suggestion;
-        return this;
-    }
+	public WidgetInputField setSuggestion(String suggestion) {
+		this.suggestion = suggestion;
+		return this;
+	}
 
-    /**
-     * Sets the text of the textbox, and moves the cursor to the end.
-     */
-    public void setText(String textIn) {
-        if (this.validator.test(textIn)) {
-            if (textIn.length() > this.maxStringLength) {
-                this.setValue(textIn.substring(0, this.maxStringLength));
-            } else {
-                this.setValue(textIn);
-            }
+	/**
+	 * Sets the text of the textbox, and moves the cursor to the end.
+	 */
+	public void setText(String textIn) {
+		if(this.validator.test(textIn)) {
+			if(textIn.length() > this.maxStringLength) {
+				this.setValue(textIn.substring(0, this.maxStringLength));
+			} else {
+				this.setValue(textIn);
+			}
 
-            this.setCursorPositionEnd();
-            this.setSelectionPos(this.cursorPosition);
-            this.lineScrollOffset = 0;
-        }
-    }
+			this.setCursorPositionEnd();
+			this.setSelectionPos(this.cursorPosition);
+			this.lineScrollOffset = 0;
+		}
+	}
 
-    /**
-     * Returns the contents of the textbox
-     */
-    public String getText() {
-        return this.value;
-    }
+	/**
+	 * Returns the contents of the textbox
+	 */
+	public String getText() {
+		return this.value;
+	}
 
-    /**
-     * returns the text between the cursor and selectionEnd
-     */
-    public String getSelectedText() {
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
-        return this.value.substring(i, j);
-    }
+	/**
+	 * returns the text between the cursor and selectionEnd
+	 */
+	public String getSelectedText() {
+		int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
+		int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+		return this.value.substring(i, j);
+	}
 
-    /**
-     * Moves the cursor to the very end of this text box.
-     */
-    public void setCursorPositionEnd() {
-        this.setCursorPosition(this.value.length());
-    }
-
-
-    /**
-     * Moves the text cursor by a specified number of characters and clears the selection
-     */
-    public void moveCursorBy(int num) {
-        this.setCursorPosition(this.cursorPosition + num);
-    }
-
-    /**
-     * Sets the current position of the cursor.
-     */
-    public void setCursorPosition(int pos) {
-        this.setClampedCursorPosition(pos);
-        if (!this.hasShiftKeyDown) {
-            this.setSelectionPos(this.cursorPosition);
-        }
-    }
-
-    /**
-     * Moves the cursor to the very start of this text box.
-     */
-    public void setCursorPositionZero() {
-        this.setCursorPosition(0);
-    }
-
-    public void setClampedCursorPosition(int pos) {
-        this.cursorPosition = MathHelper.clamp(pos, 0, this.value.length());
-    }
-
-    private boolean isFocused() {
-        return this.isVisible() && this.enabled && this.focused;
-    }
-
-    private void delete(int p_212950_1_) {
-        if (Screen.hasControlDown()) {
-            this.deleteWords(p_212950_1_);
-        } else {
-            this.deleteFromCursor(p_212950_1_);
-        }
-
-    }
-
-    /**
-     * Deletes the given number of words from the current cursor's position, unless there is currently a selection, in
-     * which case the selection is deleted instead.
-     */
-    public void deleteWords(int num) {
-        if (!this.value.isEmpty()) {
-            if (this.selectionEnd != this.cursorPosition) {
-                this.writeText("");
-            } else {
-                this.deleteFromCursor(this.getNthWordFromCursor(num) - this.cursorPosition);
-            }
-        }
-    }
-
-    /**
-     * Deletes the given number of characters from the current cursor's position, unless there is currently a selection,
-     * in which case the selection is deleted instead.
-     */
-    public void deleteFromCursor(int num) {
-        if (!this.value.isEmpty()) {
-            if (this.selectionEnd != this.cursorPosition) {
-                this.writeText("");
-            } else {
-                boolean flag = num < 0;
-                int i = flag ? this.cursorPosition + num : this.cursorPosition;
-                int j = flag ? this.cursorPosition : this.cursorPosition + num;
-                String s = "";
-                if (i >= 0) {
-                    s = this.value.substring(0, i);
-                }
-
-                if (j < this.value.length()) {
-                    s = s + this.value.substring(j);
-                }
-
-                if (this.validator.test(s)) {
-                    this.setValue(s);
-                    if (flag) {
-                        this.moveCursorBy(num);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the starting index of the word at the specified number of words away from the cursor position.
-     */
-    public int getNthWordFromCursor(int numWords) {
-        return this.getNthWordFromPos(numWords, this.cursorPosition);
-    }
-
-    /**
-     * Gets the starting index of the word at a distance of the specified number of words away from the given position.
-     */
-    private int getNthWordFromPos(int n, int pos) {
-        return this.getNthWordFromPosWS(n, pos, true);
-    }
-
-    /**
-     * Like getNthWordFromPos (which wraps this), but adds option for skipping consecutive spaces
-     */
-    private int getNthWordFromPosWS(int n, int pos, boolean skipWs) {
-        int i = pos;
-        boolean flag = n < 0;
-        int j = Math.abs(n);
-
-        for(int k = 0; k < j; ++k) {
-            if (!flag) {
-                int l = this.value.length();
-                i = this.value.indexOf(32, i);
-                if (i == -1) {
-                    i = l;
-                } else {
-                    while(skipWs && i < l && this.value.charAt(i) == ' ') {
-                        ++i;
-                    }
-                }
-            } else {
-                while(skipWs && i > 0 && this.value.charAt(i - 1) == ' ') {
-                    --i;
-                }
-
-                while(i > 0 && this.value.charAt(i - 1) != ' ') {
-                    --i;
-                }
-            }
-        }
-
-        return i;
-    }
-
-    /**
-     * Adds the given text after the cursor, or replaces the currently selected text if there is a selection.
-     */
-    public void writeText(String textToWrite) {
-        String s = "";
-        String s1 = SharedConstants.filterAllowedCharacters(textToWrite);
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
-        int k = this.maxStringLength - this.value.length() - (i - j);
-        if (!this.value.isEmpty()) {
-            s = s + this.value.substring(0, i);
-        }
-
-        int l;
-        if (k < s1.length()) {
-            s = s + s1.substring(0, k);
-            l = k;
-        } else {
-            s = s + s1;
-            l = s1.length();
-        }
-
-        if (!this.value.isEmpty() && j < this.value.length()) {
-            s = s + this.value.substring(j);
-        }
-
-        if (this.validator.test(s)) {
-            this.setValue(s);
-            this.setClampedCursorPosition(i + l);
-            this.setSelectionPos(this.cursorPosition);
-        }
-    }
-
-    private boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!this.isFocused()) {
-            return false;
-        } else {
-            if(keyCode == 69) {
-                return true;
-            }
-
-            this.hasShiftKeyDown = Screen.hasShiftDown();
-            if (Screen.isSelectAll(keyCode)) {
-                this.setCursorPositionEnd();
-                this.setSelectionPos(0);
-                return true;
-            } else if (Screen.isCopy(keyCode)) {
-                Minecraft.getInstance().keyboardListener.setClipboardString(this.getSelectedText());
-                return true;
-            } else if (Screen.isPaste(keyCode)) {
-                if (this.enabled) {
-                    this.writeText(Minecraft.getInstance().keyboardListener.getClipboardString());
-                }
-
-                return true;
-            } else if (Screen.isCut(keyCode)) {
-                Minecraft.getInstance().keyboardListener.setClipboardString(this.getSelectedText());
-                if (this.enabled) {
-                    this.writeText("");
-                }
-
-                return true;
-            } else {
-                switch(keyCode) {
-                    case 259:
-                        if (this.enabled) {
-                            this.hasShiftKeyDown = false;
-                            this.delete(-1);
-                            this.hasShiftKeyDown = Screen.hasShiftDown();
-                        }
-
-                        return true;
-                    case 260:
-                    case 264:
-                    case 265:
-                    case 266:
-                    case 267:
-                    default:
-                        return false;
-                    case 261:
-                        if (this.enabled) {
-                            this.hasShiftKeyDown = false;
-                            this.delete(1);
-                            this.hasShiftKeyDown = Screen.hasShiftDown();
-                        }
-
-                        return true;
-                    case 262:
-                        if (Screen.hasControlDown()) {
-                            this.setCursorPosition(this.getNthWordFromCursor(1));
-                        } else {
-                            this.moveCursorBy(1);
-                        }
-
-                        return true;
-                    case 263:
-                        if (Screen.hasControlDown()) {
-                            this.setCursorPosition(this.getNthWordFromCursor(-1));
-                        } else {
-                            this.moveCursorBy(-1);
-                        }
-
-                        return true;
-                    case 268:
-                        this.setCursorPositionZero();
-                        return true;
-                    case 269:
-                        this.setCursorPositionEnd();
-                        return true;
-                }
-            }
-        }
-    }
-
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        int thisX = this.getActualX();
-        int thisY = this.getActualY();
-
-        if (!this.isFocused()) {
-            return false;
-        } else {
-            boolean flag = mouseX >= (double)thisX && mouseX < (double)(thisX + this.width) && mouseY >= (double)thisY && mouseY < (double)(thisY + this.height);
-            if (this.canLoseFocus) {
-                this.focused = flag;
-            }
-
-            if (this.isFocused() && flag && mouseButton == 0) {
-                int i = MathHelper.floor(mouseX) - this.x;
-                if (this.enableBackgroundDrawing) {
-                    i -= 4;
-                }
-
-                String s = this.fontRenderer.trimStringToWidth(this.value.substring(this.lineScrollOffset), this.getAdjustedWidth());
-                this.setCursorPosition(this.fontRenderer.trimStringToWidth(s, i).length() + this.lineScrollOffset);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
+	/**
+	 * Moves the cursor to the very end of this text box.
+	 */
+	public void setCursorPositionEnd() {
+		this.setCursorPosition(this.value.length());
+	}
 
 
-    /**
-     * returns the width of the textbox depending on if background drawing is enabled
-     */
-    public int getAdjustedWidth() {
-        return this.enableBackgroundDrawing ? this.width - 8 : this.width;
-    }
+	/**
+	 * Moves the text cursor by a specified number of characters and clears the selection
+	 */
+	public void moveCursorBy(int num) {
+		this.setCursorPosition(this.cursorPosition + num);
+	}
+
+	/**
+	 * Sets the current position of the cursor.
+	 */
+	public void setCursorPosition(int pos) {
+		this.setClampedCursorPosition(pos);
+		if(!this.hasShiftKeyDown) {
+			this.setSelectionPos(this.cursorPosition);
+		}
+	}
+
+	/**
+	 * Moves the cursor to the very start of this text box.
+	 */
+	public void setCursorPositionZero() {
+		this.setCursorPosition(0);
+	}
+
+	public void setClampedCursorPosition(int pos) {
+		this.cursorPosition = MathHelper.clamp(pos, 0, this.value.length());
+	}
+
+	private boolean isFocused() {
+		return this.isVisible() && this.enabled && this.focused;
+	}
+
+	private void delete(int p_212950_1_) {
+		if(Screen.hasControlDown()) {
+			this.deleteWords(p_212950_1_);
+		} else {
+			this.deleteFromCursor(p_212950_1_);
+		}
+
+	}
+
+	/**
+	 * Deletes the given number of words from the current cursor's position, unless there is currently a selection, in
+	 * which case the selection is deleted instead.
+	 */
+	public void deleteWords(int num) {
+		if(!this.value.isEmpty()) {
+			if(this.selectionEnd != this.cursorPosition) {
+				this.writeText("");
+			} else {
+				this.deleteFromCursor(this.getNthWordFromCursor(num) - this.cursorPosition);
+			}
+		}
+	}
+
+	/**
+	 * Deletes the given number of characters from the current cursor's position, unless there is currently a selection,
+	 * in which case the selection is deleted instead.
+	 */
+	public void deleteFromCursor(int num) {
+		if(!this.value.isEmpty()) {
+			if(this.selectionEnd != this.cursorPosition) {
+				this.writeText("");
+			} else {
+				boolean flag = num < 0;
+				int i = flag ? this.cursorPosition + num : this.cursorPosition;
+				int j = flag ? this.cursorPosition : this.cursorPosition + num;
+				String s = "";
+				if(i >= 0) {
+					s = this.value.substring(0, i);
+				}
+
+				if(j < this.value.length()) {
+					s = s + this.value.substring(j);
+				}
+
+				if(this.validator.test(s)) {
+					this.setValue(s);
+					if(flag) {
+						this.moveCursorBy(num);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets the starting index of the word at the specified number of words away from the cursor position.
+	 */
+	public int getNthWordFromCursor(int numWords) {
+		return this.getNthWordFromPos(numWords, this.cursorPosition);
+	}
+
+	/**
+	 * Gets the starting index of the word at a distance of the specified number of words away from the given position.
+	 */
+	private int getNthWordFromPos(int n, int pos) {
+		return this.getNthWordFromPosWS(n, pos, true);
+	}
+
+	/**
+	 * Like getNthWordFromPos (which wraps this), but adds option for skipping consecutive spaces
+	 */
+	private int getNthWordFromPosWS(int n, int pos, boolean skipWs) {
+		int i = pos;
+		boolean flag = n < 0;
+		int j = Math.abs(n);
+
+		for(int k = 0; k < j; ++k) {
+			if(!flag) {
+				int l = this.value.length();
+				i = this.value.indexOf(32, i);
+				if(i == -1) {
+					i = l;
+				} else {
+					while(skipWs && i < l && this.value.charAt(i) == ' ') {
+						++i;
+					}
+				}
+			} else {
+				while(skipWs && i > 0 && this.value.charAt(i - 1) == ' ') {
+					--i;
+				}
+
+				while(i > 0 && this.value.charAt(i - 1) != ' ') {
+					--i;
+				}
+			}
+		}
+
+		return i;
+	}
+
+	/**
+	 * Adds the given text after the cursor, or replaces the currently selected text if there is a selection.
+	 */
+	public void writeText(String textToWrite) {
+		String s = "";
+		String s1 = SharedConstants.filterText(textToWrite);
+		int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
+		int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+		int k = this.maxStringLength - this.value.length() - (i - j);
+		if(!this.value.isEmpty()) {
+			s = s + this.value.substring(0, i);
+		}
+
+		int l;
+		if(k < s1.length()) {
+			s = s + s1.substring(0, k);
+			l = k;
+		} else {
+			s = s + s1;
+			l = s1.length();
+		}
+
+		if(!this.value.isEmpty() && j < this.value.length()) {
+			s = s + this.value.substring(j);
+		}
+
+		if(this.validator.test(s)) {
+			this.setValue(s);
+			this.setClampedCursorPosition(i + l);
+			this.setSelectionPos(this.cursorPosition);
+		}
+	}
+
+	private boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+		if(!this.isFocused()) {
+			return false;
+		} else {
+			if(keyCode == 69) {
+				return true;
+			}
+
+			this.hasShiftKeyDown = Screen.hasShiftDown();
+			if(Screen.isSelectAll(keyCode)) {
+				this.setCursorPositionEnd();
+				this.setSelectionPos(0);
+				return true;
+			} else if(Screen.isCopy(keyCode)) {
+				Minecraft.getInstance().keyboardHandler.setClipboard(this.getSelectedText());
+				return true;
+			} else if(Screen.isPaste(keyCode)) {
+				if(this.enabled) {
+					this.writeText(Minecraft.getInstance().keyboardHandler.getClipboard());
+				}
+
+				return true;
+			} else if(Screen.isCut(keyCode)) {
+				Minecraft.getInstance().keyboardHandler.setClipboard(this.getSelectedText());
+				if(this.enabled) {
+					this.writeText("");
+				}
+
+				return true;
+			} else {
+				switch(keyCode) {
+					case 259:
+						if(this.enabled) {
+							this.hasShiftKeyDown = false;
+							this.delete(-1);
+							this.hasShiftKeyDown = Screen.hasShiftDown();
+						}
+
+						return true;
+					case 260:
+					case 264:
+					case 265:
+					case 266:
+					case 267:
+					default:
+						return false;
+					case 261:
+						if(this.enabled) {
+							this.hasShiftKeyDown = false;
+							this.delete(1);
+							this.hasShiftKeyDown = Screen.hasShiftDown();
+						}
+
+						return true;
+					case 262:
+						if(Screen.hasControlDown()) {
+							this.setCursorPosition(this.getNthWordFromCursor(1));
+						} else {
+							this.moveCursorBy(1);
+						}
+
+						return true;
+					case 263:
+						if(Screen.hasControlDown()) {
+							this.setCursorPosition(this.getNthWordFromCursor(-1));
+						} else {
+							this.moveCursorBy(-1);
+						}
+
+						return true;
+					case 268:
+						this.setCursorPositionZero();
+						return true;
+					case 269:
+						this.setCursorPositionEnd();
+						return true;
+				}
+			}
+		}
+	}
+
+	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+		int thisX = this.getActualX();
+		int thisY = this.getActualY();
+
+		if(!this.isFocused()) {
+			return false;
+		} else {
+			boolean flag = mouseX >= (double) thisX && mouseX < (double) (thisX + this.width) && mouseY >= (double) thisY && mouseY < (double) (thisY + this.height);
+			if(this.canLoseFocus) {
+				this.focused = flag;
+			}
+
+			if(this.isFocused() && flag && mouseButton == 0) {
+				int i = (int) Math.floor(mouseX) - this.x;
+				if(this.enableBackgroundDrawing) {
+					i -= 4;
+				}
+
+				String s = this.fontRenderer.plainSubstrByWidth(this.value.substring(this.lineScrollOffset), this.getAdjustedWidth());
+				this.setCursorPosition(this.fontRenderer.plainSubstrByWidth(s, i).length() + this.lineScrollOffset);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 
-    /**
-     * Sets the position of the selection anchor (the selection anchor and the cursor position mark the edges of the
-     * selection). If the anchor is set beyond the bounds of the current text, it will be put back inside.
-     */
-    public void setSelectionPos(int position) {
-        int i = this.value.length();
-        this.selectionEnd = MathHelper.clamp(position, 0, i);
-        if (this.fontRenderer != null) {
-            if (this.lineScrollOffset > i) {
-                this.lineScrollOffset = i;
-            }
+	/**
+	 * returns the width of the textbox depending on if background drawing is enabled
+	 */
+	public int getAdjustedWidth() {
+		return this.enableBackgroundDrawing ? this.width - 8 : this.width;
+	}
 
-            int j = this.getAdjustedWidth();
-            String s = this.fontRenderer.trimStringToWidth(this.value.substring(this.lineScrollOffset), j);
-            int k = s.length() + this.lineScrollOffset;
-            if (this.selectionEnd == this.lineScrollOffset) {
-                this.lineScrollOffset -= this.fontRenderer.trimStringToWidth(this.value, j, true).length();
-            }
 
-            if (this.selectionEnd > k) {
-                this.lineScrollOffset += this.selectionEnd - k;
-            } else if (this.selectionEnd <= this.lineScrollOffset) {
-                this.lineScrollOffset -= this.lineScrollOffset - this.selectionEnd;
-            }
+	/**
+	 * Sets the position of the selection anchor (the selection anchor and the cursor position mark the edges of the
+	 * selection). If the anchor is set beyond the bounds of the current text, it will be put back inside.
+	 */
+	public void setSelectionPos(int position) {
+		int i = this.value.length();
+		this.selectionEnd = MathHelper.clamp(position, 0, i);
+		if(this.fontRenderer != null) {
+			if(this.lineScrollOffset > i) {
+				this.lineScrollOffset = i;
+			}
 
-            this.lineScrollOffset = MathHelper.clamp(this.lineScrollOffset, 0, i);
-        }
+			int j = this.getAdjustedWidth();
+			String s = this.fontRenderer.plainSubstrByWidth(this.value.substring(this.lineScrollOffset), j);
+			int k = s.length() + this.lineScrollOffset;
+			if(this.selectionEnd == this.lineScrollOffset) {
+				this.lineScrollOffset -= this.fontRenderer.plainSubstrByWidth(this.value, j, true).length();
+			}
 
-    }
+			if(this.selectionEnd > k) {
+				this.lineScrollOffset += this.selectionEnd - k;
+			} else if(this.selectionEnd <= this.lineScrollOffset) {
+				this.lineScrollOffset -= this.lineScrollOffset - this.selectionEnd;
+			}
+
+			this.lineScrollOffset = MathHelper.clamp(this.lineScrollOffset, 0, i);
+		}
+
+	}
 
 }

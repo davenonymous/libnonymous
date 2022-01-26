@@ -1,69 +1,74 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
+
 import com.davenonymous.libnonymous.gui.framework.GUI;
-import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 
 public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
-    public boolean hovered = false;
+	public boolean hovered = false;
 
-    public ResourceLocation backgroundTexture;
-    public TextureAtlasSprite atlasSprite;
+	public ResourceLocation backgroundTexture;
+	public TextureAtlasSprite atlasSprite;
 
-    public SoundEvent clickSound;
+	public SoundEvent clickSound;
 
-    public WidgetSelectButton() {
-        this.setHeight(20);
-        this.setWidth(100);
+	public WidgetSelectButton() {
+		this.setHeight(20);
+		this.setWidth(100);
 
-        this.clickSound = SoundEvents.UI_BUTTON_CLICK;
-        this.backgroundTexture = GUI.defaultButtonTexture;
-        this.addListener(MouseEnterEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = true; return WidgetEventResult.CONTINUE_PROCESSING; });
-        this.addListener(MouseExitEvent.class, (event, widget) -> {((WidgetSelectButton)widget).hovered = false; return WidgetEventResult.CONTINUE_PROCESSING; });
-        this.addListener(MouseClickEvent.class, ((event, widget) -> {
-            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(this.clickSound, 1.0F));
-            return WidgetEventResult.CONTINUE_PROCESSING;
-        }));
+		this.clickSound = SoundEvents.UI_BUTTON_CLICK;
+		this.backgroundTexture = GUI.defaultButtonTexture;
+		this.addListener(MouseEnterEvent.class, (event, widget) -> {
+			((WidgetSelectButton) widget).hovered = true;
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+		this.addListener(MouseExitEvent.class, (event, widget) -> {
+			((WidgetSelectButton) widget).hovered = false;
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+		this.addListener(MouseClickEvent.class, ((event, widget) -> {
+			Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(this.clickSound, 1.0F));
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		}));
 
-        // TODO: Add mouse scroll wheel functionality
+		// TODO: Add mouse scroll wheel functionality
 
-        this.addClickListener();
-    }
+		this.addClickListener();
+	}
 
-    public WidgetSelectButton<T> setClickSound(SoundEvent clickSound) {
-        this.clickSound = clickSound;
-        return this;
-    }
+	public WidgetSelectButton<T> setClickSound(SoundEvent clickSound) {
+		this.clickSound = clickSound;
+		return this;
+	}
 
-    public WidgetSelectButton<T> setBackgroundTexture(ResourceLocation backgroundTexture) {
-        this.backgroundTexture = backgroundTexture;
-        return this;
-    }
+	public WidgetSelectButton<T> setBackgroundTexture(ResourceLocation backgroundTexture) {
+		this.backgroundTexture = backgroundTexture;
+		return this;
+	}
 
-    public WidgetSelectButton<T> setAtlasSprite(TextureAtlasSprite atlasSprite) {
-        this.atlasSprite = atlasSprite;
-        return this;
-    }
+	public WidgetSelectButton<T> setAtlasSprite(TextureAtlasSprite atlasSprite) {
+		this.atlasSprite = atlasSprite;
+		return this;
+	}
 
 
-    @Override
-    public void draw(Screen screen) {
-        //Logz.info("Width: %d, height: %d", width, height);
+	@Override
+	public void draw(PoseStack pPoseStack, Screen screen) {
+		//Logz.info("Width: %d, height: %d", width, height);
+        /*
 
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
@@ -120,7 +125,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 
         FontRenderer fontrenderer = screen.getMinecraft().fontRenderer;
         RenderSystem.translatef(0.0f, 0.0f, 10.0f);
-        drawButtonContent(screen, fontrenderer);
+        drawButtonContent(pPoseStack, screen, fontrenderer);
         RenderSystem.translatef(0.0f, 0.0f, -10.0f);
 
         if(!enabled) {
@@ -130,10 +135,11 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
         }
 
         RenderSystem.popMatrix();
-    }
+         */
+	}
 
-    protected void drawButtonContent(Screen screen, FontRenderer fontrenderer) {
-        int color = 0xEEEEEE;
-        screen.drawCenteredString(fontrenderer, getValue().toString(), width / 2, (height - 8) / 2, color);
-    }
+	protected void drawButtonContent(PoseStack pPoseStack, Screen screen, Font fontrenderer) {
+		int color = 0xEEEEEE;
+		//screen.drawCenteredString(fontrenderer, getValue().toString(), width / 2, (height - 8) / 2, color);
+	}
 }

@@ -1,33 +1,20 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
-import com.davenonymous.libnonymous.Libnonymous;
-import com.davenonymous.libnonymous.render.MultiblockBlockModel;
-import com.davenonymous.libnonymous.render.MultiblockBlockModelRenderer;
-import com.davenonymous.libnonymous.render.RenderTickCounter;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import org.lwjgl.opengl.GL11;
+import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetMultiBlockModel extends Widget {
-    private MultiblockBlockModel model;
+	private MultiblockBlockModel model;
 
-    public WidgetMultiBlockModel(MultiblockBlockModel model) {
-        this.model = model;
-    }
+	public WidgetMultiBlockModel(MultiblockBlockModel model) {
+		this.model = model;
+	}
 
-    @Override
-    public void draw(Screen screen) {
+	@Override
+	public void draw(PoseStack pPoseStack, Screen screen) {
+        /*
         float angle = RenderTickCounter.renderTicks * 45.0f / 128.0f;
 
         RenderSystem.pushMatrix();
@@ -106,5 +93,6 @@ public class WidgetMultiBlockModel extends Widget {
         RenderSystem.disableBlend();
 
         RenderSystem.popMatrix();
-    }
+         */
+	}
 }

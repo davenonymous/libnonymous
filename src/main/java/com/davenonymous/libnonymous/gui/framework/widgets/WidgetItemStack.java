@@ -1,78 +1,63 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUI;
+import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraftforge.client.gui.GuiUtils;
 
 import java.util.Collections;
 
 public class WidgetItemStack extends WidgetWithValue<ItemStack> {
-    boolean drawSlot = false;
+	boolean drawSlot = false;
 
-    public WidgetItemStack(ItemStack stack) {
-        this.setSize(16, 16);
-        this.setValue(stack);
-    }
+	public WidgetItemStack(ItemStack stack) {
+		this.setSize(16, 16);
+		this.setValue(stack);
+	}
 
-    public WidgetItemStack(ItemStack stack, boolean drawSlot) {
-        this(stack);
-        this.drawSlot = drawSlot;
-    }
+	public WidgetItemStack(ItemStack stack, boolean drawSlot) {
+		this(stack);
+		this.drawSlot = drawSlot;
+	}
 
-    public void setValue(ItemStack stack) {
-        if(!stack.isEmpty()) {
-            ITooltipFlag.TooltipFlags tooltipFlag = Minecraft.getInstance().gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-            this.setTooltipLines(stack.getTooltip(Minecraft.getInstance().player, tooltipFlag));
-        } else {
-            this.setTooltipLines(Collections.emptyList());
-        }
+	public void setValue(ItemStack stack) {
+		if(!stack.isEmpty()) {
 
-        super.setValue(stack);
-    }
+			var tooltipFlag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+			this.setTooltipLines(stack.getTooltipLines(Minecraft.getInstance().player, tooltipFlag));
+		} else {
+			this.setTooltipLines(Collections.emptyList());
+		}
 
-    @Override
-    public void draw(Screen screen) {
-        super.draw(screen);
+		super.setValue(stack);
+	}
 
-        if(drawSlot) {
-            this.drawSlot(screen);
-        }
+	@Override
+	public void draw(PoseStack pPoseStack, Screen screen) {
+		super.draw(pPoseStack, screen);
 
-        if(this.value == null || this.value.isEmpty()) {
-            return;
-        }
+		if(drawSlot) {
+			this.drawSlot(pPoseStack, screen);
+		}
 
-        RenderSystem.pushMatrix();
+		if(this.value == null || this.value.isEmpty()) {
+			return;
+		}
 
-        RenderSystem.disableLighting();
-        RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-        RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
+		GUIHelper.renderGuiItem(this.value, getActualX(), getActualY(), !this.enabled);
+	}
 
-        double xScale = this.width / 16.0f;
-        double yScale = this.height / 16.0f;
+	private void drawSlot(PoseStack pPoseStack, Screen screen) {
+		RenderSystem.setShaderTexture(0, GUI.tabIcons);
 
-        RenderSystem.scaled(xScale, yScale, 1.0d);
+		int texOffsetY = 84;
+		int texOffsetX = 84;
 
-        Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(this.value, 0, 0);
-        RenderHelper.disableStandardItemLighting();
-
-        RenderSystem.popMatrix();
-    }
-
-    private void drawSlot(Screen screen) {
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1f);
-        screen.getMinecraft().textureManager.bindTexture(GUI.tabIcons);
-
-        int texOffsetY = 84;
-        int texOffsetX = 84;
-
-        GuiUtils.drawTexturedModalRect(-1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
-
-        RenderSystem.color4f(1f, 1f, 1f, 1f);
-    }
+		GuiUtils.drawTexturedModalRect(pPoseStack, -1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
+	}
 }

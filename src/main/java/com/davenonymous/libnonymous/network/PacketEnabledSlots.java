@@ -3,52 +3,53 @@ package com.davenonymous.libnonymous.network;
 import com.davenonymous.libnonymous.base.BasePacket;
 import com.davenonymous.libnonymous.gui.framework.WidgetSlot;
 import com.davenonymous.libnonymous.serialization.Sync;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.inventory.Slot;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class PacketEnabledSlots extends BasePacket {
-    @Sync
-    boolean[] enabledSlots;
+	@Sync
+	boolean[] enabledSlots;
 
-    public PacketEnabledSlots(List<Slot> slots) {
-        super();
-        this.enabledSlots = new boolean[slots.size()];
+	public PacketEnabledSlots(List<Slot> slots) {
+		super();
+		this.enabledSlots = new boolean[slots.size()];
 
-        int index = 0;
-        for(Slot slot : slots) {
-            this.enabledSlots[index] = slot.isEnabled();
-            index++;
-        }
-    }
+		int index = 0;
+		for(Slot slot : slots) {
+			if(slot instanceof WidgetSlot ws) {
+				this.enabledSlots[index] = ws.isEnabled();
+			}
+			index++;
+		}
+	}
 
-    public PacketEnabledSlots(boolean[] enabledSlots) {
-        super();
-        this.enabledSlots = enabledSlots;
-    }
+	public PacketEnabledSlots(boolean[] enabledSlots) {
+		super();
+		this.enabledSlots = enabledSlots;
+	}
 
-    public PacketEnabledSlots(PacketBuffer buf) {
-        super(buf);
-    }
+	public PacketEnabledSlots(FriendlyByteBuf buf) {
+		super(buf);
+	}
 
-    @Override
-    public void doWork(Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayerEntity serverPlayer = ctx.get().getSender();
-        int index = 0;
-        for(Slot slot : serverPlayer.openContainer.inventorySlots) {
-            if(slot instanceof WidgetSlot) {
-                if(index >= this.enabledSlots.length) {
-                    break;
-                }
+	@Override
+	public void doWork(Supplier<NetworkEvent.Context> ctx) {
+		var serverPlayer = ctx.get().getSender();
+		int index = 0;
+		for(Slot slot : serverPlayer.containerMenu.slots) {
+			if(slot instanceof WidgetSlot) {
+				if(index >= this.enabledSlots.length) {
+					break;
+				}
 
-                ((WidgetSlot) slot).setEnabled(this.enabledSlots[index]);
-            }
+				((WidgetSlot) slot).setEnabled(this.enabledSlots[index]);
+			}
 
-            index++;
-        }
-    }
+			index++;
+		}
+	}
 }

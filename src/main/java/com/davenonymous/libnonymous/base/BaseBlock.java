@@ -1,76 +1,62 @@
 package com.davenonymous.libnonymous.base;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class BaseBlock extends Block {
-    public BaseBlock(Properties properties) {
-        super(properties);
-    }
+public abstract class BaseBlock extends Block implements EntityBlock {
+	public BaseBlock(Properties properties) {
+		super(properties);
+	}
 
-    public void renderEffectOnHeldItem(PlayerEntity player, Hand mainHand, float partialTicks, MatrixStack matrix) {
 
-    }
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		if(!level.isClientSide()) {
+			return (lvl, pos, stt, te) -> {
+				if(te instanceof BaseBlockEntity blockEntity) {
+					blockEntity.tickServer();
+				}
+			};
+		} else {
+			return (lvl, pos, stt, te) -> {
+				if(te instanceof BaseBlockEntity blockEntity) {
+					blockEntity.tickClient();
+				}
+			};
+		}
+	}
 
-    @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(state, world, pos, neighbor);
 
-        if(world.isRemote()) {
-            return;
-        }
+	@Override
+	public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(world, pos, state, placer, stack);
 
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if(!(tileEntity instanceof BaseTileEntity)) {
-            return;
-        }
+		if(!(world.getBlockEntity(pos) instanceof BaseBlockEntity<?>)) {
+			return;
+		}
 
-        BaseTileEntity base = (BaseTileEntity) tileEntity;
-        int previous = base.getIncomingRedstonePower();
-        int now = base.getRedstonePowerFromNeighbors();
+		var baseTile = (BaseBlockEntity) world.getBlockEntity(pos);
+		baseTile.loadFromItem(stack);
+	}
 
-        if(now == 0) {
-            if(previous > 0) {
-                base.redstonePulse();
-            }
-        } else {
-            if(previous != now) {
-                base.redstoneChanged(previous, now);
-            }
-        }
-
-        base.setIncomingRedstonePower(now);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
-
-        if(!(world.getTileEntity(pos) instanceof BaseTileEntity)) {
-            return;
-        }
-
-        BaseTileEntity baseTile = (BaseTileEntity) world.getTileEntity(pos);
-        baseTile.loadFromItem(stack);
-    }
-
-    public static Direction getFacingFromEntity(BlockPos clickedBlock, LivingEntity entity, boolean horizontalOnly) {
-        Direction result = Direction.getFacingFromVector((float) (entity.getPosX() - clickedBlock.getX()), (float) (entity.getPosY() - clickedBlock.getY()), (float) (entity.getPosZ() - clickedBlock.getZ()));
-        if(horizontalOnly && (result == Direction.UP || result == Direction.DOWN)) {
-            return Direction.NORTH;
-        }
-        return result;
-    }
+	public static Direction getFacingFromEntity(BlockPos clickedBlock, LivingEntity entity, boolean horizontalOnly) {
+		var result = Direction.getNearest((float) (entity.getX() - clickedBlock.getX()), (float) (entity.getY() - clickedBlock.getY()), (float) (entity.getZ() - clickedBlock.getZ()));
+		if(horizontalOnly && (result == Direction.UP || result == Direction.DOWN)) {
+			return Direction.NORTH;
+		}
+		return result;
+	}
 }

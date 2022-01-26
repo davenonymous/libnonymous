@@ -1,20 +1,12 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
-import com.davenonymous.libnonymous.Libnonymous;
-import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.TabChangedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,133 +14,133 @@ import java.util.List;
 import java.util.Map;
 
 public class WidgetTabsPanel extends WidgetPanel {
-    private List<WidgetPanel> pages = new ArrayList<>();
-    private Map<WidgetPanel, ItemStack> pageStacks = new HashMap<>();
-    private Map<WidgetPanel, List<ITextComponent>> pageTooltips = new HashMap<>();
-    private TabDockEdge edge = TabDockEdge.WEST;
+	private List<WidgetPanel> pages = new ArrayList<>();
+	private Map<WidgetPanel, ItemStack> pageStacks = new HashMap<>();
+	private Map<WidgetPanel, List<Component>> pageTooltips = new HashMap<>();
+	private TabDockEdge edge = TabDockEdge.WEST;
 
-    private WidgetPanel activePanel = null;
+	private WidgetPanel activePanel = null;
 
-    public WidgetTabsPanel() {
-        super();
-    }
+	public WidgetTabsPanel() {
+		super();
+	}
 
-    public WidgetTabsPanel setEdge(TabDockEdge edge) {
-        this.edge = edge;
-        return this;
-    }
+	public WidgetTabsPanel setEdge(TabDockEdge edge) {
+		this.edge = edge;
+		return this;
+	}
 
-    public void addPage(WidgetPanel panel, ItemStack buttonStack) {
-        this.addPage(panel, buttonStack, null);
-    }
+	public void addPage(WidgetPanel panel, ItemStack buttonStack) {
+		this.addPage(panel, buttonStack, null);
+	}
 
-    public void addPage(WidgetPanel panel, ItemStack buttonStack, List<ITextComponent> tooltip) {
-        panel.setWidth(this.width);
-        panel.setHeight(this.height);
+	public void addPage(WidgetPanel panel, ItemStack buttonStack, List<Component> tooltip) {
+		panel.setWidth(this.width);
+		panel.setHeight(this.height);
 
-        pages.add(panel);
-        pageStacks.put(panel, buttonStack);
+		pages.add(panel);
+		pageStacks.put(panel, buttonStack);
 
-        if(activePanel == null) {
-            activePanel = panel;
-            activePanel.setVisible(true);
-        } else {
-            panel.setVisible(false);
-        }
+		if(activePanel == null) {
+			activePanel = panel;
+			activePanel.setVisible(true);
+		} else {
+			panel.setVisible(false);
+		}
 
-        if(tooltip != null) {
-            pageTooltips.put(panel, tooltip);
-        }
+		if(tooltip != null) {
+			pageTooltips.put(panel, tooltip);
+		}
 
-        this.add(panel);
-    }
+		this.add(panel);
+	}
 
-    public void setActivePage(int page) {
-        if(page < 0 || page >= pages.size()) {
-            return;
-        }
+	public void setActivePage(int page) {
+		if(page < 0 || page >= pages.size()) {
+			return;
+		}
 
-        activePanel.setVisible(false);
-        pages.get(page).setVisible(true);
+		activePanel.setVisible(false);
+		pages.get(page).setVisible(true);
 
-        WidgetPanel tmpOld = activePanel;
-        activePanel = pages.get(page);
+		WidgetPanel tmpOld = activePanel;
+		activePanel = pages.get(page);
 
-        this.fireEvent(new TabChangedEvent(tmpOld, pages.get(page)));
-    }
+		this.fireEvent(new TabChangedEvent(tmpOld, pages.get(page)));
+	}
 
-    public WidgetPanel getButtonsPanel() {
-        WidgetPanel result = new WidgetPanel();
-        int y = 0;
-        int x = edge == TabDockEdge.NORTH ? 4 : 0;
-        for(WidgetPanel page : pages) {
-            WidgetTabsButton button = new WidgetTabsButton(this, page, pageStacks.get(page), edge);
-            button.setPosition(x, y);
-            switch (edge) {
-                default:
-                case WEST:
-                    button.setSize(32, 28);
-                    y += 28;
-                    break;
-                case NORTH:
-                    button.setSize(31, 32);
-                    x += 31;
-                    break;
-            }
-            result.add(button);
+	public WidgetPanel getButtonsPanel() {
+		WidgetPanel result = new WidgetPanel();
+		int y = 0;
+		int x = edge == TabDockEdge.NORTH ? 4 : 0;
+		for(WidgetPanel page : pages) {
+			WidgetTabsButton button = new WidgetTabsButton(this, page, pageStacks.get(page), edge);
+			button.setPosition(x, y);
+			switch(edge) {
+				default:
+				case WEST:
+					button.setSize(32, 28);
+					y += 28;
+					break;
+				case NORTH:
+					button.setSize(31, 32);
+					x += 31;
+					break;
+			}
+			result.add(button);
 
-            if(pageTooltips.containsKey(page)) {
-                button.addTooltipLine(pageTooltips.get(page));
-            }
-        }
+			if(pageTooltips.containsKey(page)) {
+				button.addTooltipLine(pageTooltips.get(page));
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    public enum TabDockEdge {
-        WEST,
-        NORTH
-    }
+	public enum TabDockEdge {
+		WEST, NORTH
+	}
 
-    private static class WidgetTabsButton extends Widget {
-        WidgetTabsPanel parent;
-        WidgetPanel page;
-        ItemStack pageStack;
-        TabDockEdge edge;
+	private static class WidgetTabsButton extends Widget {
+		WidgetTabsPanel parent;
+		WidgetPanel page;
+		ItemStack pageStack;
+		TabDockEdge edge;
 
-        public WidgetTabsButton(WidgetTabsPanel parent, WidgetPanel page, ItemStack pageStack, TabDockEdge edge) {
-            this.parent = parent;
-            this.page = page;
-            this.pageStack = pageStack;
-            this.edge = edge;
+		public WidgetTabsButton(WidgetTabsPanel parent, WidgetPanel page, ItemStack pageStack, TabDockEdge edge) {
+			this.parent = parent;
+			this.page = page;
+			this.pageStack = pageStack;
+			this.edge = edge;
 
-            this.addListener(MouseClickEvent.class, (event, widget) -> {
-                setActive(true);
-                return WidgetEventResult.HANDLED;
-            });
-        }
+			this.addListener(MouseClickEvent.class, (event, widget) -> {
+				setActive(true);
+				return WidgetEventResult.HANDLED;
+			});
+		}
 
-        public void setActive(boolean fireEvent) {
-            parent.activePanel.setVisible(false);
-            page.setVisible(true);
-            WidgetPanel tmpOld = parent.activePanel;
-            parent.activePanel = page;
+		public void setActive(boolean fireEvent) {
+			parent.activePanel.setVisible(false);
+			page.setVisible(true);
+			WidgetPanel tmpOld = parent.activePanel;
+			parent.activePanel = page;
 
-            if(fireEvent) {
-                this.parent.fireEvent(new TabChangedEvent(tmpOld, page));
-            }
-        }
+			if(fireEvent) {
+				this.parent.fireEvent(new TabChangedEvent(tmpOld, page));
+			}
+		}
 
-        private boolean isActive() {
-            return this.parent.activePanel == this.page;
-        }
+		private boolean isActive() {
+			return this.parent.activePanel == this.page;
+		}
 
-        private boolean isFirst() {
-            return this.parent.pages.indexOf(this.page) == 0;
-        }
+		private boolean isFirst() {
+			return this.parent.pages.indexOf(this.page) == 0;
+		}
 
-        @Override
-        public void draw(Screen screen) {
+		@Override
+		public void draw(PoseStack pPoseStack, Screen screen) {
+            /*
             RenderSystem.pushMatrix();
 
             screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
@@ -197,6 +189,8 @@ public class WidgetTabsPanel extends WidgetPanel {
             RenderHelper.enableStandardItemLighting();
 
             RenderSystem.popMatrix();
-        }
-    }
+
+             */
+		}
+	}
 }

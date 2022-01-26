@@ -1,13 +1,13 @@
 package com.davenonymous.libnonymous.gui.framework;
 
-import com.davenonymous.libnonymous.Libnonymous;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import com.davenonymous.bonsaitrees3.BonsaiTrees3;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
@@ -17,187 +17,221 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WidgetContainer extends Container {
-    public static ResourceLocation SLOTGROUP_PLAYER = new ResourceLocation(Libnonymous.MODID, "player_slots");
+public class WidgetContainer extends AbstractContainerMenu {
+	public static ResourceLocation SLOTGROUP_PLAYER = new ResourceLocation(BonsaiTrees3.MODID, "player_slots");
 
-    private IItemHandler playerInventory;
-    private CircularPointedArrayList<ResourceLocation> slotGroups;
-    private Map<ResourceLocation, List<Integer>> slotGroupMap;
+	private IItemHandler playerInventory;
+	private CircularPointedArrayList<ResourceLocation> slotGroups;
+	private Map<ResourceLocation, List<Integer>> slotGroupMap;
+	private Map<ResourceLocation, List<ResourceLocation>> allowedSlotGroupQuickMoving;
 
-    private int nextSlotId = 0;
-    protected WidgetContainer(@Nullable ContainerType<?> type, int id, PlayerInventory inv) {
-        super(type, id);
+	private int nextSlotId = 0;
 
-        this.playerInventory = new InvWrapper(inv);
-        this.slotGroups = new CircularPointedArrayList<>();
-        this.slotGroupMap = new HashMap<>();
-    }
+	protected WidgetContainer(@Nullable MenuType<?> type, int id, Inventory inv) {
+		super(type, id);
 
-    @Override
-    protected Slot addSlot(Slot slotIn) {
-        if(!(slotIn instanceof WidgetSlot)) {
-            throw new RuntimeException("Only WidgetSlots are allowed in a WidgetContainer!");
-        }
+		this.playerInventory = new InvWrapper(inv);
+		this.slotGroups = new CircularPointedArrayList<>();
+		this.slotGroupMap = new HashMap<>();
+		this.allowedSlotGroupQuickMoving = new HashMap<>();
+	}
 
-        ResourceLocation slotGroupId = ((WidgetSlot)slotIn).getGroupId();
-        if(!this.slotGroups.contains(slotGroupId)) {
-            this.slotGroups.add(slotGroupId);
-        }
+	@Override
+	protected Slot addSlot(Slot slotIn) {
+		if(!(slotIn instanceof WidgetSlot)) {
+			throw new RuntimeException("Only WidgetSlots are allowed in a WidgetContainer!");
+		}
 
-        if(!this.slotGroupMap.containsKey(slotGroupId)) {
-            this.slotGroupMap.put(slotGroupId, new ArrayList<>());
-        }
+		ResourceLocation slotGroupId = ((WidgetSlot) slotIn).getGroupId();
+		if(!this.slotGroups.contains(slotGroupId)) {
+			this.slotGroups.add(slotGroupId);
+		}
 
-        this.slotGroupMap.get(slotGroupId).add(nextSlotId++);
-        return super.addSlot(slotIn);
-    }
+		if(!this.slotGroupMap.containsKey(slotGroupId)) {
+			this.slotGroupMap.put(slotGroupId, new ArrayList<>());
+		}
 
-    protected void lockSlot(int index) {
-        Slot slot = this.inventorySlots.get(index);
-        if(slot instanceof WidgetSlot) {
-            ((WidgetSlot) slot).setLocked(true);
-            this.inventorySlots.set(index, slot);
-        }
-    }
+		this.slotGroupMap.get(slotGroupId).add(nextSlotId++);
+		return super.addSlot(slotIn);
+	}
 
-    protected int addSlotRange(ResourceLocation id, IItemHandler handler, int index, int x, int y, int amount, int dx) {
-        for (int i = 0 ; i < amount ; i++) {
-            this.addSlot(new WidgetSlot(id, handler, index, x, y));
-            x += dx;
-            index++;
-        }
-        return index;
-    }
+	protected void allowSlotGroupMovement(ResourceLocation from, ResourceLocation to, boolean bidirectional) {
+		allowSlotGroupMovement(from, to);
+		if(bidirectional) {
+			allowSlotGroupMovement(to, from);
+		}
+	}
 
-    protected int addSlotBox(ResourceLocation id, IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0 ; j < verAmount ; j++) {
-            index = this.addSlotRange(id, handler, index, x, y, horAmount, dx);
-            y += dy;
-        }
-        return index;
-    }
+	protected void allowSlotGroupMovement(ResourceLocation from, ResourceLocation to) {
+		if(!this.allowedSlotGroupQuickMoving.containsKey(from)) {
+			this.allowedSlotGroupQuickMoving.put(from, new ArrayList<>());
+		}
 
-    protected void layoutPlayerInventorySlots(int leftCol, int topRow) {
-        // Player inventory
-        this.addSlotBox(SLOTGROUP_PLAYER, playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
+		this.allowedSlotGroupQuickMoving.get(from).add(to);
+	}
 
-        // Hotbar
-        topRow += 58;
-        this.addSlotRange(SLOTGROUP_PLAYER, playerInventory, 0, leftCol, topRow, 9, 18);
-    }
+	protected void lockSlot(int index) {
+		Slot slot = this.slots.get(index);
+		if(slot instanceof WidgetSlot) {
+			((WidgetSlot) slot).setLocked(true);
+			this.slots.set(index, slot);
+		}
+	}
 
-    private ArrayList<Integer> getTransferTargetSlots(ItemStack stack) {
-        ArrayList<Integer> result = new ArrayList<>();
-        for(int groupIndex = 0; groupIndex < this.slotGroups.size(); groupIndex++) {
-            ResourceLocation targetGroup = this.slotGroups.next();
-            List<Integer> slotsForThisGroup = this.slotGroupMap.get(targetGroup);
-            for(int slotIndex : slotsForThisGroup) {
-                WidgetSlot slot = (WidgetSlot) this.inventorySlots.get(slotIndex);
-                if(!slot.isEnabled() || slot.isLocked()) {
-                    continue;
-                }
+	protected int addSlotRange(ResourceLocation id, IItemHandler handler, int index, int x, int y, int amount, int dx) {
+		for(int i = 0; i < amount; i++) {
+			this.addSlot(new WidgetSlot(id, handler, index, x, y));
+			x += dx;
+			index++;
+		}
+		return index;
+	}
 
-                if(!slot.isItemValid(stack)) {
-                    continue;
-                }
+	protected int addSlotBox(ResourceLocation id, IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
+		for(int j = 0; j < verAmount; j++) {
+			index = this.addSlotRange(id, handler, index, x, y, horAmount, dx);
+			y += dy;
+		}
+		return index;
+	}
 
-                if(slot.getHasStack()) {
-                    if(!stack.isStackable()) {
-                        continue;
-                    }
+	protected void layoutPlayerInventorySlots(int leftCol, int topRow) {
+		// Player inventory
+		this.addSlotBox(SLOTGROUP_PLAYER, playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
 
-                    ItemStack existingStack = slot.getStack();
-                    if(!existingStack.isStackable()) {
-                        continue;
-                    }
+		// Hotbar
+		topRow += 58;
+		this.addSlotRange(SLOTGROUP_PLAYER, playerInventory, 0, leftCol, topRow, 9, 18);
+	}
 
-                    if(existingStack.getCount() >= existingStack.getMaxStackSize()) {
-                        continue;
-                    }
+	private ArrayList<Integer> getTransferTargetSlots(WidgetSlot pSlot) {
+		ItemStack stack = pSlot.getItem();
+		ArrayList<Integer> result = new ArrayList<>();
 
-                    if(existingStack.getCount() >= slot.getSlotStackLimit()) {
-                        continue;
-                    }
+		for(int groupIndex = 0; groupIndex < this.slotGroups.size(); groupIndex++) {
+			ResourceLocation targetGroup = this.slotGroups.next();
+			if(allowedSlotGroupQuickMoving.containsKey(pSlot.getGroupId())) {
+				var allowedGroups = allowedSlotGroupQuickMoving.get(pSlot.getGroupId());
+				if(allowedGroups.size() > 0 && !allowedGroups.contains(targetGroup)) {
+					continue;
+				}
+			}
 
-                    if(existingStack.getCount() >= slot.getItemStackLimit(existingStack)) {
-                        continue;
-                    }
+			List<Integer> slotsForThisGroup = this.slotGroupMap.get(targetGroup);
+			for(int slotIndex : slotsForThisGroup) {
+				WidgetSlot testSlot = (WidgetSlot) this.slots.get(slotIndex);
+				if(!testSlot.isEnabled() || testSlot.isLocked()) {
+					continue;
+				}
 
-                    if(!areItemsAndTagsEqual(stack, existingStack)) {
-                        continue;
-                    }
-                }
+				if(!testSlot.mayPlace(stack)) {
+					continue;
+				}
 
-                result.add(slotIndex);
-            }
-        }
+				if(testSlot.hasItem()) {
+					if(!stack.isStackable()) {
+						continue;
+					}
 
-        return result;
-    }
+					ItemStack existingStack = testSlot.getItem();
+					if(!existingStack.isStackable()) {
+						continue;
+					}
 
-    private int getSlotStackLimit(WidgetSlot slot, ItemStack stack) {
-        int limit = Integer.MAX_VALUE;
-        limit = Math.min(limit, slot.getItemStackLimit(stack));
-        limit = Math.min(limit, slot.getSlotStackLimit());
-        limit = Math.min(limit, stack.getMaxStackSize());
-        return limit;
-    }
+					if(!existingStack.is(stack.getItem())) {
+						continue;
+					}
 
-    // This method assumes that the widget slot already fulfills all required conditions.
-    // See the getTransferTargetSlots method above.
-    private ItemStack insertStackIntoSlot(WidgetSlot slot, ItemStack stack) {
-        ItemStack existingStack = slot.getStack();
-        int fitSize = getSlotStackLimit(slot, stack);
-        int remainingSpace = fitSize - existingStack.getCount();
-        int toAddSize = stack.getCount();
-        int remaining = Math.max(0, toAddSize - remainingSpace);
-        int inserted = toAddSize - remaining;
+					if(existingStack.getCount() >= existingStack.getMaxStackSize()) {
+						continue;
+					}
 
-        ItemStack toInsert = stack.copy();
-        toInsert.setCount(inserted + existingStack.getCount());
-        slot.putStack(toInsert);
+					if(existingStack.getCount() >= testSlot.getMaxStackSize()) {
+						continue;
+					}
 
-        ItemStack remainingStack = stack.copy();
-        remainingStack.setCount(remaining);
-        return remainingStack;
-    }
+					if(existingStack.getCount() >= testSlot.getMaxStackSize(existingStack)) {
+						continue;
+					}
 
-    // We are relying on the client to tell the server which slots are currently enabled,
-    // see MessageEnabledSlots.
-    @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
-        Slot uncastSlot = this.inventorySlots.get(index);
-        if(uncastSlot == null || !uncastSlot.getHasStack() || !(uncastSlot instanceof WidgetSlot)) {
-            return ItemStack.EMPTY;
-        }
-        WidgetSlot slot = (WidgetSlot)uncastSlot;
+					if(!stack.areShareTagsEqual(existingStack)) {
+						continue;
+					}
+				}
 
-        ItemStack stackToMove = uncastSlot.getStack().copy();
-        if(stackToMove.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
+				result.add(slotIndex);
+			}
+		}
 
-        this.slotGroups.setPointerTo(slot.getGroupId());
-        List<Integer> availableSlotsInOrderOfPriority = getTransferTargetSlots(slot.getStack());
-        for(int targetSlotId : availableSlotsInOrderOfPriority) {
-            if(targetSlotId == index) {
-                // Skip own slot
-                continue;
-            }
+		return result;
+	}
 
-            WidgetSlot targetSlot = (WidgetSlot) this.inventorySlots.get(targetSlotId);
-            stackToMove = insertStackIntoSlot(targetSlot, stackToMove);
-            if(stackToMove.isEmpty()) {
-                break;
-            }
-        }
+	private int getSlotStackLimit(WidgetSlot slot, ItemStack stack) {
+		int limit = Integer.MAX_VALUE;
+		limit = Math.min(limit, slot.getMaxStackSize(stack));
+		limit = Math.min(limit, slot.getMaxStackSize());
+		limit = Math.min(limit, stack.getMaxStackSize());
+		return limit;
+	}
 
-        slot.putStack(stackToMove);
-        return ItemStack.EMPTY;
-    }
+	// This method assumes that the widget slot already fulfills all required conditions.
+	// See the getTransferTargetSlots method above.
+	private ItemStack insertStackIntoSlot(WidgetSlot slot, ItemStack stack) {
+		ItemStack existingStack = slot.getItem();
+		int fitSize = getSlotStackLimit(slot, stack);
+		int remainingSpace = fitSize - existingStack.getCount();
+		int toAddSize = stack.getCount();
+		int remaining = Math.max(0, toAddSize - remainingSpace);
+		int inserted = toAddSize - remaining;
 
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return true;
-    }
+		ItemStack toInsert = stack.copy();
+		toInsert.setCount(inserted + existingStack.getCount());
+		slot.set(toInsert);
+
+		ItemStack remainingStack = stack.copy();
+		remainingStack.setCount(remaining);
+		return remainingStack;
+	}
+
+
+	// We are relying on the client to tell the server which slots are currently enabled,
+	// see MessageEnabledSlots.
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int index) {
+		Slot uncastSlot = this.slots.get(index);
+		if(uncastSlot == null || !uncastSlot.hasItem() || !(uncastSlot instanceof WidgetSlot)) {
+			return ItemStack.EMPTY;
+		}
+		WidgetSlot slot = (WidgetSlot) uncastSlot;
+
+		ItemStack stackToMove = uncastSlot.getItem().copy();
+		//BonsaiTrees3.LOGGER.info("Clicked slot: {} -> {} [{}]", index, stackToMove, slot.getGroupId());
+		if(stackToMove.isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+
+		this.slotGroups.setPointerTo(slot.getGroupId());
+		List<Integer> availableSlotsInOrderOfPriority = getTransferTargetSlots(slot);
+		//BonsaiTrees3.LOGGER.info("Target slots: {}", availableSlotsInOrderOfPriority.toArray());
+		for(int targetSlotId : availableSlotsInOrderOfPriority) {
+			if(targetSlotId == index) {
+				// Skip own slot
+				continue;
+			}
+
+			WidgetSlot targetSlot = (WidgetSlot) this.slots.get(targetSlotId);
+			stackToMove = insertStackIntoSlot(targetSlot, stackToMove);
+			if(stackToMove.isEmpty()) {
+				break;
+			}
+		}
+
+		slot.set(stackToMove);
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public boolean stillValid(Player pPlayer) {
+		return true;
+	}
 }
