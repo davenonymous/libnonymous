@@ -69,8 +69,6 @@ public class GUI extends WidgetPanel {
 	}
 
 	protected void drawWindow(PoseStack pPoseStack, Screen screen) {
-		RenderSystem.setShaderTexture(0, tabIcons);
-
 		int texOffsetY = 11;
 		int texOffsetX = 64;
 
@@ -81,6 +79,10 @@ public class GUI extends WidgetPanel {
 			width -= 32;
 			xOffset += 32;
 		}
+
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, tabIcons);
 
 		// Top Left corner
 		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
