@@ -28,14 +28,18 @@ displayName="libnonymous" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/thraaawn/libnonymous" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="libnonymous_logo.png" #optional
+logoFile="libnonymous.png" #optional
 # A text field displayed in the mod UI
 credits="" #optional
 # A text field displayed in the mod UI
 authors="Davenonymous" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Library mod for mods by Davenonymous
+Library mod for mods by Davenonymous.
+Currently used by:
+- Bonsai Trees
+- SlimeClicker (unreleased)
+- RiddleChests (unreleased)
 '''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
