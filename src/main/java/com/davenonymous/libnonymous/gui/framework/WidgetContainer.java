@@ -1,6 +1,6 @@
 package com.davenonymous.libnonymous.gui.framework;
 
-import com.davenonymous.bonsaitrees3.BonsaiTrees3;
+import com.davenonymous.libnonymous.Libnonymous;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WidgetContainer extends AbstractContainerMenu {
-	public static ResourceLocation SLOTGROUP_PLAYER = new ResourceLocation(BonsaiTrees3.MODID, "player_slots");
+	public static ResourceLocation SLOTGROUP_PLAYER = new ResourceLocation(Libnonymous.MODID, "player_slots");
 
 	private IItemHandler playerInventory;
 	private CircularPointedArrayList<ResourceLocation> slotGroups;

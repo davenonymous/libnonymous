@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.setup;
 
-import com.davenonymous.libnonymous.command.ModCommands;
+
+import com.davenonymous.libnonymous.commands.ModCommands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 

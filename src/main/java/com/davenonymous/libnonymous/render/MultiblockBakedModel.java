@@ -1,6 +1,5 @@
 package com.davenonymous.libnonymous.render;
 
-import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
@@ -14,7 +13,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.QuadTransformer;
 import net.minecraftforge.client.model.data.EmptyModelData;

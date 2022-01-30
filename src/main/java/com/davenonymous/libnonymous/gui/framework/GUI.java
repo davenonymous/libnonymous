@@ -1,7 +1,7 @@
 package com.davenonymous.libnonymous.gui.framework;
 
 
-import com.davenonymous.bonsaitrees3.BonsaiTrees3;
+import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.widgets.IValueProvider;
 import com.davenonymous.libnonymous.gui.framework.widgets.Widget;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetPanel;
@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GUI extends WidgetPanel {
-	public static ResourceLocation tabIcons = new ResourceLocation(BonsaiTrees3.MODID, "textures/gui/tabicons.png");
-	public static ResourceLocation defaultButtonTexture = new ResourceLocation(BonsaiTrees3.MODID, "textures/gui/button_background.png");
+	public static ResourceLocation tabIcons = new ResourceLocation(Libnonymous.MODID, "textures/gui/tabicons.png");
+	public static ResourceLocation defaultButtonTexture = new ResourceLocation(Libnonymous.MODID, "textures/gui/button_background.png");
 
 	public boolean hasTabs = false;
 	private Map<ResourceLocation, IValueProvider> valueMap = new HashMap<>();

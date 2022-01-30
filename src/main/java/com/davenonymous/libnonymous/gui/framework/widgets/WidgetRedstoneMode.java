@@ -1,6 +1,6 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
-import com.davenonymous.bonsaitrees3.BonsaiTrees3;
+import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.ValueChangedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
@@ -8,9 +8,9 @@ import com.davenonymous.libnonymous.helper.RedstoneMode;
 import com.davenonymous.libnonymous.helper.Translatable;
 
 public class WidgetRedstoneMode extends WidgetSpriteSelect<RedstoneMode> {
-	public static final Translatable REDSTONE_IGNORE = new Translatable(BonsaiTrees3.MODID, "button.redstone.tooltip.ignore");
-	public static final Translatable REDSTONE_REQUIRED = new Translatable(BonsaiTrees3.MODID, "button.redstone.tooltip.required");
-	public static final Translatable REDSTONE_REJECTED = new Translatable(BonsaiTrees3.MODID, "button.redstone.tooltip.rejected");
+	public static final Translatable REDSTONE_IGNORE = new Translatable(Libnonymous.MODID, "button.redstone.tooltip.ignore");
+	public static final Translatable REDSTONE_REQUIRED = new Translatable(Libnonymous.MODID, "button.redstone.tooltip.required");
+	public static final Translatable REDSTONE_REJECTED = new Translatable(Libnonymous.MODID, "button.redstone.tooltip.rejected");
 
 	public WidgetRedstoneMode() {
 		this(RedstoneMode.IGNORE_POWER);
