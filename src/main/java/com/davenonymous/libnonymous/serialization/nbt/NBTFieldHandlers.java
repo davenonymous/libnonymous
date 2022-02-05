@@ -83,8 +83,10 @@ public class NBTFieldHandlers {
 			return null;
 		}), (key, anEnum, tag) -> {
 			CompoundTag result = new CompoundTag();
-			result.putString("class", anEnum.getClass().getName());
-			result.putString("value", anEnum.name());
+			if(anEnum != null) {
+				result.putString("class", anEnum.getClass().getName());
+				result.putString("value", anEnum.name());
+			}
 
 			tag.put(key, result);
 		});
