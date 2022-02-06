@@ -14,6 +14,9 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 	private int previousMouseX = Integer.MAX_VALUE;
 	private int previousMouseY = Integer.MAX_VALUE;
 	public boolean dataUpdated = false;
+	public boolean renderTitle = true;
+	public boolean renderInventoryTitle = true;
+
 
 	public WidgetContainerScreen(T container, Inventory inv, Component name) {
 		super(container, inv, name);
@@ -97,17 +100,23 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	@Override
 	protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
-		int minY = height;
-		for(Slot slot : this.menu.slots) {
-			if(slot instanceof WidgetSlot ws) {
-				if(ws.getGroupId() == WidgetContainer.SLOTGROUP_PLAYER && ws.y < minY) {
-					minY = ws.y;
+		if(this.renderInventoryTitle) {
+			int minY = height;
+			for(Slot slot : this.menu.slots) {
+				if(slot instanceof WidgetSlot ws) {
+					if(ws.getGroupId() == WidgetContainer.SLOTGROUP_PLAYER && ws.y < minY) {
+						minY = ws.y;
+					}
 				}
 			}
+
+			this.inventoryLabelY = minY - (font.lineHeight + 2);
+			this.font.draw(pPoseStack, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040);
 		}
-		this.inventoryLabelY = minY - (font.lineHeight + 2);
-		this.font.draw(pPoseStack, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040);
-		this.font.draw(pPoseStack, this.title, (float) this.titleLabelX, 7.0f, 0x404040);
+
+		if(this.renderTitle) {
+			this.font.draw(pPoseStack, this.title, (float) this.titleLabelX, 7.0f, 0x404040);
+		}
 
 		pPoseStack.pushPose();
 		pPoseStack.translate(-getGuiLeft(), -getGuiTop() + 18, 0.0f);
