@@ -2,7 +2,6 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetCheckbox extends WidgetSelectButton<Boolean> {
@@ -15,9 +14,9 @@ public class WidgetCheckbox extends WidgetSelectButton<Boolean> {
 	}
 
 	@Override
-	protected void drawButtonContent(PoseStack pPoseStack, Screen screen, Font fontrenderer) {
+	protected void drawButtonContent(PoseStack pPoseStack, Screen screen) {
 		if(this.getValue()) {
-			// fontrenderer.drawString("x", 2.2f, 0.3f, 0xEEEEEE);
+			drawString(pPoseStack, screen, "x");
 		}
 	}
 }
