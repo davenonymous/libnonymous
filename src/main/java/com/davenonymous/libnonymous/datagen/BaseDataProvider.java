@@ -37,9 +37,7 @@ public abstract class BaseDataProvider implements DataProvider {
 		ASSETS, DATA
 	}
 
-	;
-
-	public float getRounded(double d) {
+	public static float getRounded(double d) {
 		var df = new DecimalFormat("#.##");
 		var symbols = df.getDecimalFormatSymbols();
 		symbols.setDecimalSeparator('.');
