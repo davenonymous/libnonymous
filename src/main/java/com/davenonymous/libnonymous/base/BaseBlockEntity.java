@@ -141,7 +141,12 @@ public class BaseBlockEntity<T extends BaseBlockEntity> extends BlockEntity {
 			return null;
 		}
 
-		return belowBlockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).orElseGet(null);
+		var optionalHandler = belowBlockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).resolve();
+		if(optionalHandler.isEmpty()) {
+			return null;
+		}
+
+		return optionalHandler.get();
 	}
 
 }
