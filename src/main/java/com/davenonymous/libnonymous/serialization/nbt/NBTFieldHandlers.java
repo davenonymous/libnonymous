@@ -1,6 +1,7 @@
 package com.davenonymous.libnonymous.serialization.nbt;
 
 
+import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.helper.BlockStateSerializationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -270,11 +271,13 @@ public class NBTFieldHandlers {
 					return result;
 				}
 
+				int index = 0;
 				NbtReader reader = getNBTHandler(valueClass).getLeft();
 				for(Tag baseTag : containerTag.getList("values", Tag.TAG_COMPOUND)) {
 					CompoundTag entry = (CompoundTag) baseTag;
-					Object value = reader.read("data", entry, original);
+					Object value = reader.read("data", entry, original.get(index));
 					result.add(value);
+					index++;
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();

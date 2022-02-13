@@ -26,3 +26,4 @@ forge*changelog.txt
 
 # more build artifacts
 src/generated/resources/.cache
+mcmodsrepo

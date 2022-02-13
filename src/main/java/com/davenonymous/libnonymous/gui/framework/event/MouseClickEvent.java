@@ -14,7 +14,8 @@ public class MouseClickEvent implements IEvent {
 		this.y = mouseY;
 		this.button = button;
 		if(Minecraft.getInstance().player != null && Minecraft.getInstance().player.getInventory() != null) {
-			this.carriedStack = Minecraft.getInstance().player.getInventory().getSelected().copy();
+			// TODO: Fix this: How do we know what item the player has picked up with the mouse in a GUI
+			//this.carriedStack = Minecraft.getInstance().player.getInventory().getSelected().copy();
 		}
 	}
 
