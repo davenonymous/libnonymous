@@ -27,16 +27,27 @@ public final class AnnotatedInstanceUtil {
 	public static <T> List<T> getInstances(Class<?> annotationClass, Class<T> instanceClass) {
 		Type annotationType = Type.getType(annotationClass);
 		List<ModFileScanData> allScanData = ModList.get().getAllScanData();
+
 		Set<String> pluginClassNames = new LinkedHashSet<>();
-		for (ModFileScanData scanData : allScanData) {
-			Iterable<ModFileScanData.AnnotationData> annotations = scanData.getAnnotations();
-			for (ModFileScanData.AnnotationData a : annotations) {
-				if (Objects.equals(a.annotationType(), annotationType)) {
-					String memberName = a.memberName();
-					pluginClassNames.add(memberName);
+		for (var scanData : allScanData) {
+			for (var a : scanData.getAnnotations()) {
+				if (!Objects.equals(a.annotationType(), annotationType)) {
+					continue;
 				}
+
+				if(a.annotationData().containsKey("mod")) {
+					String requiredMod = (String)a.annotationData().get("mod");
+					if(!ModList.get().isLoaded(requiredMod)) {
+						continue;
+					}
+				}
+
+				String memberName = a.memberName();
+				pluginClassNames.add(memberName);
 			}
 		}
+
+
 		List<T> instances = new ArrayList<>();
 		for (String className : pluginClassNames) {
 			try {
