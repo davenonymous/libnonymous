@@ -27,9 +27,15 @@ public class Networking {
 		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Libnonymous.MODID, CHANNEL_NAME), () -> "1.0", s -> true, s -> true);
 
 		INSTANCE.registerMessage(nextID(), PacketEnabledSlots.class, PacketEnabledSlots::toBytes, PacketEnabledSlots::new, PacketEnabledSlots::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
+		INSTANCE.registerMessage(nextID(), PacketOpenModsGui.class, PacketOpenModsGui::toBytes, PacketOpenModsGui::new, PacketOpenModsGui::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
 	public static void sendEnabledSlotsMessage(List<Slot> inventorySlots) {
 		INSTANCE.sendToServer(new PacketEnabledSlots(inventorySlots));
+	}
+
+	public static void sendOpenModsGUI(Connection target, String mod, boolean openConfigScreen) {
+		INSTANCE.sendTo(new PacketOpenModsGui(mod, openConfigScreen), target, NetworkDirection.PLAY_TO_CLIENT);
 	}
 }
