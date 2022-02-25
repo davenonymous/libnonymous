@@ -13,8 +13,8 @@ public class SpawnHelper {
 			return;
 		}
 
-		var entity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack);
-		entity.setDeltaMovement(0d, 0.1d, 0.0d);
+		var entity = new ItemEntity(level, pos.getX()+0.5d, pos.getY()+0.5d, pos.getZ()+0.5d, stack);
+		entity.setDeltaMovement(0d, 0.15d, 0.0d);
 		entity.setPickUpDelay(10);
 		entity.setExtendedLifetime();
 		level.addFreshEntity(entity);
