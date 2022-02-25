@@ -58,6 +58,11 @@ public class WidgetSlot extends SlotItemHandler {
 	}
 
 	@Override
+	public boolean isActive() {
+		return isEnabled();
+	}
+
+	@Override
 	public void onTake(Player thePlayer, ItemStack stack) {
 		if(locked) {
 			return;
@@ -80,7 +85,7 @@ public class WidgetSlot extends SlotItemHandler {
 
 	@Override
 	public boolean allowModification(Player player) {
-		if(locked) {
+		if(locked || !enabled) {
 			return false;
 		}
 

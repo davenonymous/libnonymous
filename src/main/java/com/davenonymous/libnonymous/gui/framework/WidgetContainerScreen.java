@@ -27,6 +27,11 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	protected abstract GUI createGUI();
 
+	public void recreateGUI() {
+		this.gui = createGUI();
+		this.gui.setVisible(true);
+	}
+
 	@Override
 	protected void containerTick() {
 		super.containerTick();

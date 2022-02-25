@@ -1,12 +1,18 @@
 package com.davenonymous.libnonymous.gui.framework.widgets;
 
+import com.davenonymous.libnonymous.gui.framework.GUI;
+import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.TabChangedEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mcjty.theoneprobe.rendering.RenderHelper;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +43,7 @@ public class WidgetTabsPanel extends WidgetPanel {
 	public void addPage(WidgetPanel panel, ItemStack buttonStack, List<Component> tooltip) {
 		panel.setWidth(this.width);
 		panel.setHeight(this.height);
+		panel.parent = this;
 
 		pages.add(panel);
 		pageStacks.put(panel, buttonStack);
@@ -140,15 +147,11 @@ public class WidgetTabsPanel extends WidgetPanel {
 
 		@Override
 		public void draw(PoseStack pPoseStack, Screen screen) {
-            /*
-            RenderSystem.pushMatrix();
+			pPoseStack.pushPose();
 
-            screen.getMinecraft().getTextureManager().bindTexture(GUI.tabIcons);
-
-            RenderSystem.disableLighting();
-            RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-            RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShaderTexture(0, GUI.tabIcons);
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
             // Defaults are for the West edge
             int buttonWidth = 32;
@@ -183,14 +186,15 @@ public class WidgetTabsPanel extends WidgetPanel {
                 iconY = 7;
             }
 
-            GuiUtils.drawTexturedModalRect(x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
+			if(!isActive()) {
+				iconY += 2;
+			}
 
-            screen.getMinecraft().getItemRenderer().renderItemAndEffectIntoGUI(pageStack, iconX, iconY);
-            RenderHelper.enableStandardItemLighting();
+            GuiUtils.drawTexturedModalRect(pPoseStack, x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
 
-            RenderSystem.popMatrix();
+			GUIHelper.renderGuiItem(pageStack, getActualX() + iconX, getActualY() + iconY, false);
 
-             */
+            pPoseStack.popPose();
 		}
 	}
 }
