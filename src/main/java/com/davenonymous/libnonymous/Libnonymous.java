@@ -1,10 +1,13 @@
 package com.davenonymous.libnonymous;
 
 import com.davenonymous.libnonymous.compat.top.TOPPlugin;
+import com.davenonymous.libnonymous.setup.ClientEventHandlers;
 import com.davenonymous.libnonymous.setup.ForgeEventHandlers;
 import com.davenonymous.libnonymous.setup.ModSetup;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +24,8 @@ public class Libnonymous {
 
 	public Libnonymous() {
 		MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecraftForge.EVENT_BUS.register(new ClientEventHandlers()));
 
 		IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
 		modbus.addListener(ModSetup::init);

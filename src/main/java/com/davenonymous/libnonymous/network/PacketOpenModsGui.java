@@ -1,10 +1,10 @@
 package com.davenonymous.libnonymous.network;
 
 import com.davenonymous.libnonymous.base.BasePacket;
-import com.davenonymous.libnonymous.reflections.ModListScreenReflection;
 import com.davenonymous.libnonymous.serialization.Sync;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -28,26 +28,8 @@ public class PacketOpenModsGui extends BasePacket {
 
 	@Override
 	public void doWork(Supplier<NetworkEvent.Context> ctx) {
-		var screen = new net.minecraftforge.client.gui.ModListScreen(null) {
-			@Override
-			public void init() {
-				super.init();
-				if(!"".equals(preselectMod)) {
-					var modList = ModListScreenReflection.getModList(this);
-					for(var modEntry : modList.children()) {
-						var name = modEntry.getInfo().getModId();
-						if(preselectMod.equals(name)) {
-							this.setSelected(modEntry);
-							if(openConfigScreen) {
-								ModListScreenReflection.displayModConfig(this);
-							}
-							break;
-						}
-					}
-				}
-			}
-		};
-
-		Minecraft.getInstance().setScreen(screen);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			PacketOpenModsGuiWrapper.doIt(preselectMod, openConfigScreen);
+		});
 	}
 }
