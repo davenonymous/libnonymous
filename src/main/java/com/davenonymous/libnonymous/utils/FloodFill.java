@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FloodFill {
+	private List<Block> allowedBlocks;
 	private List<Block> ignoredBlocks = Arrays.asList(new Block[]{Blocks.DIRT, Blocks.STONE, Blocks.COBBLESTONE, Blocks.GRASS, Blocks.DIRT_PATH, Blocks.GRAVEL, Blocks.SAND, Blocks.SANDSTONE, Blocks.WATER, Blocks.BEDROCK, Blocks.END_STONE});
 	private int MAX_SEARCH_DEPTH = 2048;
 	private int MAX_BLOCKS = 4196;
@@ -20,11 +21,20 @@ public class FloodFill {
 	private LevelReader world;
 	private BlockPos startingPosition;
 	private Map<BlockPos, BlockState> result;
-	private boolean normalized = true;
 
 	public FloodFill(LevelReader world, BlockPos startingPosition) {
 		this.world = world;
 		this.startingPosition = startingPosition;
+	}
+
+	public FloodFill(LevelReader world, BlockPos startingPos, Block... allowedBlocks) {
+		this(world, startingPos);
+		this.allowedBlocks = List.of(allowedBlocks);
+	}
+
+	public FloodFill(LevelReader world, BlockPos startingPos, List allowedBlocks) {
+		this(world, startingPos);
+		this.allowedBlocks = allowedBlocks;
 	}
 
 	private static Map<BlockPos, BlockState> normalizeBlockPosMap(Map<BlockPos, BlockState> input) {
@@ -51,14 +61,18 @@ public class FloodFill {
 		return result;
 	}
 
-	public Map<BlockPos, BlockState> getConnectedBlocks() {
+	public Map<BlockPos, BlockState> getConnectedBlocks(boolean normalize) {
 		result = new HashMap<>();
 		floodFill(world, startingPosition, 0);
-		if(normalized) {
+		if(normalize) {
 			return normalizeBlockPosMap(result);
 		}
 
 		return result;
+	}
+
+	public Map<BlockPos, BlockState> getConnectedBlocks() {
+		return getConnectedBlocks(true);
 	}
 
 	private void floodFill(LevelReader world, BlockPos pos, int depth) {
@@ -80,6 +94,10 @@ public class FloodFill {
 		}
 
 		if(ignoredBlocks.contains(state.getBlock())) {
+			return;
+		}
+
+		if(allowedBlocks != null && !allowedBlocks.contains(state.getBlock())) {
 			return;
 		}
 
