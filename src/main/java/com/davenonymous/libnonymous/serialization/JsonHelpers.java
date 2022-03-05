@@ -5,7 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,29 +50,8 @@ public class JsonHelpers {
 	}
 
 	public static Ingredient getIngredientFromArrayOrSingle(JsonElement json) {
-		List<Ingredient> ingredients = new ArrayList<>();
-		var allTags = ItemTags.getAllTags();
-		processArrayOrSingle(json, jsonElement -> {
-			if(!jsonElement.isJsonObject()) {
-				return;
-			}
-
-			var obj = jsonElement.getAsJsonObject();
-			if(obj.has("item")) {
-				ingredients.add(Ingredient.fromJson(obj));
-			} else if(obj.has("tag")) {
-				var tagName = obj.get("tag").getAsString();
-				var tagRL = ResourceLocation.tryParse(tagName);
-				if(tagRL != null && allTags.hasTag(tagRL)) {
-					var tag = allTags.getTag(tagRL);
-					ingredients.add(Ingredient.of(tag));
-				}
-			}
-		});
-
-		return Ingredient.merge(ingredients);
+		return Ingredient.fromJson(json);
 	}
-
 
 	public static int processArrayOrSingle(JsonElement json, Consumer<JsonElement> c) {
 		if(json == null) {
