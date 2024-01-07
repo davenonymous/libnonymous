@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.*;
@@ -100,7 +99,7 @@ public class Widget {
 	}
 
 	public Widget setTooltipLines(Translatable... tooltipLines) {
-		this.tooltipLines = Arrays.stream(tooltipLines).map(translatable -> new TextComponent(I18n.get(BaseLanguageProvider.getTranslatableLanguageKey(translatable)))).collect(Collectors.toList());
+		this.tooltipLines = Arrays.stream(tooltipLines).map(translatable -> Component.translatable(BaseLanguageProvider.getTranslatableLanguageKey(translatable))).collect(Collectors.toList());
 		return this;
 	}
 
@@ -135,7 +134,7 @@ public class Widget {
 	public static int computeGuiScale(Minecraft mc) {
 		int scaleFactor = 1;
 
-		int k = mc.options.guiScale;
+		int k = mc.options.guiScale().get();
 
 		if(k == 0) {
 			k = 1000;

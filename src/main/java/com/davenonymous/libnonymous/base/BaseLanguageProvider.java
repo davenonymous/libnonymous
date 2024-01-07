@@ -2,8 +2,10 @@ package com.davenonymous.libnonymous.base;
 
 import com.davenonymous.libnonymous.helper.Translatable;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public abstract class BaseLanguageProvider extends LanguageProvider {
 	private final String modid;
@@ -18,7 +20,8 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
 	}
 
 	public static String getContainerLanguageKey(MenuType container) {
-		return "container." + container.getRegistryName().getNamespace() + "." + container.getRegistryName().getPath();
+		ResourceLocation rLoc = ForgeRegistries.MENU_TYPES.getKey(container);
+		return "container." + rLoc.getNamespace() + "." + rLoc.getPath();
 	}
 
 

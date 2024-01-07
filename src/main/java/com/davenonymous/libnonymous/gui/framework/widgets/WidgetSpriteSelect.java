@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class WidgetSpriteSelect<T> extends WidgetWithChoiceValue<T> {
 		var xOffset = (this.width - sprite.width) / 2;
 		var yOffset = (this.height - sprite.height) / 2;
 
-		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset, yOffset, sprite.u, sprite.v, sprite.width, sprite.height, 10.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, yOffset, sprite.u, sprite.v, sprite.width, sprite.height, 10.0f);
 	}
 
 	public record SpriteData(ResourceLocation sprite, int u, int v, int width, int height) {

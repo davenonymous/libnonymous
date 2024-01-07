@@ -18,7 +18,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 
 public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
@@ -90,17 +90,17 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 		int texOffsetY = 84;
 		int overlayWidth = 20;
 
-		GuiUtils.drawTexturedModalRect(pPoseStack, 0, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, 0, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
 
 
 		// Top right corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, 0 + width - 4, 0, texOffsetX + overlayWidth - 4, texOffsetY, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, 0 + width - 4, 0, texOffsetX + overlayWidth - 4, texOffsetY, 4, 4, 0.0f);
 
 		// Bottom Left corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, 0, this.height - 4, texOffsetX, texOffsetY + overlayWidth - 4, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, 0, this.height - 4, texOffsetX, texOffsetY + overlayWidth - 4, 4, 4, 0.0f);
 
 		// Bottom Right corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, 0 + width - 4, this.height - 4, texOffsetX + overlayWidth - 4, texOffsetY + overlayWidth - 4, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, 0 + width - 4, this.height - 4, texOffsetX + overlayWidth - 4, texOffsetY + overlayWidth - 4, 4, 4, 0.0f);
 
 
 		// Top edge

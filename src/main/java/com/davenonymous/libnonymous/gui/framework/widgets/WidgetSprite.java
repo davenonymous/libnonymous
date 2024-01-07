@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 public class WidgetSprite extends Widget {
 	ResourceLocation spriteSheet;
@@ -32,6 +32,6 @@ public class WidgetSprite extends Widget {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, spriteSheet);
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-		GuiUtils.drawTexturedModalRect(pPoseStack, 0, 0, u, v, width, height, 10.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, 0, 0, u, v, width, height, 10.0f);
 	}
 }

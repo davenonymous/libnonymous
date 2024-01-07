@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,7 +190,7 @@ public class WidgetTabsPanel extends WidgetPanel {
 				iconY += 2;
 			}
 
-            GuiUtils.drawTexturedModalRect(pPoseStack, x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
+			ScreenUtils.drawTexturedModalRect(pPoseStack, x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
 
 			GUIHelper.renderGuiItem(pageStack, getActualX() + iconX, getActualY() + iconY, false);
 

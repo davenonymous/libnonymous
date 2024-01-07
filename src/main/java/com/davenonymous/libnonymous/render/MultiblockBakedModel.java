@@ -14,13 +14,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.QuadTransformer;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.IDynamicBakedModel;
+import net.minecraftforge.client.model.IQuadTransformer;
+import net.minecraftforge.client.model.QuadTransformers;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +49,7 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 	}
 
 	private MultiblockBakedModel(MultiblockBlockModel model) {
-		this.spriteGetter = material -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(material.atlasLocation());
+		this.spriteGetter = material -> Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(material.atlasLocation());
 		this.model = model;
 		this.overrides = ItemOverrides.EMPTY;
 		this.itemTransforms = ItemTransforms.NO_TRANSFORMS;
@@ -56,8 +57,7 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 
 	@NotNull
 	@Override
-	public List<BakedQuad> getQuads(@Nullable BlockState inputBlockState, @Nullable Direction pSide, @NotNull Random rand, @NotNull IModelData extraData) {
-		RenderType layer = MinecraftForgeClient.getRenderType();
+	public List<BakedQuad> getQuads(@Nullable BlockState inputBlockState, @Nullable Direction pSide, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType layer) {
 		if(pSide != null || (layer != null && !layer.equals(RenderType.solid()))) {
 			return Collections.emptyList();
 		}
@@ -72,12 +72,13 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 				var sides = new ArrayList<>(List.of(Direction.values()));
 				sides.add(null);
 				for(var side : sides) {
-					List<BakedQuad> modelQuads = blockModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
+					List<BakedQuad> modelQuads = blockModel.getQuads(state, side, rand);
 
 					Transformation translate = new Transformation(Matrix4f.createTranslateMatrix(pos.getX(), pos.getY(), pos.getZ()));
-					QuadTransformer quadTransformer = new QuadTransformer(translate);
+					IQuadTransformer quadTransformer = QuadTransformers.applying(translate);
+					
 
-					var transformedQuads = quadTransformer.processMany(modelQuads);
+					var transformedQuads = quadTransformer.process(modelQuads);
 					for(var quad : transformedQuads) {
 						cache.add(TintedBakedQuad.of(quad, state, pos));
 					}

@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 public class SimpleCommandReply implements Command<CommandSourceStack> {
 	private final Component reply;
@@ -17,19 +16,19 @@ public class SimpleCommandReply implements Command<CommandSourceStack> {
 	}
 
 	public static SimpleCommandReply info(String input) {
-		return new SimpleCommandReply(new TextComponent(input), false);
+		return new SimpleCommandReply(Component.literal(input), false);
 	}
 
 	public static SimpleCommandReply info(String fmt, Object... data) {
-		return new SimpleCommandReply(new TextComponent(String.format(fmt, data)), false);
+		return new SimpleCommandReply(Component.translatable(fmt, data), false);
 	}
 
 	public static SimpleCommandReply error(String input) {
-		return new SimpleCommandReply(new TextComponent(input), true);
+		return new SimpleCommandReply(Component.literal(input), true);
 	}
 
 	public static SimpleCommandReply error(String fmt, Object... data) {
-		return new SimpleCommandReply(new TextComponent(String.format(fmt, data)), true);
+		return new SimpleCommandReply(Component.translatable(fmt, data), true);
 	}
 
 	@Override

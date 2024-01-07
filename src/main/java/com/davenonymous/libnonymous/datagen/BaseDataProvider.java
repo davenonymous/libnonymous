@@ -3,9 +3,10 @@ package com.davenonymous.libnonymous.datagen;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +54,7 @@ public abstract class BaseDataProvider implements DataProvider {
 
 
 	@Override
-	public void run(HashCache cache) throws IOException {
+	public void run(CachedOutput cache) throws IOException {
 		addValues();
 
 		values.forEach((s, jsonObject) -> {
@@ -61,13 +62,13 @@ public abstract class BaseDataProvider implements DataProvider {
 		});
 	}
 
-	private void saveValue(HashCache cache, String key, JsonObject jsonObject) {
+	private void saveValue(CachedOutput cache, String key, JsonObject jsonObject) {
 		Path mainOutput = generator.getOutputFolder();
 		String pathSuffix = (type == Type.ASSETS ? "assets" : "data") + "/" + getModId() + "/" + key + ".json";
 
 		Path outputPath = mainOutput.resolve(pathSuffix);
 		try {
-			DataProvider.save(GSON, cache, jsonObject, outputPath);
+			DataProvider.saveStable(cache, jsonObject, outputPath);
 		} catch (IOException e) {
 			LOGGER.error("Couldn't save {} to {}", getName(), outputPath, e);
 		}

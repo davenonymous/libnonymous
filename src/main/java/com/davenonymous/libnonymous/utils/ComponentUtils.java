@@ -1,9 +1,9 @@
 package com.davenonymous.libnonymous.utils;
 
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class ComponentUtils {
-	public static TextComponent format(String fmt, Object... data) {
-		return new TextComponent(String.format(fmt, data));
+	public static Component format(String fmt, Object... data) {
+		return Component.literal(String.format(fmt, data));
 	}
 }
