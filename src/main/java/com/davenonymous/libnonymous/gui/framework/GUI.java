@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,16 +85,16 @@ public class GUI extends WidgetPanel {
 		RenderSystem.setShaderTexture(0, tabIcons);
 
 		// Top Left corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
 
 		// Top right corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, 0, texOffsetX + 4 + 64, texOffsetY, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, 0, texOffsetX + 4 + 64, texOffsetY, 4, 4, 0.0f);
 
 		// Bottom Left corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset, this.height - 4, texOffsetX, texOffsetY + 4 + 64, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, this.height - 4, texOffsetX, texOffsetY + 4 + 64, 4, 4, 0.0f);
 
 		// Bottom Right corner
-		GuiUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, this.height - 4, texOffsetX + 4 + 64, texOffsetY + 4 + 64, 4, 4, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, this.height - 4, texOffsetX + 4 + 64, texOffsetY + 4 + 64, 4, 4, 0.0f);
 
 		// Top edge
 		GUIHelper.drawStretchedTexture(pPoseStack, xOffset + 4, 0, width - 8, 4, texOffsetX + 4, texOffsetY, 64, 4);
@@ -146,7 +146,7 @@ public class GUI extends WidgetPanel {
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, tabIcons);
-		GuiUtils.drawTexturedModalRect(pPoseStack, slot.x, slot.y, texOffsetX, texOffsetY, 18, 18, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, slot.x, slot.y, texOffsetX, texOffsetY, 18, 18, 0.0f);
 		//RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		pPoseStack.popPose();
 	}

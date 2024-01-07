@@ -55,7 +55,8 @@ public class FluidStateSerializationHelper {
 
 									state = state.setValue(blockProperty, propValue.get());
 								} catch (final Exception e) {
-									LOGGER.error("Failed to update state for fluid {}. The mod that adds this fluid has issues.", fluid.getRegistryName());
+									ResourceLocation rLoc = ForgeRegistries.FLUIDS.getKey(fluid);
+									LOGGER.error("Failed to update state for fluid {}. The mod that adds this fluid has issues.", rLoc);
 								}
 							} else {
 
@@ -66,8 +67,8 @@ public class FluidStateSerializationHelper {
 							throw new JsonSyntaxException("Expected property value for " + property.getKey() + " to be primitive string. Got " + property.getValue());
 						}
 					} else {
-
-						throw new JsonSyntaxException("The property " + property.getKey() + " is not valid for block " + fluid.getRegistryName());
+						ResourceLocation rLoc = ForgeRegistries.FLUIDS.getKey(fluid);
+						throw new JsonSyntaxException("The property " + property.getKey() + " is not valid for block " + rLoc);
 					}
 				}
 			} else {
@@ -80,7 +81,8 @@ public class FluidStateSerializationHelper {
 	}
 
 	public static void serializeFluidState(FriendlyByteBuf buffer, FluidState state) {
-		buffer.writeResourceLocation(state.getType().getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.FLUIDS.getKey(state.getType());
+		buffer.writeResourceLocation(rLoc);
 
 		final Collection<Property<?>> properties = state.getProperties();
 		buffer.writeInt(properties.size());
@@ -114,7 +116,8 @@ public class FluidStateSerializationHelper {
 						try {
 							state = state.setValue(blockProperty, propValue.get());
 						} catch (final Exception e) {
-							LOGGER.error("Failed to read state for block {}. The mod that adds this block has issues.", fluid.getRegistryName());
+							ResourceLocation rLoc = ForgeRegistries.FLUIDS.getKey(fluid);
+							LOGGER.error("Failed to read state for block {}. The mod that adds this block has issues.", rLoc);
 						}
 					}
 				}

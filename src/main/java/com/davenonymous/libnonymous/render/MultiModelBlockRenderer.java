@@ -10,17 +10,17 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 import javax.annotation.Nullable;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiModelBlockRenderer {
@@ -34,7 +34,7 @@ public class MultiModelBlockRenderer {
 
 		MultiModelBlockRenderer renderer = new MultiModelBlockRenderer(blockColors);
 
-		renderer.tesselateWithoutAO(fakeLevel, baked, Blocks.DIRT.defaultBlockState(), BlockPos.ZERO, pose, buffer, pPackedLight, new Random(), OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+		renderer.tesselateWithoutAO(fakeLevel, baked, Blocks.DIRT.defaultBlockState(), BlockPos.ZERO, pose, buffer, pPackedLight, RandomSource.create(), OverlayTexture.NO_OVERLAY, ModelData.EMPTY);
 	}
 
 	public MultiModelBlockRenderer(BlockColors pBlockColors) {
@@ -42,10 +42,10 @@ public class MultiModelBlockRenderer {
 	}
 
 
-	public boolean tesselateWithoutAO(BlockAndTintGetter pLevel, BakedModel pModel, BlockState pState, BlockPos pPos, PoseStack pPoseStack, VertexConsumer pConsumer, int pPackedLight, Random pRandom, int pPackedOverlay, net.minecraftforge.client.model.data.IModelData modelData) {
+	public boolean tesselateWithoutAO(BlockAndTintGetter pLevel, BakedModel pModel, BlockState pState, BlockPos pPos, PoseStack pPoseStack, VertexConsumer pConsumer, int pPackedLight, RandomSource pRandom, int pPackedOverlay, net.minecraftforge.client.model.data.ModelData modelData) {
 		BitSet bitset = new BitSet(3);
 
-		List<BakedQuad> list1 = pModel.getQuads(pState, (Direction) null, pRandom, modelData);
+		List<BakedQuad> list1 = pModel.getQuads(pState, (Direction) null, pRandom, modelData, null);
 		if(!list1.isEmpty()) {
 			this.renderModelFaceFlat(pLevel, pState, pPos, pPackedLight, pPackedOverlay, false, pPoseStack, pConsumer, list1, bitset);
 			return true;
