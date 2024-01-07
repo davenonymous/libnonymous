@@ -14,9 +14,9 @@ public class QuadBaker {
 
 		builder
 			.vertex(vector.x(), vector.y(), vector.z())
-			.uv(u, v)
-			.uv2(0, 0)
 			.color(r, g, b, alpha)
+			.uv(sprite.getU(u), sprite.getV(v))
+			.uv2(0, 0)
 			.normal((float)normal.x(), (float)normal.y(), (float)normal.z())
 			.endVertex();
 	}
