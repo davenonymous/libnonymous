@@ -12,7 +12,7 @@ public class AbstractTreeGrowerReflection {
 	private static Method getConfiguredFeature;
 
 	static {
-		getConfiguredFeature = ObfuscationReflectionHelper.findMethod(AbstractTreeGrower.class, "m_6486_", RandomSource.class, boolean.class);
+		getConfiguredFeature = ObfuscationReflectionHelper.findMethod(AbstractTreeGrower.class, "m_213888_", RandomSource.class, boolean.class);
 		getConfiguredFeature.setAccessible(true);
 	}
 

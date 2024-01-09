@@ -57,7 +57,7 @@ public class BlockStateSerializationHelper {
 		if(nbt.contains("properties")) {
 			CompoundTag propertiesTag = nbt.getCompound("properties");
 			for(String propertyName : propertiesTag.getAllKeys()) {
-				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propertyName)).findFirst().get();
+				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propertyName)).findFirst().orElseGet(() -> null);
 				if(blockProperty == null) {
 					LOGGER.warn("The property '{}' is not valid for block {}", propertyName, blockId);
 					continue;
@@ -109,7 +109,7 @@ public class BlockStateSerializationHelper {
 				final String value = buffer.readUtf();
 
 				// Check the block for the property. Keys = property names.
-				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propName)).findFirst().get();
+				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propName)).findFirst().orElseGet(() -> null);
 				if(blockProperty != null) {
 					// Attempt to parse the value with the the property.
 					final Optional<Comparable> propValue = blockProperty.getValue(value);
@@ -189,7 +189,7 @@ public class BlockStateSerializationHelper {
 				for(final Map.Entry<String, JsonElement> property : props.entrySet()) {
 
 					// Check the block for the property. Keys = property names.
-					final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(prop -> prop.getName().equals(property.getKey())).findFirst().get();
+					final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(prop -> prop.getName().equals(property.getKey())).findFirst().orElseGet(() -> null);
 					if(blockProperty != null) {
 
 						if(property.getValue().isJsonPrimitive()) {
