@@ -25,7 +25,8 @@ public class BlockStateSerializationHelper {
 	public static CompoundTag serializeBlockStateToNBT(BlockState state) {
 		CompoundTag result = new CompoundTag();
 		final Block block = state.getBlock();
-		result.putString("block", block.getRegistryName().toString());
+		ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+		result.putString("block", rLoc.toString());
 		if(state.getProperties().size() > 0) {
 			CompoundTag propertiesTag = new CompoundTag();
 
@@ -56,7 +57,7 @@ public class BlockStateSerializationHelper {
 		if(nbt.contains("properties")) {
 			CompoundTag propertiesTag = nbt.getCompound("properties");
 			for(String propertyName : propertiesTag.getAllKeys()) {
-				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propertyName)).findFirst().get();
+				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propertyName)).findFirst().orElseGet(() -> null);
 				if(blockProperty == null) {
 					LOGGER.warn("The property '{}' is not valid for block {}", propertyName, blockId);
 					continue;
@@ -72,7 +73,8 @@ public class BlockStateSerializationHelper {
 				try {
 					state = state.setValue(blockProperty, propValue.get());
 				} catch (final Exception e) {
-					LOGGER.warn("Failed to update state for block {}. The mod that adds this block has issues.", block.getRegistryName());
+					ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+					LOGGER.warn("Failed to update state for block {}. The mod that adds this block has issues.", rLoc);
 					continue;
 				}
 			}
@@ -82,7 +84,8 @@ public class BlockStateSerializationHelper {
 	}
 
 	public static void serializeBlockState(FriendlyByteBuf buffer, BlockState state) {
-		buffer.writeResourceLocation(state.getBlock().getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+		buffer.writeResourceLocation(rLoc);
 
 		final Collection<Property<?>> properties = state.getProperties();
 		buffer.writeInt(properties.size());
@@ -106,7 +109,7 @@ public class BlockStateSerializationHelper {
 				final String value = buffer.readUtf();
 
 				// Check the block for the property. Keys = property names.
-				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propName)).findFirst().get();
+				final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(property -> property.getName().equals(propName)).findFirst().orElseGet(() -> null);
 				if(blockProperty != null) {
 					// Attempt to parse the value with the the property.
 					final Optional<Comparable> propValue = blockProperty.getValue(value);
@@ -116,7 +119,8 @@ public class BlockStateSerializationHelper {
 						try {
 							state = state.setValue(blockProperty, propValue.get());
 						} catch (final Exception e) {
-							LOGGER.error("Failed to read state for block {}. The mod that adds this block has issues.", block.getRegistryName());
+							ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+							LOGGER.error("Failed to read state for block {}. The mod that adds this block has issues.", rLoc);
 						}
 					}
 				}
@@ -132,7 +136,8 @@ public class BlockStateSerializationHelper {
 		JsonObject result = new JsonObject();
 
 		final Block block = state.getBlock();
-		result.addProperty("block", block.getRegistryName().toString());
+		ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+		result.addProperty("block", rLoc.toString());
 		if(state.getProperties().size() > 0) {
 			JsonObject propertiesObj = new JsonObject();
 
@@ -153,7 +158,8 @@ public class BlockStateSerializationHelper {
 		}
 
 		final Block block = MCJsonUtils.getBlock(json, "block");
-		if(block == null || block.getRegistryName().toString().equals("minecraft:air")) {
+		ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+		if(block == null || rLoc.toString().equals("minecraft:air")) {
 			return false;
 		}
 
@@ -183,7 +189,7 @@ public class BlockStateSerializationHelper {
 				for(final Map.Entry<String, JsonElement> property : props.entrySet()) {
 
 					// Check the block for the property. Keys = property names.
-					final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(prop -> prop.getName().equals(property.getKey())).findFirst().get();
+					final Property blockProperty = block.defaultBlockState().getProperties().stream().filter(prop -> prop.getName().equals(property.getKey())).findFirst().orElseGet(() -> null);
 					if(blockProperty != null) {
 
 						if(property.getValue().isJsonPrimitive()) {
@@ -199,7 +205,8 @@ public class BlockStateSerializationHelper {
 
 									state = state.setValue(blockProperty, propValue.get());
 								} catch (final Exception e) {
-									LOGGER.error("Failed to update state for block {}. The mod that adds this block has issues.", block.getRegistryName());
+									ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+									LOGGER.error("Failed to update state for block {}. The mod that adds this block has issues.", rLoc);
 								}
 							} else {
 
@@ -210,8 +217,8 @@ public class BlockStateSerializationHelper {
 							throw new JsonSyntaxException("Expected property value for " + property.getKey() + " to be primitive string. Got " + property.getValue());
 						}
 					} else {
-
-						throw new JsonSyntaxException("The property " + property.getKey() + " is not valid for block " + block.getRegistryName());
+						ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+						throw new JsonSyntaxException("The property " + property.getKey() + " is not valid for block " + rLoc);
 					}
 				}
 			} else {

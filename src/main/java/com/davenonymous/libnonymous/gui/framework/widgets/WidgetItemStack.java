@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.Collections;
 
@@ -58,6 +58,6 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 		int texOffsetY = 84;
 		int texOffsetX = 84;
 
-		GuiUtils.drawTexturedModalRect(pPoseStack, -1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
+		ScreenUtils.drawTexturedModalRect(pPoseStack, -1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
 	}
 }

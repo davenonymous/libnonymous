@@ -1,13 +1,11 @@
 package com.davenonymous.libnonymous.base;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -26,8 +24,13 @@ import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -66,7 +69,8 @@ public abstract class BaseLootTableProvider extends LootTableProvider {
 	}
 
 	protected LootTable.Builder dropSelf(Block block) {
-		return dropSelf(block.getRegistryName().getPath(), block);
+		ResourceLocation rLoc = ForgeRegistries.BLOCKS.getKey(block);
+		return dropSelf(rLoc.getPath(), block);
 	}
 
 	protected LootTable.Builder dropSelf(String name, Block block) {
@@ -81,7 +85,7 @@ public abstract class BaseLootTableProvider extends LootTableProvider {
 
 
 	@Override
-	public void run(HashCache cache) {
+	public void run(CachedOutput cache) {
 		addTables();
 
 		Map<ResourceLocation, LootTable> tables = new HashMap<>();
@@ -92,12 +96,12 @@ public abstract class BaseLootTableProvider extends LootTableProvider {
 		writeTables(cache, tables);
 	}
 
-	private void writeTables(HashCache cache, Map<ResourceLocation, LootTable> tables) {
+	private void writeTables(CachedOutput cache, Map<ResourceLocation, LootTable> tables) {
 		Path outputFolder = this.generator.getOutputFolder();
 		tables.forEach((key, lootTable) -> {
 			Path path = outputFolder.resolve("data/" + key.getNamespace() + "/loot_tables/" + key.getPath() + ".json");
 			try {
-				DataProvider.save(GSON, cache, LootTables.serialize(lootTable), path);
+				DataProvider.saveStable(cache, LootTables.serialize(lootTable), path);
 			} catch (IOException e) {
 				LOGGER.error("Couldn't write loot table {}", path, e);
 			}

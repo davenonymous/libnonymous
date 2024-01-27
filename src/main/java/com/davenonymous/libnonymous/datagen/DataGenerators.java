@@ -5,7 +5,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = Libnonymous.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
@@ -13,7 +13,7 @@ public class DataGenerators {
 	}
 
 	private static void generateClientData(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-		generator.addProvider(new DatagenTranslations(generator, "en_us"));
+		generator.addProvider(true, new DatagenTranslations(generator, "en_us"));
 	}
 
 	@SubscribeEvent

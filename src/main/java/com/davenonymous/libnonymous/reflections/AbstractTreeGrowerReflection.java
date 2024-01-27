@@ -1,23 +1,22 @@
 package com.davenonymous.libnonymous.reflections;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Random;
 
 public class AbstractTreeGrowerReflection {
 	private static Method getConfiguredFeature;
 
 	static {
-		getConfiguredFeature = ObfuscationReflectionHelper.findMethod(AbstractTreeGrower.class, "m_6486_", Random.class, boolean.class);
+		getConfiguredFeature = ObfuscationReflectionHelper.findMethod(AbstractTreeGrower.class, "m_213888_", RandomSource.class, boolean.class);
 		getConfiguredFeature.setAccessible(true);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static ConfiguredFeature<?, ?> getConfiguredFeature(AbstractTreeGrower grower, Random random, boolean pLargeHive) {
+	public static ConfiguredFeature<?, ?> getConfiguredFeature(AbstractTreeGrower grower, RandomSource random, boolean pLargeHive) {
 		try {
 			ConfiguredFeature<?, ?> feature = (ConfiguredFeature<?, ?>) getConfiguredFeature.invoke(grower, random, pLargeHive);
 			return feature;

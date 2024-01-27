@@ -7,6 +7,7 @@ import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -59,7 +60,8 @@ public class EnchantmentHelper {
 	}
 
 	public boolean has(Enchantment enchantment) {
-		return this.has(enchantment.getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+		return this.has(rLoc);
 	}
 
 	public boolean has(ResourceLocation enchantment) {
@@ -67,7 +69,8 @@ public class EnchantmentHelper {
 	}
 
 	public int getLevel(Enchantment enchantment) {
-		return this.getLevel(enchantment.getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+		return this.getLevel(rLoc);
 	}
 
 	public int getLevel(ResourceLocation registryName) {
@@ -93,7 +96,8 @@ public class EnchantmentHelper {
 		}
 
 		for(var enchantment : wanted) {
-			if(enchantmentHash.containsKey(enchantment.getRegistryName())) {
+			ResourceLocation rLoc = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+			if(enchantmentHash.containsKey(rLoc)) {
 				return true;
 			}
 		}
@@ -102,7 +106,8 @@ public class EnchantmentHelper {
 	}
 
 	public static boolean has(@Nonnull ListTag enchantments, @Nonnull Enchantment enchantment) {
-		return has(enchantments, enchantment.getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+		return has(enchantments, rLoc);
 	}
 
 	public static boolean has(@Nonnull ListTag enchantments, @Nonnull ResourceLocation wanted) {
@@ -120,7 +125,8 @@ public class EnchantmentHelper {
 
 
 	public static int getLevel(@Nonnull ListTag enchantments, @Nonnull Enchantment enchantment) {
-		return getLevel(enchantments, enchantment.getRegistryName());
+		ResourceLocation rLoc = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+		return getLevel(enchantments, rLoc);
 	}
 
 	public static int getLevel(@Nonnull ListTag enchantments, @Nonnull ResourceLocation enchantmentId) {

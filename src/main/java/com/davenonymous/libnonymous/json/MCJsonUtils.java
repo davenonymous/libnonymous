@@ -7,7 +7,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -16,11 +16,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class MCJsonUtils {
-	public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(JsonObject json, String memberName, IForgeRegistry<T> registry) {
+	public static <T> T getRegistryEntry(JsonObject json, String memberName, IForgeRegistry<T> registry) {
 
 		if(json.has(memberName)) {
 
@@ -31,7 +30,7 @@ public class MCJsonUtils {
 		}
 	}
 
-	public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(JsonElement json, String memberName, IForgeRegistry<T> registry) {
+	public static <T> T getRegistryEntry(JsonElement json, String memberName, IForgeRegistry<T> registry) {
 
 		if(json == null) {
 
@@ -93,18 +92,18 @@ public class MCJsonUtils {
 	}
 
 	public static EntityType<?> getEntity(JsonObject json, String memberName) {
-		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.ENTITIES);
+		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.ENTITY_TYPES);
 	}
 
 	public static BlockEntityType<?> getBlockEntity(JsonObject json, String memberName) {
-		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.BLOCK_ENTITIES);
+		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.BLOCK_ENTITY_TYPES);
 	}
 
 	public static ParticleType<?> getParticleType(JsonObject json, String memberName) {
 		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.PARTICLE_TYPES);
 	}
 
-	public static Motive getPainting(JsonObject json, String memberName) {
-		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.PAINTING_TYPES);
+	public static PaintingVariant getPainting(JsonObject json, String memberName) {
+		return getRegistryEntry(json.get(memberName), memberName, ForgeRegistries.PAINTING_VARIANTS);
 	}
 }

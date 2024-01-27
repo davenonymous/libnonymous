@@ -4,7 +4,7 @@ import com.davenonymous.libnonymous.gui.framework.SmartNumberFormatter;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 
 public class WidgetProgressBar extends WidgetWithValue<Double> {
@@ -91,14 +91,14 @@ public class WidgetProgressBar extends WidgetWithValue<Double> {
 		int width = this.width;
 		int height = this.height;
 
-		GuiUtils.drawGradientRect(pPoseStack.last().pose(), 0, x, y, x + width, y + height, borderColor, borderColor);
-		GuiUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + width - 1, y + height - 1, backgroundColor, backgroundColor);
+		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x, y, x + width, y + height, borderColor, borderColor);
+		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + width - 1, y + height - 1, backgroundColor, backgroundColor);
 
 		double progress = (getValue() - getRangeMin()) / (getRangeMax() - getRangeMin());
 		progress = Math.min(Math.max(progress, 0.0d), 1.0d);
 		int progressWidth = (int) ((Math.ceil((double) width - 2) * progress));
 
-		GuiUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + 1 + progressWidth, y + height - 1, foregroundColor, foregroundColor);
+		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + 1 + progressWidth, y + height - 1, foregroundColor, foregroundColor);
 
 		if(displayMode != EnumDisplayMode.NOTHING && displayMode != EnumDisplayMode.CUSTOM) {
 			Font fr = screen.getMinecraft().font;
