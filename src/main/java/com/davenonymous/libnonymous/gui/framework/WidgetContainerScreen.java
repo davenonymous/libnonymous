@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework;
 
 import com.davenonymous.libnonymous.gui.framework.event.*;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -104,7 +105,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
     */
 
 	@Override
-	protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
+	protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
 		if(this.renderInventoryTitle) {
 			int minY = height;
 			for(Slot slot : this.menu.slots) {
@@ -116,22 +117,22 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 			}
 
 			this.inventoryLabelY = minY - (font.lineHeight + 2);
-			this.font.draw(pPoseStack, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040);
+			// this.font.draw(pGuiGraphics, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040); /?
 		}
 
 		if(this.renderTitle) {
-			this.font.draw(pPoseStack, this.title, (float) this.titleLabelX, 7.0f, 0x404040);
+			// this.font.draw(pGuiGraphics, this.title, (float) this.titleLabelX, 7.0f, 0x404040); /?
 		}
 
-		pPoseStack.pushPose();
-		pPoseStack.translate(-getGuiLeft(), -getGuiTop() + 18, 0.0f);
-		gui.drawTooltips(pPoseStack, this, pMouseX, pMouseY);
-		this.renderTooltip(pPoseStack, pMouseX, pMouseY);
-		pPoseStack.popPose();
+		pGuiGraphics.pose().pushPose();
+		pGuiGraphics.pose().translate(-getGuiLeft(), -getGuiTop() + 18, 0.0f);
+		gui.drawTooltips(pGuiGraphics, this, pMouseX, pMouseY);
+		this.renderTooltip(pGuiGraphics, pMouseX, pMouseY);
+		pGuiGraphics.pose().popPose();
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float partialTicks) {
 		if(dataUpdated) {
 			dataUpdated = false;
 			gui.fireEvent(new GuiDataUpdatedEvent());
@@ -144,13 +145,13 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 			previousMouseY = mouseY;
 		}
 
-		super.render(pPoseStack, mouseX, mouseY, partialTicks);
+		super.render(pGuiGraphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override
-	protected void renderBg(PoseStack pPoseStack, float pPartialTick, int pMouseX, int pMouseY) {
-		this.renderBackground(pPoseStack);
-		gui.drawGUI(pPoseStack, this);
+	protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+		this.renderBackground(pGuiGraphics);
+		gui.drawGUI(pGuiGraphics, this);
 
 		if(this.menu != null && this.menu.slots != null) {
 			for(Slot slot : this.menu.slots) {
@@ -159,7 +160,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 						continue;
 					}
 
-					gui.drawSlot(pPoseStack, this, slot, this.leftPos, this.topPos);
+					gui.drawSlot(pGuiGraphics, this, slot, this.leftPos, this.topPos);
 				}
 			}
 		}

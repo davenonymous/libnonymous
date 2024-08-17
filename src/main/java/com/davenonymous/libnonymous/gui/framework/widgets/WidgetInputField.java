@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.function.BiFunction;
@@ -80,8 +81,8 @@ public class WidgetInputField extends WidgetWithValue<String> {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
-		super.draw(pPoseStack, screen);
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+		super.draw(pGuiGraphics, screen);
 
 		int renderX = 0;
 		int renderY = 0;
@@ -152,7 +153,7 @@ public class WidgetInputField extends WidgetWithValue<String> {
 	/**
 	 * Draws the blue selection box.
 	 */
-	private void drawSelectionBox(PoseStack pPoseStack, int startX, int startY, int endX, int endY) {
+	private void drawSelectionBox(GuiGraphics pGuiGraphics, int startX, int startY, int endX, int endY) {
 		if(startX < endX) {
 			int i = startX;
 			startX = endX;

@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 import com.davenonymous.libnonymous.gui.framework.SmartNumberFormatter;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.client.gui.ScreenUtils;
 
@@ -85,20 +86,20 @@ public class WidgetProgressBar extends WidgetWithValue<Double> {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		int x = 0;
 		int y = 0;
 		int width = this.width;
 		int height = this.height;
 
-		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x, y, x + width, y + height, borderColor, borderColor);
-		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + width - 1, y + height - 1, backgroundColor, backgroundColor);
+		pGuiGraphics.fillGradient(x, y, x+width, y+height, borderColor, borderColor);
+		pGuiGraphics.fillGradient(x + 1, y + 1, x + width - 1, y + height - 1, backgroundColor, backgroundColor);
 
 		double progress = (getValue() - getRangeMin()) / (getRangeMax() - getRangeMin());
 		progress = Math.min(Math.max(progress, 0.0d), 1.0d);
 		int progressWidth = (int) ((Math.ceil((double) width - 2) * progress));
 
-		ScreenUtils.drawGradientRect(pPoseStack.last().pose(), 0, x + 1, y + 1, x + 1 + progressWidth, y + height - 1, foregroundColor, foregroundColor);
+		pGuiGraphics.fillGradient(x + 1, y + 1, x + 1 + progressWidth, y + height - 1, foregroundColor, foregroundColor);
 
 		if(displayMode != EnumDisplayMode.NOTHING && displayMode != EnumDisplayMode.CUSTOM) {
 			Font fr = screen.getMinecraft().font;
@@ -115,7 +116,7 @@ public class WidgetProgressBar extends WidgetWithValue<Double> {
 
 			int xPos = x + 1 + (width - fr.width(content)) / 2;
 			int yPos = y + (height + 4 - fr.lineHeight) / 2;
-			fr.draw(pPoseStack, content, xPos, yPos, textColor);
+			pGuiGraphics.drawString(fr, content, xPos, yPos, textColor);
 		}
 	}
 

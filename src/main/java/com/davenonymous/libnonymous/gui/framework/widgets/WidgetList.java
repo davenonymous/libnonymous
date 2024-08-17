@@ -7,6 +7,7 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseClickEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseScrollEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 
@@ -41,7 +42,7 @@ public class WidgetList extends WidgetPanel {
 	public Widget getScrollUpButton(int color) {
 		WidgetTextBox box = new WidgetTextBox("<") {
 			@Override
-			public void draw(PoseStack pPoseStack, Screen screen) {
+			public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 				if(lineOffset == 0) {
 					return;
 				}
@@ -67,7 +68,7 @@ public class WidgetList extends WidgetPanel {
 	public Widget getScrollDownButton(int color) {
 		WidgetTextBox box = new WidgetTextBox(">") {
 			@Override
-			public void draw(PoseStack pPoseStack, Screen screen) {
+			public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 				if(lastVisibleLine == getTotalLines() - 1) {
 					return;
 				}
@@ -159,7 +160,7 @@ public class WidgetList extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		int backgroundColor = 0xFF333333;
 		int borderColor = 0xFF000000;
 		int selectedBackgroundColor = 0xFF555555;
@@ -212,7 +213,7 @@ public class WidgetList extends WidgetPanel {
         }
 
 */
-		super.draw(pPoseStack, screen);
+		super.draw(pGuiGraphics, screen);
 	}
 
 	public <T extends Widget & ISelectable> void addListEntry(T widget) {

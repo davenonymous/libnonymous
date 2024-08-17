@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
@@ -44,7 +45,7 @@ public class WidgetImage extends Widget {
 
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
         /*
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
@@ -75,7 +76,7 @@ public class WidgetImage extends Widget {
          */
 	}
 
-	protected void actuallyDraw(PoseStack pPoseStack) {
-		GUIHelper.drawModalRectWithCustomSizedTexture(pPoseStack, 0, 0, 0, 0, width * 2, height * 2, textureWidth, textureHeight);
+	protected void actuallyDraw(GuiGraphics pGuiGraphics) {
+		GUIHelper.drawModalRectWithCustomSizedTexture(pGuiGraphics, 0, 0, 0, 0, width * 2, height * 2, textureWidth, textureHeight);
 	}
 }

@@ -5,6 +5,7 @@ import com.davenonymous.libnonymous.gui.framework.event.MouseEnterEvent;
 import com.davenonymous.libnonymous.gui.framework.event.MouseExitEvent;
 import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
@@ -32,7 +33,7 @@ public class WidgetColorSelect extends WidgetWithChoiceValue<Color> {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
         /*
         screen.getMinecraft().getTextureManager().bindTexture(BUTTON_TEXTURES);
 

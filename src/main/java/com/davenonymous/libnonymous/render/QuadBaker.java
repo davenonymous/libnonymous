@@ -2,15 +2,16 @@ package com.davenonymous.libnonymous.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import net.minecraft.core.Position;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
 
 public class QuadBaker {
-	private static void putVertex(VertexConsumer builder, Vector3f normal, Vector4f vector, float u, float v, TextureAtlasSprite sprite, float r, float g, float b, float alpha) {
+	private static void putVertex(VertexConsumer builder, Vec3 normal, Vector4f vector, float u, float v, TextureAtlasSprite sprite, float r, float g, float b, float alpha) {
 
 		builder
 			.vertex(vector.x(), vector.y(), vector.z())
@@ -20,51 +21,31 @@ public class QuadBaker {
 			.normal((float)normal.x(), (float)normal.y(), (float)normal.z())
 			.endVertex();
 	}
-/*
-	private static void putVertexUV(BakedQuadBuilder builder, float u, float v, TextureAtlasSprite sprite, int j, VertexFormatElement e) {
-		switch(e.getIndex()) {
-			case 0 -> builder.put(j, sprite.getU(u), sprite.getV(v));
-			case 2 -> builder.put(j, (short) 0, (short) 0);
-			default -> builder.put(j);
-		}
-	}*/
 
-	public static BakedQuad createQuad(Vector3f v1, Vector3f v2, Vector3f v3, Vector3f v4, Transformation rotation, TextureAtlasSprite sprite, float r, float g, float b, float alpha) {
-		Vector3f normal = v3.copy();
-		normal.sub(v2);
-		Vector3f temp = v1.copy();
-		temp.sub(v2);
-		normal.cross(temp);
-		normal.normalize();
-
-		int tw = sprite.getWidth();
-		int th = sprite.getHeight();
-
-		rotation = rotation.blockCenterToCorner();
-		rotation.transformNormal(normal);
-
-		Vector4f vv1 = new Vector4f(v1);
-		rotation.transformPosition(vv1);
-		Vector4f vv2 = new Vector4f(v2);
-		rotation.transformPosition(vv2);
-		Vector4f vv3 = new Vector4f(v3);
-		rotation.transformPosition(vv3);
-		Vector4f vv4 = new Vector4f(v4);
-		rotation.transformPosition(vv4);
+	public static BakedQuad createQuad(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 v4, Transformation rotation, TextureAtlasSprite sprite, float r, float g, float b, float alpha) {
+		Vec3 normal = v3.subtract(v2).cross(v1.subtract(v2)).normalize();
 
 		BakedQuad[] quad = new BakedQuad[1];
-		var builder = new QuadBakingVertexConsumer(q -> quad[0] = q);
+		QuadBakingVertexConsumer builder = new QuadBakingVertexConsumer(q -> quad[0] = q);
 		builder.setSprite(sprite);
-		builder.setDirection(Direction.getNearest(normal.x(), normal.y(), normal.z()));
-		putVertex(builder, normal, vv1, 0, 0, sprite, r, g, b, alpha);
-		putVertex(builder, normal, vv2, 0, th, sprite, r, g, b, alpha);
-		putVertex(builder, normal, vv3, tw, th, sprite, r, g, b, alpha);
-		putVertex(builder, normal, vv4, tw, 0, sprite, r, g, b, alpha);
-		
+		builder.setDirection(Direction.getNearest(normal.x, normal.y, normal.z));
+		putVertex(builder, normal, v1.x, v1.y, v1.z, 0, 0, sprite, r, g, b, alpha);
+		putVertex(builder, normal, v2.x, v2.y, v2.z, 0, 16, sprite, r, g, b, alpha);
+		putVertex(builder, normal, v3.x, v3.y, v3.z, 16, 16, sprite, r, g, b, alpha);
+		putVertex(builder, normal, v4.x, v4.y, v4.z, 16, 0, sprite, r, g, b, alpha);
 		return quad[0];
 	}
 
-	public static Vector3f v(float x, float y, float z) {
-		return new Vector3f(x, y, z);
+	public static void putVertex(VertexConsumer builder, Position normal,
+								 double x, double y, double z, float u, float v,
+								 TextureAtlasSprite sprite, float r, float g, float b, float a) {
+		float iu = sprite.getU(u);
+		float iv = sprite.getV(v);
+		builder.vertex(x, y, z)
+				.uv(iu, iv)
+				.uv2(0, 0)
+				.color(r, g, b, a)
+				.normal((float) normal.x(), (float) normal.y(), (float) normal.z())
+				.endVertex();
 	}
 }

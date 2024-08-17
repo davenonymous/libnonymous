@@ -5,6 +5,7 @@ import com.davenonymous.libnonymous.gui.framework.GUIHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -38,11 +39,11 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
-		super.draw(pPoseStack, screen);
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+		super.draw(pGuiGraphics, screen);
 
 		if(drawSlot) {
-			this.drawSlot(pPoseStack, screen);
+			this.drawSlot(pGuiGraphics, screen);
 		}
 
 		if(this.value == null || this.value.isEmpty()) {
@@ -52,12 +53,11 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 		GUIHelper.renderGuiItem(this.value, getActualX(), getActualY(), !this.enabled);
 	}
 
-	private void drawSlot(PoseStack pPoseStack, Screen screen) {
+	private void drawSlot(GuiGraphics pGuiGraphics, Screen screen) {
 		RenderSystem.setShaderTexture(0, GUI.tabIcons);
 
 		int texOffsetY = 84;
 		int texOffsetX = 84;
-
-		ScreenUtils.drawTexturedModalRect(pPoseStack, -1, -1, texOffsetX, texOffsetY, 18, 18, 0.0f);
+		pGuiGraphics.blit(GUI.tabIcons, -1, -1, texOffsetX, texOffsetY, 18, 18);
 	}
 }

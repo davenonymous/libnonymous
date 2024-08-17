@@ -6,15 +6,16 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.DynamicLoot;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -35,20 +36,22 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class BaseLootTableProvider extends LootTableProvider {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	protected final Map<Block, LootTable.Builder> lootTables = new HashMap<>();
-	private final DataGenerator generator;
-	private final String MODID;
+	private final PackOutput generator;
 
-	public BaseLootTableProvider(DataGenerator dataGeneratorIn, String modid) {
-		super(dataGeneratorIn);
+
+	public BaseLootTableProvider(PackOutput dataGeneratorIn, Set<ResourceLocation> pRequiredTables, List<SubProviderEntry> pSubProviders) {
+		super(dataGeneratorIn, pRequiredTables, pSubProviders);
 		this.generator = dataGeneratorIn;
-		this.MODID = modid;
 	}
 
 	protected abstract void addTables();
@@ -85,7 +88,7 @@ public abstract class BaseLootTableProvider extends LootTableProvider {
 
 
 	@Override
-	public void run(CachedOutput cache) {
+	public CompletableFuture<?> run(CachedOutput cache) {
 		addTables();
 
 		Map<ResourceLocation, LootTable> tables = new HashMap<>();
@@ -93,23 +96,16 @@ public abstract class BaseLootTableProvider extends LootTableProvider {
 			tables.put(entry.getKey().getLootTable(), entry.getValue().setParamSet(LootContextParamSets.BLOCK)
 					.build());
 		}
-		writeTables(cache, tables);
+		return writeTables(cache, tables);
 	}
 
-	private void writeTables(CachedOutput cache, Map<ResourceLocation, LootTable> tables) {
+	private CompletableFuture<?> writeTables(CachedOutput cache, Map<ResourceLocation, LootTable> tables) {
 		Path outputFolder = this.generator.getOutputFolder();
-		tables.forEach((key, lootTable) -> {
-			Path path = outputFolder.resolve("data/" + key.getNamespace() + "/loot_tables/" + key.getPath() + ".json");
-			try {
-				DataProvider.saveStable(cache, LootTables.serialize(lootTable), path);
-			} catch (IOException e) {
-				LOGGER.error("Couldn't write loot table {}", path, e);
-			}
-		});
-	}
-
-	@Override
-	public String getName() {
-		return MODID + " Loot Tables";
+		return CompletableFuture.allOf(tables.entrySet().stream().map((table) -> {
+			ResourceLocation res = table.getKey();
+			LootTable lootTable = table.getValue();
+			Path path = outputFolder.resolve("data/" + res.getNamespace() + "/loot_tables/" + res.getPath() + ".json");
+			return DataProvider.saveStable(cache, LootDataType.TABLE.parser().toJsonTree(lootTable), path);
+		}).toArray(CompletableFuture[]::new));
 	}
 }

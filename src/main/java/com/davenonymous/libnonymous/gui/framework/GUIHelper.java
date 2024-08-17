@@ -5,7 +5,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.world.item.ItemDisplayContext;
+import org.joml.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,37 +25,37 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class GUIHelper {
-	public static void drawStringCentered(PoseStack pPoseStack, String str, Screen screen, float x, float y, int color) {
+	public static void drawStringCentered(GuiGraphics pGuiGraphics, String str, Screen screen, float x, float y, int color) {
 		Font renderer = screen.getMinecraft().font;
 		float xPos = x - ((float) renderer.width(str) / 2.0f);
 		var old = RenderSystem.getShader();
-		renderer.draw(pPoseStack, str, xPos, y, color);
+		pGuiGraphics.drawCenteredString(renderer, str, (int)xPos, (int)y, color);
 		RenderSystem.setShader(() -> old);
 	}
 
-	public static void drawSplitStringCentered(PoseStack pPoseStack, String str, Screen screen, int x, int y, int width, int color) {
+	public static void drawSplitStringCentered(GuiGraphics pGuiGraphics, String str, Screen screen, int x, int y, int width, int color) {
 		Font renderer = screen.getMinecraft().font;
 		int yOffset = 0;
 
 		for(FormattedText row : renderer.getSplitter().splitLines(str, width, Style.EMPTY)) {
-			drawStringCentered(pPoseStack, row.getString(), screen, x + width / 2, y + yOffset, color);
+			drawStringCentered(pGuiGraphics, row.getString(), screen, x + width / 2, y + yOffset, color);
 			yOffset += renderer.lineHeight;
 		}
 	}
 
-	public static void drawColoredRectangle(PoseStack pPoseStack, int x, int y, int width, int height, int argb) {
+	public static void drawColoredRectangle(GuiGraphics pGuiGraphics, int x, int y, int width, int height, int argb) {
 		int a = (argb >> 24) & 0xFF;
 		int r = (argb >> 16) & 0xFF;
 		int g = (argb >> 8) & 0xFF;
 		int b = (argb & 0xFF);
-		drawColoredRectangle(pPoseStack, x, y, width, height, r, g, b, a);
+		drawColoredRectangle(pGuiGraphics, x, y, width, height, r, g, b, a);
 	}
 
-	public static void drawColoredRectangle(PoseStack pPoseStack, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+	public static void drawColoredRectangle(GuiGraphics pGuiGraphics, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
 		float zLevel = 0.0f;
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		RenderSystem.disableTexture();
+		// RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -61,7 +64,7 @@ public class GUIHelper {
 		var builder = tesselator.getBuilder();
 
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		Matrix4f matrix = pPoseStack.last().pose();
+		Matrix4f matrix = pGuiGraphics.pose().last().pose();
 
 		builder.vertex(matrix, (x + 0), (y + 0), zLevel).color(red, green, blue, alpha).endVertex();
 		builder.vertex(matrix, (x + 0), (y + height), zLevel).color(red, green, blue, alpha).endVertex();
@@ -72,10 +75,10 @@ public class GUIHelper {
 
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
-		RenderSystem.enableTexture();
+		// RenderSystem.enableTexture(); /?
 	}
 
-	public static void drawStretchedTexture(PoseStack pPoseStack, int x, int y, int width, int height, int textureX, int textureY, int textureWidth, int textureHeight) {
+	public static void drawStretchedTexture(GuiGraphics pGuiGraphics, int x, int y, int width, int height, int textureX, int textureY, int textureWidth, int textureHeight) {
 		final float uScale = 1f / 0x100;
 		final float vScale = 1f / 0x100;
 
@@ -85,7 +88,7 @@ public class GUIHelper {
 		var builder = tesselator.getBuilder();
 
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		Matrix4f matrix = pPoseStack.last().pose();
+		Matrix4f matrix = pGuiGraphics.pose().last().pose();
 
 		builder.vertex(matrix, (float) x, (float) (y + height), zLevel).uv((float) textureX * uScale, (float) (textureY + textureHeight) * vScale).endVertex();
 		builder.vertex(matrix, (float) (x + width), (float) (y + height), zLevel).uv((float) (textureX + textureWidth) * uScale, (float) (textureY + textureHeight) * vScale).endVertex();
@@ -94,7 +97,7 @@ public class GUIHelper {
 		tesselator.end();
 	}
 
-	public static void drawModalRectWithCustomSizedTexture(PoseStack pPoseStack, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+	public static void drawModalRectWithCustomSizedTexture(GuiGraphics pGuiGraphics, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
 		float f = 1.0F / textureWidth;
 		float f1 = 1.0F / textureHeight;
 
@@ -102,7 +105,7 @@ public class GUIHelper {
 		var builder = tesselator.getBuilder();
 
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		Matrix4f matrix = pPoseStack.last().pose();
+		Matrix4f matrix = pGuiGraphics.pose().last().pose();
 
 		builder.vertex(matrix, (float) x, (float) (y + height), 0.0f).uv((u * f), ((v + (float) height) * f1)).endVertex();
 		builder.vertex(matrix, (float) (x + width), (float) (y + height), 0.0f).uv(((u + (float) width) * f), ((v + (float) height) * f1)).endVertex();
@@ -133,7 +136,7 @@ public class GUIHelper {
 			Lighting.setupForFlatItems();
 		}
 
-		Minecraft.getInstance().getItemRenderer().render(pStack, ItemTransforms.TransformType.GUI, false, posestack1, multibuffersource$buffersource, blackOut ? 0 : 15728880, OverlayTexture.NO_OVERLAY, pBakedmodel);
+		Minecraft.getInstance().getItemRenderer().render(pStack, ItemDisplayContext.GUI, false, posestack1, multibuffersource$buffersource, blackOut ? 0 : 15728880, OverlayTexture.NO_OVERLAY, pBakedmodel);
 		multibuffersource$buffersource.endBatch();
 		RenderSystem.enableDepthTest();
 		if(flag) {
@@ -154,7 +157,7 @@ public class GUIHelper {
 	 * @param width  The width of the provided icon to draw on the screen
 	 * @param height The height of the provided icon to draw on the screen
 	 */
-	public static void fillAreaWithIcon(PoseStack pPoseStack, TextureAtlasSprite icon, int x, int y, int width, int height) {
+	public static void fillAreaWithIcon(GuiGraphics pGuiGraphics, TextureAtlasSprite icon, int x, int y, int width, int height) {
 		Tesselator t = Tesselator.getInstance();
 		BufferBuilder b = t.getBuilder();
 
@@ -162,8 +165,8 @@ public class GUIHelper {
 
 		float zLevel = 0.0f;
 
-		int iconWidth = icon.getWidth();
-		int iconHeight = icon.getHeight();
+		int iconWidth = icon.contents().width();
+		int iconHeight = icon.contents().height();
 
 		// number of rows & cols of full size icons
 		int fullCols = width / iconWidth;
@@ -188,12 +191,12 @@ public class GUIHelper {
 			for(int col = 0; col < fullCols; col++) {
 				// main part, only full icons
 				xNow = x + col * iconWidth;
-				drawRect(pPoseStack, xNow, yNow, iconWidth, iconHeight, zLevel, minU, minV, maxU, maxV);
+				drawRect(pGuiGraphics, xNow, yNow, iconWidth, iconHeight, zLevel, minU, minV, maxU, maxV);
 			}
 			if(excessWidth != 0) {
 				// last not full width column in every row at the end
 				xNow = x + fullCols * iconWidth;
-				drawRect(pPoseStack, xNow, yNow, iconWidth, iconHeight, zLevel, minU, minV, maxU, maxV);
+				drawRect(pGuiGraphics, xNow, yNow, iconWidth, iconHeight, zLevel, minU, minV, maxU, maxV);
 			}
 		}
 		if(excessHeight != 0) {
@@ -201,13 +204,13 @@ public class GUIHelper {
 			for(int col = 0; col < fullCols; col++) {
 				xNow = x + col * iconWidth;
 				yNow = y + fullRows * iconHeight;
-				drawRect(pPoseStack, xNow, yNow, iconWidth, excessHeight, zLevel, minU, minV, maxU, partialMaxV);
+				drawRect(pGuiGraphics, xNow, yNow, iconWidth, excessHeight, zLevel, minU, minV, maxU, partialMaxV);
 			}
 			if(excessWidth != 0) {
 				// missing quad in the bottom right corner of neither full height nor full width
 				xNow = x + fullCols * iconWidth;
 				yNow = y + fullRows * iconHeight;
-				drawRect(pPoseStack, xNow, yNow, excessWidth, excessHeight, zLevel, minU, minV, partialMaxU, partialMaxV);
+				drawRect(pGuiGraphics, xNow, yNow, excessWidth, excessHeight, zLevel, minU, minV, partialMaxU, partialMaxV);
 			}
 		}
 
@@ -215,7 +218,7 @@ public class GUIHelper {
 	}
 
 
-	private static void drawRect(PoseStack pPoseStack, float x, float y, float width, float height, float z, float u, float v, float maxU, float maxV) {
+	private static void drawRect(GuiGraphics pGuiGraphics, float x, float y, float width, float height, float z, float u, float v, float maxU, float maxV) {
 		BufferBuilder b = Tesselator.getInstance().getBuilder();
 
         /*

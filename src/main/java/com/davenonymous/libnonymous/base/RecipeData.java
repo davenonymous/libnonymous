@@ -1,5 +1,6 @@
 package com.davenonymous.libnonymous.base;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -23,12 +24,12 @@ public abstract class RecipeData implements Recipe<Inventory> {
 	}
 
 	@Override
-	public ItemStack assemble(Inventory inv) {
+	public ItemStack assemble(Inventory inv, RegistryAccess registryAccess) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess registryAccess) {
 		return ItemStack.EMPTY;
 	}
 

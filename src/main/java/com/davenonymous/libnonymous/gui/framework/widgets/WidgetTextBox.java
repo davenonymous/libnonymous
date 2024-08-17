@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetTextBox extends Widget {
@@ -35,12 +36,12 @@ public class WidgetTextBox extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		if(text == null) {
 			return;
 		}
 
-		pPoseStack.pushPose();
+		pGuiGraphics.pose().pushPose();
 		RenderSystem.enableBlend();
 
 		int scale = computeGuiScale(screen.getMinecraft());
@@ -51,10 +52,10 @@ public class WidgetTextBox extends Widget {
 		}
 
 		RenderSystem.enableScissor(getActualX() * scale, bottomOffset + 2, width * scale, heightTmp);
-		screen.getMinecraft().font.draw(pPoseStack, text, 0, 0, textColor);
+		pGuiGraphics.drawString(screen.getMinecraft().font, text, 0, 0, textColor);
 		RenderSystem.disableScissor();
 
 		RenderSystem.disableBlend();
-		pPoseStack.popPose();
+		pGuiGraphics.pose().popPose();
 	}
 }

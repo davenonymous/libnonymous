@@ -4,9 +4,10 @@ import com.davenonymous.libnonymous.Libnonymous;
 import com.davenonymous.libnonymous.base.BaseLanguageProvider;
 import com.davenonymous.libnonymous.gui.framework.widgets.WidgetRedstoneMode;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 
 public class DatagenTranslations extends BaseLanguageProvider {
-	public DatagenTranslations(DataGenerator gen, String locale) {
+	public DatagenTranslations(PackOutput gen, String locale) {
 		super(gen, Libnonymous.MODID, locale);
 	}
 

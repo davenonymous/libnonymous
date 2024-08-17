@@ -8,6 +8,7 @@ import com.davenonymous.libnonymous.gui.framework.widgets.WidgetPanel;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -48,27 +49,27 @@ public class GUI extends WidgetPanel {
 		return valueMap.get(id).getValue();
 	}
 
-	public void drawGUI(PoseStack pPoseStack, Screen screen) {
+	public void drawGUI(GuiGraphics pGuiGraphics, Screen screen) {
 		this.setX((screen.width - this.width) / 2);
 		this.setY((screen.height - this.height) / 2);
 
-		this.shiftAndDraw(pPoseStack, screen);
+		this.shiftAndDraw(pGuiGraphics, screen);
 	}
 
 	@Override
-	public void drawBeforeShift(PoseStack pPoseStack, Screen screen) {
+	public void drawBeforeShift(GuiGraphics pGuiGraphics, Screen screen) {
 		//screen.drawDefaultBackground();
 
-		super.drawBeforeShift(pPoseStack, screen);
+		super.drawBeforeShift(pGuiGraphics, screen);
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
-		drawWindow(pPoseStack, screen);
-		super.draw(pPoseStack, screen);
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+		drawWindow(pGuiGraphics, screen);
+		super.draw(pGuiGraphics, screen);
 	}
 
-	protected void drawWindow(PoseStack pPoseStack, Screen screen) {
+	protected void drawWindow(GuiGraphics pGuiGraphics, Screen screen) {
 		int texOffsetY = 11;
 		int texOffsetX = 64;
 
@@ -85,39 +86,39 @@ public class GUI extends WidgetPanel {
 		RenderSystem.setShaderTexture(0, tabIcons);
 
 		// Top Left corner
-		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, 0, texOffsetX, texOffsetY, 4, 4, 0.0f);
+		pGuiGraphics.blit(tabIcons, xOffset, y, texOffsetX, texOffsetY, 4, 4);
 
 		// Top right corner
-		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, 0, texOffsetX + 4 + 64, texOffsetY, 4, 4, 0.0f);
+		pGuiGraphics.blit(tabIcons, xOffset + width - 4, 0, texOffsetX + 4 + 64, texOffsetY, 4, 4);
 
 		// Bottom Left corner
-		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, this.height - 4, texOffsetX, texOffsetY + 4 + 64, 4, 4, 0.0f);
+		pGuiGraphics.blit(tabIcons, xOffset, this.height - 4, texOffsetX, texOffsetY + 4 + 64, 4, 4);
 
 		// Bottom Right corner
-		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset + width - 4, this.height - 4, texOffsetX + 4 + 64, texOffsetY + 4 + 64, 4, 4, 0.0f);
+		pGuiGraphics.blit(tabIcons, xOffset + width - 4, this.height - 4, texOffsetX + 4 + 64, texOffsetY + 4 + 64, 4, 4);
 
 		// Top edge
-		GUIHelper.drawStretchedTexture(pPoseStack, xOffset + 4, 0, width - 8, 4, texOffsetX + 4, texOffsetY, 64, 4);
+		GUIHelper.drawStretchedTexture(pGuiGraphics, xOffset + 4, 0, width - 8, 4, texOffsetX + 4, texOffsetY, 64, 4);
 
 		// Bottom edge
-		GUIHelper.drawStretchedTexture(pPoseStack, xOffset + 4, this.height - 4, width - 8, 4, texOffsetX + 4, texOffsetY + 4 + 64, 64, 4);
+		GUIHelper.drawStretchedTexture(pGuiGraphics, xOffset + 4, this.height - 4, width - 8, 4, texOffsetX + 4, texOffsetY + 4 + 64, 64, 4);
 
 		// Left edge
-		GUIHelper.drawStretchedTexture(pPoseStack, xOffset, 4, 4, this.height - 8, texOffsetX, texOffsetY + 4, 4, 64);
+		GUIHelper.drawStretchedTexture(pGuiGraphics, xOffset, 4, 4, this.height - 8, texOffsetX, texOffsetY + 4, 4, 64);
 
 		// Right edge
-		GUIHelper.drawStretchedTexture(pPoseStack, xOffset + width - 4, 4, 4, this.height - 8, texOffsetX + 64 + 4, texOffsetY + 3, 4, 64);
+		GUIHelper.drawStretchedTexture(pGuiGraphics, xOffset + width - 4, 4, 4, this.height - 8, texOffsetX + 64 + 4, texOffsetY + 3, 4, 64);
 
-		GUIHelper.drawStretchedTexture(pPoseStack, xOffset + 4, 4, width - 8, this.height - 8, texOffsetX + 4, texOffsetY + 4, 64, 64);
+		GUIHelper.drawStretchedTexture(pGuiGraphics, xOffset + 4, 4, width - 8, this.height - 8, texOffsetX + 4, texOffsetY + 4, 64, 64);
 	}
 
-	public void drawTooltips(PoseStack pPoseStack, Screen screen, int mouseX, int mouseY) {
+	public void drawTooltips(GuiGraphics pGuiGraphics, Screen screen, int mouseX, int mouseY) {
 		Widget hoveredWidget = getHoveredWidget(mouseX, mouseY);
 		Font font = screen.getMinecraft().font;
 
 		if(hoveredWidget != null && hoveredWidget.getTooltip() != null) {
 			if(hoveredWidget.getTooltip().size() > 0) {
-				screen.renderTooltip(pPoseStack, hoveredWidget.getTooltipAsFormattedCharSequence(), mouseX, mouseY, font);
+				pGuiGraphics.renderTooltip(font, hoveredWidget.getTooltipAsFormattedCharSequence(), mouseX, mouseY);
 				// GuiUtils.drawHoveringText(hoveredWidget.getTooltipAsString(), mouseX, mouseY, width, height, 180, font);
 			}/* else {
                 List<String> tooltips = new ArrayList<>();
@@ -127,7 +128,7 @@ public class GUI extends WidgetPanel {
 		}
 	}
 
-	public void drawSlot(PoseStack pPoseStack, Screen screen, Slot slot, int guiLeft, int guiTop) {
+	public void drawSlot(GuiGraphics pGuiGraphics, Screen screen, Slot slot, int guiLeft, int guiTop) {
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 		if(slot instanceof WidgetSlot) {
@@ -139,16 +140,17 @@ public class GUI extends WidgetPanel {
 		float offsetX = guiLeft - 1;
 		float offsetY = guiTop - 1;
 
-		pPoseStack.pushPose();
-		pPoseStack.translate(offsetX, offsetY, 0.0f);
+		pGuiGraphics.pose().pushPose();
+		pGuiGraphics.pose().translate(offsetX, offsetY, 0.0f);
 		int texOffsetY = 84;
 		int texOffsetX = 84;
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, tabIcons);
-		ScreenUtils.drawTexturedModalRect(pPoseStack, slot.x, slot.y, texOffsetX, texOffsetY, 18, 18, 0.0f);
+		pGuiGraphics.blit(tabIcons, slot.x, slot.y, texOffsetX, texOffsetY, 18, 18);
+
 		//RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-		pPoseStack.popPose();
+		pGuiGraphics.pose().popPose();
 	}
 
 	public void setContainer(WidgetContainer container) {

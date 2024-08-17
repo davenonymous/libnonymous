@@ -6,13 +6,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ClientEventHandlers {
 
 	@SubscribeEvent
-	public void onRenderLevel(RenderLevelLastEvent event) {
+	public void onRenderLevel(RenderLevelStageEvent event) {
+		if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES);
+
 		boolean hasScreenOpen = Minecraft.getInstance().screen != null;
 		if(hasScreenOpen || Minecraft.getInstance().player == null) {
 			return;

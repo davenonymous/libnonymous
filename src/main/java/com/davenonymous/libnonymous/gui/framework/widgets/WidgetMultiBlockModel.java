@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetMultiBlockModel extends Widget {
@@ -13,7 +14,7 @@ public class WidgetMultiBlockModel extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
         /*
         float angle = RenderTickCounter.renderTicks * 45.0f / 128.0f;
 

@@ -8,6 +8,7 @@ import com.davenonymous.libnonymous.gui.framework.event.WidgetEventResult;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.theoneprobe.rendering.RenderHelper;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -146,8 +147,8 @@ public class WidgetTabsPanel extends WidgetPanel {
 		}
 
 		@Override
-		public void draw(PoseStack pPoseStack, Screen screen) {
-			pPoseStack.pushPose();
+		public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+			pGuiGraphics.pose().pushPose();
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderTexture(0, GUI.tabIcons);
@@ -190,11 +191,11 @@ public class WidgetTabsPanel extends WidgetPanel {
 				iconY += 2;
 			}
 
-			ScreenUtils.drawTexturedModalRect(pPoseStack, x, y, textureX, textureY, buttonWidth, buttonHeight, 0.0f);
+			pGuiGraphics.blit(GUI.tabIcons, x, y, textureX, textureY, buttonWidth, buttonHeight);
 
 			GUIHelper.renderGuiItem(pageStack, getActualX() + iconX, getActualY() + iconY, false);
 
-            pPoseStack.popPose();
+            pGuiGraphics.pose().popPose();
 		}
 	}
 }

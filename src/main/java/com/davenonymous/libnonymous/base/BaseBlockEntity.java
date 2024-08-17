@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -141,7 +141,7 @@ public class BaseBlockEntity<T extends BaseBlockEntity> extends BlockEntity {
 			return null;
 		}
 
-		var optionalHandler = belowBlockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).resolve();
+		var optionalHandler = belowBlockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side.getOpposite()).resolve();
 		if(optionalHandler.isEmpty()) {
 			return null;
 		}

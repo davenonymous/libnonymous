@@ -1,6 +1,5 @@
 package com.davenonymous.libnonymous.helper;
 
-import com.mojang.math.Matrix4f;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
 import net.minecraft.world.phys.shapes.Shapes;

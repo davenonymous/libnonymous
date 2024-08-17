@@ -3,6 +3,7 @@ package com.davenonymous.libnonymous.gui.framework;
 
 import com.davenonymous.libnonymous.gui.framework.event.*;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -87,8 +88,8 @@ public abstract class WidgetScreen extends Screen {
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int mouseX, int mouseY, float partialTicks) {
-		super.render(pPoseStack, mouseX, mouseY, partialTicks);
+	public void render(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float partialTicks) {
+		super.render(pGuiGraphics, mouseX, mouseY, partialTicks);
 
 		if(mouseX != previousMouseX || mouseY != previousMouseY) {
 			getOrCreateGui().fireEvent(new MouseMoveEvent(mouseX, mouseY));
@@ -97,16 +98,16 @@ public abstract class WidgetScreen extends Screen {
 			previousMouseY = mouseY;
 		}
 
-		getOrCreateGui().drawGUI(pPoseStack, this);
-		getOrCreateGui().drawTooltips(pPoseStack, this, mouseX, mouseY);
+		getOrCreateGui().drawGUI(pGuiGraphics, this);
+		getOrCreateGui().drawTooltips(pGuiGraphics, this, mouseX, mouseY);
 		//renderHoveredToolTip(mouseX, mouseY);
 
 		// RenderHelper.disableStandardItemLighting();
 	}
 
 	@Override
-	public void renderBackground(PoseStack pPoseStack) {
-		super.renderBackground(pPoseStack);
+	public void renderBackground(GuiGraphics pGuiGraphics) {
+		super.renderBackground(pGuiGraphics);
 	}
 
 	protected void resetMousePositions() {

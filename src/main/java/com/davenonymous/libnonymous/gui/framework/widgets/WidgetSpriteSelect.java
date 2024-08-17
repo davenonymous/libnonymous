@@ -2,6 +2,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +32,7 @@ public class WidgetSpriteSelect<T> extends WidgetWithChoiceValue<T> {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		var sprite = spriteMap.get(this.getValue());
 		if(sprite == null) {
 			return;
@@ -45,7 +46,7 @@ public class WidgetSpriteSelect<T> extends WidgetWithChoiceValue<T> {
 		var xOffset = (this.width - sprite.width) / 2;
 		var yOffset = (this.height - sprite.height) / 2;
 
-		ScreenUtils.drawTexturedModalRect(pPoseStack, xOffset, yOffset, sprite.u, sprite.v, sprite.width, sprite.height, 10.0f);
+		pGuiGraphics.blit(sprite.sprite, xOffset, yOffset, sprite.u, sprite.v, sprite.width, sprite.height);
 	}
 
 	public record SpriteData(ResourceLocation sprite, int u, int v, int width, int height) {

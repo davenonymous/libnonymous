@@ -7,6 +7,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootDataType;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,6 +18,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class BaseDataProvider implements DataProvider {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -54,23 +58,22 @@ public abstract class BaseDataProvider implements DataProvider {
 
 
 	@Override
-	public void run(CachedOutput cache) throws IOException {
+	public CompletableFuture<?> run(CachedOutput cache) {
 		addValues();
 
-		values.forEach((s, jsonObject) -> {
-			saveValue(cache, s, jsonObject);
-		});
+		return CompletableFuture.allOf(values.entrySet().stream().map((table) -> {
+			String s = table.getKey();
+			JsonObject jsonObject = table.getValue();
+
+			return saveValue(cache, s, jsonObject);
+		}).toArray(CompletableFuture[]::new));
 	}
 
-	private void saveValue(CachedOutput cache, String key, JsonObject jsonObject) {
-		Path mainOutput = generator.getOutputFolder();
+	private CompletableFuture<?> saveValue(CachedOutput cache, String key, JsonObject jsonObject) {
+		Path mainOutput = generator.getPackOutput().getOutputFolder();
 		String pathSuffix = (type == Type.ASSETS ? "assets" : "data") + "/" + getModId() + "/" + key + ".json";
 
 		Path outputPath = mainOutput.resolve(pathSuffix);
-		try {
-			DataProvider.saveStable(cache, jsonObject, outputPath);
-		} catch (IOException e) {
-			LOGGER.error("Couldn't save {} to {}", getName(), outputPath, e);
-		}
+		return DataProvider.saveStable(cache, jsonObject, outputPath);
 	}
 }

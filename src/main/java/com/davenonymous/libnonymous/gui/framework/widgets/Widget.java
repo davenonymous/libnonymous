@@ -4,8 +4,8 @@ import com.davenonymous.libnonymous.base.BaseLanguageProvider;
 import com.davenonymous.libnonymous.gui.framework.GUI;
 import com.davenonymous.libnonymous.gui.framework.event.*;
 import com.davenonymous.libnonymous.helper.Translatable;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -245,16 +245,16 @@ public class Widget {
 	 * <p>
 	 * Do not override this. Override the draw() method instead.
 	 *
-	 * @param pPoseStack
+	 * @param pGuiGraphics
 	 * @param screen
 	 */
-	public void shiftAndDraw(PoseStack pPoseStack, Screen screen) {
-		this.drawBeforeShift(pPoseStack, screen);
+	public void shiftAndDraw(GuiGraphics pGuiGraphics, Screen screen) {
+		this.drawBeforeShift(pGuiGraphics, screen);
 
-		pPoseStack.pushPose();
-		pPoseStack.translate(this.x, this.y, 0);
-		this.draw(pPoseStack, screen);
-		pPoseStack.popPose();
+		pGuiGraphics.pose().pushPose();
+		pGuiGraphics.pose().translate(this.x, this.y, 0);
+		this.draw(pGuiGraphics, screen);
+		pGuiGraphics.pose().popPose();
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class Widget {
 	 *
 	 * @param screen
 	 */
-	public void drawBeforeShift(PoseStack pPoseStack, Screen screen) {
+	public void drawBeforeShift(GuiGraphics pGuiGraphics, Screen screen) {
 
 	}
 
@@ -277,7 +277,7 @@ public class Widget {
 	 *
 	 * @param screen
 	 */
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		//Logz.debug("Drawing widget: %s, x=%d, y=%d, width=%d, height=%d", this, layoutResult.getX(), layoutResult.getY(), layoutResult.getWidth(), layoutResult.getHeight());
 	}
 

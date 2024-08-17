@@ -2,6 +2,7 @@ package com.davenonymous.libnonymous.base;
 
 import com.davenonymous.libnonymous.helper.Translatable;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -10,8 +11,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public abstract class BaseLanguageProvider extends LanguageProvider {
 	private final String modid;
 
-	public BaseLanguageProvider(DataGenerator gen, String modid, String locale) {
-		super(gen, modid, locale);
+	public BaseLanguageProvider(PackOutput output, String modid, String locale) {
+		super(output, modid, locale);
 		this.modid = modid;
 	}
 

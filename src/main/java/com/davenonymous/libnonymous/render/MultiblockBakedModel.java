@@ -1,7 +1,7 @@
 package com.davenonymous.libnonymous.render;
 
 import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
-import com.mojang.math.Matrix4f;
+import org.joml.Matrix4f;
 import com.mojang.math.Transformation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -24,6 +24,7 @@ import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4fStack;
 
 import java.util.*;
 import java.util.function.Function;
@@ -74,9 +75,8 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 				for(var side : sides) {
 					List<BakedQuad> modelQuads = blockModel.getQuads(state, side, rand);
 
-					Transformation translate = new Transformation(Matrix4f.createTranslateMatrix(pos.getX(), pos.getY(), pos.getZ()));
+					Transformation translate = new Transformation(new Matrix4f().translate(pos.getX(), pos.getY(), pos.getZ()));
 					IQuadTransformer quadTransformer = QuadTransformers.applying(translate);
-					
 
 					var transformedQuads = quadTransformer.process(modelQuads);
 					for(var quad : transformedQuads) {

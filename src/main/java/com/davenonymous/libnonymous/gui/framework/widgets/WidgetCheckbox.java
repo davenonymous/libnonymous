@@ -2,6 +2,7 @@ package com.davenonymous.libnonymous.gui.framework.widgets;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetCheckbox extends WidgetSelectButton<Boolean> {
@@ -14,9 +15,9 @@ public class WidgetCheckbox extends WidgetSelectButton<Boolean> {
 	}
 
 	@Override
-	protected void drawButtonContent(PoseStack pPoseStack, Screen screen) {
+	protected void drawButtonContent(GuiGraphics pGuiGraphics, Screen screen) {
 		if(this.getValue()) {
-			drawString(pPoseStack, screen, "x");
+			drawString(pGuiGraphics, screen, "x");
 		}
 	}
 }

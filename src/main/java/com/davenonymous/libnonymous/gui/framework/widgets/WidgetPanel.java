@@ -5,6 +5,7 @@ import com.davenonymous.libnonymous.network.Networking;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
@@ -156,13 +157,13 @@ public class WidgetPanel extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack pPoseStack, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Screen screen) {
 		for(Widget child : children) {
 			if(!child.visible) {
 				continue;
 			}
 
-			child.shiftAndDraw(pPoseStack, screen);
+			child.shiftAndDraw(guiGraphics, screen);
 		}
 	}
 

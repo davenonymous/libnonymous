@@ -6,6 +6,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Supplier;
+
 public class SimpleCommandReply implements Command<CommandSourceStack> {
 	private final Component reply;
 	private final boolean isError;
@@ -34,10 +36,11 @@ public class SimpleCommandReply implements Command<CommandSourceStack> {
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		var source = context.getSource();
+
 		if(isError) {
 			source.sendFailure(reply);
 		} else {
-			source.sendSuccess(reply, false);
+			source.sendSuccess(() -> reply, true);
 		}
 		return 0;
 	}
