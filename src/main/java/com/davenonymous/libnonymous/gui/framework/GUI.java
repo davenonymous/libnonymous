@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +85,7 @@ public class GUI extends WidgetPanel {
 		RenderSystem.setShaderTexture(0, tabIcons);
 
 		// Top Left corner
-		pGuiGraphics.blit(tabIcons, xOffset, y, texOffsetX, texOffsetY, 4, 4);
+		pGuiGraphics.blit(tabIcons, xOffset, 0, texOffsetX, texOffsetY, 4, 4);
 
 		// Top right corner
 		pGuiGraphics.blit(tabIcons, xOffset + width - 4, 0, texOffsetX + 4 + 64, texOffsetY, 4, 4);

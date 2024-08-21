@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 
 public abstract class WidgetContainerScreen<T extends WidgetContainer> extends AbstractContainerScreen<T> {
 	protected GUI gui;
@@ -117,11 +118,11 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 			}
 
 			this.inventoryLabelY = minY - (font.lineHeight + 2);
-			// this.font.draw(pGuiGraphics, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040); /?
+			pGuiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0x404040, false);
 		}
 
 		if(this.renderTitle) {
-			// this.font.draw(pGuiGraphics, this.title, (float) this.titleLabelX, 7.0f, 0x404040); /?
+			pGuiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
 		}
 
 		pGuiGraphics.pose().pushPose();
