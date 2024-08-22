@@ -3,8 +3,11 @@ package com.davenonymous.libnonymous.render;
 import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -12,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,13 +32,15 @@ public class MultiModelBlockRenderer {
 	private final BlockColors blockColors;
 
 	public static void renderMultiBlockModel(MultiblockBlockModel model, BlockAndTintGetter pRealWorld, VertexConsumer buffer, PoseStack pose, int pPackedLight) {
+		MultiModelBlockRenderer.renderMultiBlockModel(model, pRealWorld, Blocks.DIRT.defaultBlockState(), BlockPos.ZERO, buffer, pose, pPackedLight);
+	}
+
+	public static void renderMultiBlockModel(MultiblockBlockModel model, BlockAndTintGetter pRealWorld, BlockState blockState, BlockPos blockPos, VertexConsumer buffer, PoseStack pose, int pPackedLight) {
 		var baked = MultiblockBakedModel.of(model);
-		MultiBlockBlockColors blockColors = new MultiBlockBlockColors(model);
 		MultiBlockBlockAndTintGetter fakeLevel = new MultiBlockBlockAndTintGetter(model, pRealWorld);
 
-		MultiModelBlockRenderer renderer = new MultiModelBlockRenderer(blockColors);
-
-		renderer.tesselateWithoutAO(fakeLevel, baked, Blocks.DIRT.defaultBlockState(), BlockPos.ZERO, pose, buffer, pPackedLight, RandomSource.create(), OverlayTexture.NO_OVERLAY, ModelData.EMPTY);
+		MultiModelBlockRenderer renderer = new MultiModelBlockRenderer(Minecraft.getInstance().getBlockColors());
+		renderer.tesselateWithoutAO(fakeLevel, baked, blockState, blockPos, pose, buffer, pPackedLight, RandomSource.create(), OverlayTexture.NO_OVERLAY, ModelData.EMPTY);
 	}
 
 	public MultiModelBlockRenderer(BlockColors pBlockColors) {
