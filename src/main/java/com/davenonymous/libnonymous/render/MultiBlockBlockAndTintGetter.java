@@ -38,6 +38,10 @@ public class MultiBlockBlockAndTintGetter implements BlockAndTintGetter {
 
 	@Override
 	public int getBrightness(LightLayer pLightType, BlockPos pBlockPos) {
+		if(this.bonsaiPosition.equals(BlockPos.ZERO)) {
+			return 255;
+		}
+
 		return realLevel.getBrightness(pLightType, this.bonsaiPosition);
 	}
 
