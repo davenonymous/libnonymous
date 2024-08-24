@@ -1,14 +1,12 @@
 package com.davenonymous.libnonymous.render;
 
 import com.davenonymous.libnonymous.serialization.MultiblockBlockModel;
-import org.joml.Matrix4f;
 import com.mojang.math.Transformation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -24,7 +22,7 @@ import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4fStack;
+import org.joml.Matrix4f;
 
 import java.util.*;
 import java.util.function.Function;
@@ -59,7 +57,7 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 	@NotNull
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState inputBlockState, @Nullable Direction pSide, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType layer) {
-		if(pSide != null || (layer != null && !layer.equals(RenderType.solid()))) {
+		if(pSide != null) { //  || (layer != null && !layer.equals(RenderType.solid()))
 			return Collections.emptyList();
 		}
 
@@ -77,7 +75,6 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 
 					Transformation translate = new Transformation(new Matrix4f().translate(pos.getX(), pos.getY(), pos.getZ()));
 					IQuadTransformer quadTransformer = QuadTransformers.applying(translate);
-
 					var transformedQuads = quadTransformer.process(modelQuads);
 					for(var quad : transformedQuads) {
 						cache.add(TintedBakedQuad.of(quad, state, pos));
@@ -101,7 +98,7 @@ public class MultiblockBakedModel implements IDynamicBakedModel {
 
 	@Override
 	public boolean usesBlockLight() {
-		return false;
+		return true;
 	}
 
 	@Override

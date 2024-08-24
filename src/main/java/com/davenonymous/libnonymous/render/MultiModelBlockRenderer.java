@@ -37,10 +37,10 @@ public class MultiModelBlockRenderer {
 
 	public static void renderMultiBlockModel(MultiblockBlockModel model, BlockAndTintGetter pRealWorld, BlockState blockState, BlockPos blockPos, VertexConsumer buffer, PoseStack pose, int pPackedLight) {
 		var baked = MultiblockBakedModel.of(model);
-		MultiBlockBlockAndTintGetter fakeLevel = new MultiBlockBlockAndTintGetter(model, pRealWorld);
+		MultiBlockBlockAndTintGetter fakeLevel = new MultiBlockBlockAndTintGetter(model, pRealWorld, blockPos);
 
 		MultiModelBlockRenderer renderer = new MultiModelBlockRenderer(Minecraft.getInstance().getBlockColors());
-		renderer.tesselateWithoutAO(fakeLevel, baked, blockState, blockPos, pose, buffer, pPackedLight, RandomSource.create(), OverlayTexture.NO_OVERLAY, ModelData.EMPTY);
+		renderer.tesselateWithoutAO(fakeLevel, baked, blockState, BlockPos.ZERO, pose, buffer, pPackedLight, RandomSource.create(), OverlayTexture.NO_OVERLAY, ModelData.EMPTY);
 	}
 
 	public MultiModelBlockRenderer(BlockColors pBlockColors) {
@@ -51,9 +51,9 @@ public class MultiModelBlockRenderer {
 	public boolean tesselateWithoutAO(BlockAndTintGetter pLevel, BakedModel pModel, BlockState pState, BlockPos pPos, PoseStack pPoseStack, VertexConsumer pConsumer, int pPackedLight, RandomSource pRandom, int pPackedOverlay, net.minecraftforge.client.model.data.ModelData modelData) {
 		BitSet bitset = new BitSet(3);
 
-		List<BakedQuad> list1 = pModel.getQuads(pState, (Direction) null, pRandom, modelData, null);
+		List<BakedQuad> list1 = pModel.getQuads(pState, null, pRandom, modelData, null);
 		if(!list1.isEmpty()) {
-			this.renderModelFaceFlat(pLevel, pState, pPos, pPackedLight, pPackedOverlay, false, pPoseStack, pConsumer, list1, bitset);
+			this.renderModelFaceFlat(pLevel, pState, pPos, pPackedLight, pPackedOverlay, true, pPoseStack, pConsumer, list1, bitset);
 			return true;
 		}
 
@@ -167,7 +167,9 @@ public class MultiModelBlockRenderer {
 			if(pRepackLight) {
 				this.calculateShape(pLevel, pState, pPos, bakedquad.getVertices(), bakedquad.getDirection(), (float[]) null, pShapeFlags);
 				BlockPos blockpos = pShapeFlags.get(0) ? pPos.relative(bakedquad.getDirection()) : pPos;
-				pPackedLight = LevelRenderer.getLightColor(pLevel, pState, blockpos);
+
+				//pPackedLight = LevelRenderer.getLightColor(pLevel, pState, pPos);
+				//pPackedLight = pLevel.getBrightness(LightLayer.BLOCK, pPos) << 4;
 			}
 
 			float f = pLevel.getShade(bakedquad.getDirection(), bakedquad.isShade());

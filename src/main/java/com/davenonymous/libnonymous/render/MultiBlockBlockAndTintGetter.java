@@ -18,9 +18,12 @@ public class MultiBlockBlockAndTintGetter implements BlockAndTintGetter {
 	MultiblockBlockModel model;
 	BlockAndTintGetter realLevel;
 
-	public MultiBlockBlockAndTintGetter(MultiblockBlockModel model, BlockAndTintGetter realLevel) {
+	BlockPos bonsaiPosition;
+
+	public MultiBlockBlockAndTintGetter(MultiblockBlockModel model, BlockAndTintGetter realLevel, BlockPos bonsaiPosition) {
 		this.model = model;
 		this.realLevel = realLevel;
+		this.bonsaiPosition = bonsaiPosition;
 	}
 
 	@Override
@@ -35,12 +38,12 @@ public class MultiBlockBlockAndTintGetter implements BlockAndTintGetter {
 
 	@Override
 	public int getBrightness(LightLayer pLightType, BlockPos pBlockPos) {
-		return realLevel.getBrightness(pLightType, pBlockPos);
+		return realLevel.getBrightness(pLightType, this.bonsaiPosition);
 	}
 
 	@Override
 	public int getBlockTint(BlockPos pBlockPos, ColorResolver pColorResolver) {
-		return realLevel.getBlockTint(pBlockPos, pColorResolver);
+		return realLevel.getBlockTint(bonsaiPosition, pColorResolver);
 	}
 
 	@Nullable

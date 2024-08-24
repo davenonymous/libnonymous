@@ -14,10 +14,13 @@ public class TintedBakedQuad extends BakedQuad {
 
 	public BlockState state;
 	public BlockPos pos;
+	public float[] aoBrightness = new float[]{-1.0f, -1.0f, -1.0f, -1.0f};
 
 	private TintedBakedQuad(int[] pVertices, int pTintIndex, Direction pDirection, TextureAtlasSprite pSprite, boolean pShade, BlockState state, BlockPos pos) {
-		super(pVertices, pTintIndex, pDirection, pSprite, pShade);
+		super(pVertices, pTintIndex, pDirection, pSprite, pShade, true);
 		this.state = state;
 		this.pos = pos;
 	}
+
+
 }
